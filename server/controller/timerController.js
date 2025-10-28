@@ -5,7 +5,8 @@ export const startTimer = async (req, res) => {
   try {
     const { user, start, description } = req.body;
 
-    if (!user || !start) {
+    console.log(req.user._id);
+    if (!start) {
       return res.status(400).json({
         success: false,
         message: "Please provide all the required fields",
@@ -14,7 +15,7 @@ export const startTimer = async (req, res) => {
     }
 
     const timer = await timerModel.create({
-      user: user ? user : req.user.id,
+      user: user ? user : req.user._id,
       start,
       description,
       isActive: true,

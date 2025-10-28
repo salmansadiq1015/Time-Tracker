@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import authModel from "../models/authModel.js";
+import userModel from "../models/userModel.js";
 
 // Is Authenticated
 
@@ -22,8 +22,8 @@ export const isAuthenticated = async (req, res, next) => {
       });
     }
 
-    const user = await authModel
-      .findById(decoded.user._id)
+    const user = await userModel
+      .findById(decoded.id)
       .select("name email roles");
 
     if (!user) {
@@ -54,7 +54,7 @@ export const isAdmin = async (req, res, next) => {
     });
   }
   try {
-    const user = await authModel.findById(req.user._id);
+    const user = await userModel.findById(req.user._id);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -62,7 +62,7 @@ export const isAdmin = async (req, res, next) => {
       });
     }
 
-    if (!user.roles.isAdmin) {
+    if (user.role !== "admin") {
       return res.status(401).json({
         success: false,
         message: "Forbidden! User does not have admin privileges.!",
