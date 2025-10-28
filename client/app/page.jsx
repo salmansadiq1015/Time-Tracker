@@ -9,7 +9,7 @@ export default function Home() {
   useEffect(() => {
     const token = localStorage.getItem("Ttoken");
     if (token) {
-      router.push("/dashboard");
+      router.push("/dashboard/time-tracker");
     } else {
       router.push("/login");
     }
