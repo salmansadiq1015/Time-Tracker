@@ -25,7 +25,7 @@ export function Sidebar() {
   };
 
   const menuItems = [
-    { label: "Dashboard", href: "/dashboard", icon: BarChart3 },
+    // { label: "Dashboard", href: "/dashboard", icon: BarChart3 },
     { label: "Time Tracker", href: "/dashboard/time-tracker", icon: Clock },
     ...(user?.role === "admin" || user?.role === "dispatcher"
       ? [{ label: "Users", href: "/dashboard/users", icon: Users }]
