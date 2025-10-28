@@ -59,7 +59,9 @@ export default function LoginPage() {
         toast.success("Login Successful");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError(
+        err?.response?.data?.message || "An error occurred. Please try again."
+      );
       console.log(err);
       toast.error(
         err?.response?.data?.message || "An error occurred. Please try again."
