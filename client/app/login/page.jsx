@@ -55,7 +55,7 @@ export default function LoginPage() {
         if (rememberMe) {
           localStorage.setItem("rememberMe", "true");
         }
-        router.push("/time-tracker");
+        router.push("/dashboard/time-tracker");
         toast.success("Login Successful");
       }
     } catch (err) {
