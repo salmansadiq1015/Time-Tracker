@@ -14,6 +14,7 @@ import { EditTimerModal } from "@/components/edit-timer-modal";
 import { AdvancedFilters } from "@/components/timer-filters";
 import { useParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
+import { PiClipboardTextBold } from "react-icons/pi";
 
 interface TimeEntry {
   _id: string;
@@ -296,7 +297,7 @@ export default function TimeTrackerPage() {
     {
       title: "Total Count",
       value: summary?.totalCount || 0,
-      icon: <Users className="w-8 h-8 text-sky-400" />,
+      icon: <PiClipboardTextBold className="w-8 h-8 text-sky-400" />,
       glow: "shadow-[0_0_25px_rgba(56,189,248,0.4)]",
       border: "border-sky-500/30",
       gradient: "from-sky-950/40 to-sky-900/20",

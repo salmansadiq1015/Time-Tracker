@@ -107,7 +107,9 @@ export function UserList({
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => onEdit(user)}
+                            onClick={() =>
+                              router.push(`/dashboard/users/${user._id}`)
+                            }
                             className="text-primary hover:bg-primary/10"
                           >
                             <Clock className="w-4 h-4" />
@@ -115,9 +117,7 @@ export function UserList({
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() =>
-                              router.push(`/dashboard/users/${user._id}`)
-                            }
+                            onClick={() => onEdit(user)}
                             className="text-purple-600 hover:bg-primary/10"
                           >
                             <Edit2 className="w-4 h-4" />
