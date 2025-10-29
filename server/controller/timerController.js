@@ -5,7 +5,6 @@ export const startTimer = async (req, res) => {
   try {
     const { user, start, description } = req.body;
 
-    console.log(req.user._id);
     if (!start) {
       return res.status(400).json({
         success: false,
@@ -124,17 +123,17 @@ export const updateTimer = async (req, res) => {
 };
 
 // Fetch Timer
+
 export const fetchTimers = async (req, res) => {
   try {
-    // Parse query params with defaults
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const { user, start, end } = req.query;
 
-    // Build dynamic query efficiently
     const query = {};
     if (user) query.user = user;
 
+    // 🗓️ Apply date filters (based on createdAt)
     if (start || end) {
       query.createdAt = {};
       if (start) {
@@ -149,25 +148,75 @@ export const fetchTimers = async (req, res) => {
       }
     }
 
-    // Count total documents for pagination metadata
+    // 📦 Fetch timers and count for pagination
     const [timers, totalCount] = await Promise.all([
       timerModel
         .find(query)
         .populate("user", "name email")
-        .sort({ start: -1 })
+        .sort({ "start.startTime": 1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .lean(),
       timerModel.countDocuments(query),
     ]);
 
+    // ⏱️ Compute duration for each timer dynamically
+    let totalDuration = 0;
+
+    const timersWithDuration = timers.map((t) => {
+      let duration = 0;
+
+      if (t.start?.startTime && t.end?.endTime) {
+        const start = new Date(t.start.startTime);
+        const end = new Date(t.end.endTime);
+        duration = Math.max(0, (end - start) / 1000 / 60); // minutes
+        totalDuration += duration;
+      }
+
+      return {
+        ...t,
+        duration, // add duration to each timer
+      };
+    });
+
+    // 📅 Compute total leaves (days with no work)
+    let totalLeaves = 0;
+    if (timersWithDuration.length > 0) {
+      const firstEntryDate = new Date(timersWithDuration[0].start.startTime);
+      firstEntryDate.setHours(0, 0, 0, 0);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const workedDays = new Set(
+        timersWithDuration.map(
+          (t) => new Date(t.start.startTime).toISOString().split("T")[0]
+        )
+      );
+
+      for (
+        let d = new Date(firstEntryDate);
+        d <= today;
+        d.setDate(d.getDate() + 1)
+      ) {
+        const dateKey = d.toISOString().split("T")[0];
+        if (!workedDays.has(dateKey)) totalLeaves++;
+      }
+    }
+
     const totalPages = Math.ceil(totalCount / limit);
 
+    // 📤 Send response
     res.status(200).json({
       success: true,
       message: "Timers fetched successfully",
       data: {
-        timers,
+        timers: timersWithDuration,
+        summary: {
+          totalDuration: totalDuration.toFixed(2),
+          totalLeaves,
+          totalCount,
+        },
         pagination: {
           total: totalCount,
           totalPages,
@@ -187,6 +236,70 @@ export const fetchTimers = async (req, res) => {
     });
   }
 };
+
+// export const fetchTimers = async (req, res) => {
+//   try {
+//     // Parse query params with defaults
+//     const page = Math.max(parseInt(req.query.page) || 1, 1);
+//     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+//     const { user, start, end } = req.query;
+
+//     // Build dynamic query efficiently
+//     const query = {};
+//     if (user) query.user = user;
+
+//     if (start || end) {
+//       query.createdAt = {};
+//       if (start) {
+//         const startDate = new Date(start);
+//         startDate.setHours(0, 0, 0, 0);
+//         query.createdAt.$gte = startDate;
+//       }
+//       if (end) {
+//         const endDate = new Date(end);
+//         endDate.setHours(23, 59, 59, 999);
+//         query.createdAt.$lte = endDate;
+//       }
+//     }
+
+//     // Count total documents for pagination metadata
+//     const [timers, totalCount] = await Promise.all([
+//       timerModel
+//         .find(query)
+//         .populate("user", "name email")
+//         .sort({ start: -1 })
+//         .skip((page - 1) * limit)
+//         .limit(limit)
+//         .lean(),
+//       timerModel.countDocuments(query),
+//     ]);
+
+//     const totalPages = Math.ceil(totalCount / limit);
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Timers fetched successfully",
+//       data: {
+//         timers,
+//         pagination: {
+//           total: totalCount,
+//           totalPages,
+//           currentPage: page,
+//           limit,
+//           hasNextPage: page < totalPages,
+//           hasPrevPage: page > 1,
+//         },
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error fetching timers:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal Server Error",
+//       error: error.message,
+//     });
+//   }
+// };
 
 // Delete Timer
 export const deleteTimer = async (req, res) => {

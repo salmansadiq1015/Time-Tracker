@@ -3,8 +3,17 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Trash2, Edit2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  MapPin,
+  Trash2,
+  Edit2,
+  ChevronLeft,
+  ChevronRight,
+  Map,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BiMap } from "react-icons/bi";
+import Link from "next/link";
 
 interface TimeEntry {
   _id: string;
@@ -138,7 +147,7 @@ export function TimeTrackerTable({
                 <th className="text-left py-3 px-4 font-semibold text-foreground min-w-[15rem]">
                   Description
                 </th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground">
+                <th className="text-left py-3 px-4 font-semibold text-foreground">
                   Actions
                 </th>
               </tr>
@@ -235,6 +244,67 @@ export function TimeTrackerTable({
                       </td>
                       <td className="py-4 px-4 text-right">
                         <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              const start = entry.start;
+                              const end = entry.end;
+
+                              if (
+                                start?.lat != null &&
+                                start?.lng != null &&
+                                end?.lat != null &&
+                                end?.lng != null
+                              ) {
+                                // Parse coords as floats
+                                const originLat = parseFloat(start.lat);
+                                const originLng = parseFloat(start.lng);
+                                const destLat = parseFloat(end.lat);
+                                const destLng = parseFloat(end.lng);
+
+                                // Validate they are numbers and within valid lat/lng ranges
+                                if (
+                                  !isNaN(originLat) &&
+                                  !isNaN(originLng) &&
+                                  originLat >= -90 &&
+                                  originLat <= 90 &&
+                                  originLng >= -180 &&
+                                  originLng <= 180 &&
+                                  !isNaN(destLat) &&
+                                  !isNaN(destLng) &&
+                                  destLat >= -90 &&
+                                  destLat <= 90 &&
+                                  destLng >= -180 &&
+                                  destLng <= 180
+                                ) {
+                                  const mapsUrl =
+                                    `https://www.google.com/maps/dir/?api=1` +
+                                    `&origin=${encodeURIComponent(
+                                      originLat + "," + originLng
+                                    )}` +
+                                    `&destination=${encodeURIComponent(
+                                      destLat + "," + destLng
+                                    )}` +
+                                    `&travelmode=driving`;
+
+                                  window.open(mapsUrl, "_blank");
+                                } else {
+                                  alert(
+                                    "Invalid latitude or longitude values."
+                                  );
+                                }
+                              } else {
+                                alert(
+                                  "Start or end location missing for this entry."
+                                );
+                              }
+                            }}
+                            className="text-yellow-400 hover:bg-yellow-400/10 h-8 w-8"
+                          >
+                            <BiMap className="w-4 h-4" />
+                          </Button>
+
                           <Button
                             variant="ghost"
                             size="icon"

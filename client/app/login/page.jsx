@@ -23,6 +23,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuthContent } from "../context/authContext";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -55,7 +56,11 @@ export default function LoginPage() {
         if (rememberMe) {
           localStorage.setItem("rememberMe", "true");
         }
-        router.push("/dashboard/time-tracker");
+        router.push(
+          data.user.role === "admin" || data.user.role === "dispatcher"
+            ? "/dashboard/users"
+            : "/dashboard/time-tracker"
+        );
         toast.success("Login Successful");
       }
     } catch (err) {
@@ -82,7 +87,7 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        <div className="flex justify-center mb-12">
+        {/* <div className="flex justify-center mb-12">
           <div className="flex items-center gap-3 group cursor-pointer transition-transform duration-300 hover:scale-105">
             <div className="p-2.5 bg-gradient-t-br from-primary to-primary/80 rounded-xl shadow-lg">
               <Clock className="w-7 h-7 text-purple-600" />
@@ -96,10 +101,20 @@ export default function LoginPage() {
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <Card className="border border-purple-600/50 shadow-2xl backdrop-blur-sm bg-card/95">
-          <CardHeader className="space-y-3 pb-6">
+        <Card className="border border-[#C16840] shadow-2xl backdrop-blur-sm bg-card/95">
+          <CardHeader className="space-y-3 pb-6 w-full">
+            <div className="flex items-center justify-center w-full">
+              <Image
+                src="/s_notext.png"
+                alt="logo"
+                width={70}
+                height={70}
+                className="object-contain  drop-shadow-lg hover:scale-105 transition-transform duration-200"
+                priority
+              />
+            </div>
             <div>
               <CardTitle className="text-3xl font-bold text-balance text-center">
                 Welcome Back
@@ -192,7 +207,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-primary-foreground font-semibold h-11 text-base shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 group"
+                className="w-full bg-[#C16840] from-[#C16840] to-[#C16840]/90 hover:from-[#C16840]/90 hover:to-[#C16840]/80 text-white font-semibold h-11 text-base shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 group"
               >
                 {loading ? (
                   <>
@@ -212,7 +227,7 @@ export default function LoginPage() {
                   Don't have an account?{" "}
                   <a
                     href="#"
-                    className="text-primary hover:text-primary/80 font-semibold transition-colors"
+                    className="text-[#C16840] hover:text-primary/80 font-semibold transition-colors"
                   >
                     Sign up
                   </a>

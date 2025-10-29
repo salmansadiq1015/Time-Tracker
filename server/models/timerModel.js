@@ -44,9 +44,6 @@ const timerModelSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    duration: {
-      type: Number,
-    },
     isActive: {
       type: Boolean,
       default: true,

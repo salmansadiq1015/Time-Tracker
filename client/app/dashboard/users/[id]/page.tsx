@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Play } from "lucide-react";
+import { CalendarX, Clock, Play, Users } from "lucide-react";
 import { TimeTrackerForm } from "@/components/time-tracker-form";
 import { ActiveTimerDisplay } from "@/components/active-timer-display";
 import axios from "axios";
@@ -12,6 +12,8 @@ import { TimeTrackerCards } from "@/components/time-tracker-cards";
 import { TimeTrackerTable } from "@/components/time-tracker-table";
 import { EditTimerModal } from "@/components/edit-timer-modal";
 import { AdvancedFilters } from "@/components/timer-filters";
+import { useParams } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface TimeEntry {
   _id: string;
@@ -56,7 +58,14 @@ interface FilterState {
 
 export default function TimeTrackerPage() {
   const { toast } = useToast();
+  const params = useParams();
+  const userId = params.id;
   const [entries, setEntries] = useState<TimeEntry[]>([]);
+  const [summary, setSummary] = useState<any>({
+    totalDuration: 0,
+    totalLeaves: 0,
+    totalCount: 0,
+  });
   const [loading, setLoading] = useState(false);
   const [activeTimer, setActiveTimer] = useState<TimeEntry | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -93,8 +102,7 @@ export default function TimeTrackerPage() {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        user:
-          auth.user.role === "user" ? auth?.user?._id : filters.selectedUser,
+        user: String(userId),
       });
 
       if (filters.startDate) params.append("start", filters.startDate);
@@ -107,6 +115,7 @@ export default function TimeTrackerPage() {
 
       if (response.data?.success && response.data?.data) {
         setEntries(response.data.data.timers || []);
+        setSummary(response.data.data.summary);
         setPagination(response.data.data.pagination);
 
         const active = response.data.data.timers?.find(
@@ -125,31 +134,11 @@ export default function TimeTrackerPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, filters, auth, toast]);
+  }, [page, limit, filters, userId]);
 
   useEffect(() => {
     fetchEntries();
   }, [fetchEntries]);
-
-  // Fetch Users
-  const fetchUsers = useCallback(async () => {
-    if (auth?.user?.role !== "admin" && auth.user.role !== "dispatcher") return;
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/all`
-      );
-
-      if (response.data?.success && response.data) {
-        setUsers(response.data.results.users);
-      }
-    } catch (error: any) {
-      console.error("Error fetching users:", error);
-    }
-  }, [auth]);
-
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
 
   // Handle Starting Timer
   const handleStartTimer = async (data: any) => {
@@ -297,6 +286,39 @@ export default function TimeTrackerPage() {
     setPage(1);
   };
 
+  const formatDuration = (minutes: number) => {
+    const hrs = Math.floor(minutes / 60);
+    const mins = Math.floor(minutes % 60);
+    return `${hrs}h:${mins}m`;
+  };
+
+  const cards = [
+    {
+      title: "Total Count",
+      value: summary?.totalCount || 0,
+      icon: <Users className="w-8 h-8 text-sky-400" />,
+      glow: "shadow-[0_0_25px_rgba(56,189,248,0.4)]",
+      border: "border-sky-500/30",
+      gradient: "from-sky-950/40 to-sky-900/20",
+    },
+    {
+      title: "Total Duration",
+      value: formatDuration(summary?.totalDuration || 0),
+      icon: <Clock className="w-8 h-8 text-green-400" />,
+      glow: "shadow-[0_0_25px_rgba(74,222,128,0.4)]",
+      border: "border-green-500/30",
+      gradient: "from-green-950/40 to-green-900/20",
+    },
+    {
+      title: "Total Leaves",
+      value: summary?.totalLeaves || 0,
+      icon: <CalendarX className="w-8 h-8 text-pink-400" />,
+      glow: "shadow-[0_0_25px_rgba(244,114,182,0.4)]",
+      border: "border-pink-500/30",
+      gradient: "from-pink-950/40 to-pink-900/20",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
       <div className="p-4 md:p-8 space-y-6">
@@ -308,16 +330,32 @@ export default function TimeTrackerPage() {
               Track your work hours with precision and advanced analytics
             </p>
           </div>
-          {auth.user.role === "user" && (
-            <Button
-              onClick={() => setShowForm(!showForm)}
-              disabled={!!activeTimer}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground w-full md:w-auto disabled:opacity-50 shadow-lg"
+        </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          {cards.map((card, i) => (
+            <Card
+              key={i}
+              className={`relative overflow-hidden ${card.border} bg-gradient-to-br ${card.gradient} 
+          backdrop-blur-md border rounded-2xl p-1 transition-all duration-500 hover:scale-[1.03] hover:${card.glow}`}
             >
-              <Play className="w-4 h-4 mr-2" />
-              Start Timer
-            </Button>
-          )}
+              <CardContent className="p-6 flex flex-col justify-between h-full">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="p-3 bg-black/40 rounded-xl border border-white/10 backdrop-blur-sm">
+                    {card.icon}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400 font-medium tracking-wide uppercase">
+                    {card.title}
+                  </p>
+                  <p className="text-4xl font-extrabold text-white mt-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                    {card.value}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Start Timer Form */}
@@ -338,7 +376,7 @@ export default function TimeTrackerPage() {
         {/* Advanced Filters */}
         <AdvancedFilters
           filters={filters}
-          users={users}
+          users={[]}
           onFilterChange={handleFilterChange}
           onReset={handleResetFilters}
           showFilters={showFilters}

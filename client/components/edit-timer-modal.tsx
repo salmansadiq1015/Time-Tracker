@@ -73,8 +73,8 @@ export function EditTimerModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl border-purple-600 bg-gray-800/90 py-0 overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 bg-purple-600 py-3">
+      <Card className="w-full max-w-2xl border-gray-600 bg-gray-800/90 py-0 overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 bg-[#c16840] py-3">
           <CardTitle>Edit Timer</CardTitle>
           <Button
             variant="ghost"

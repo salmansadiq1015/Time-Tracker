@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Clock, Users, BarChart3, LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export function Sidebar() {
   const router = useRouter();
@@ -26,11 +27,12 @@ export function Sidebar() {
 
   const menuItems = [
     // { label: "Dashboard", href: "/dashboard", icon: BarChart3 },
-    { label: "Time Tracker", href: "/dashboard/time-tracker", icon: Clock },
     ...(user?.role === "admin" || user?.role === "dispatcher"
       ? [{ label: "Users", href: "/dashboard/users", icon: Users }]
       : []),
-    // ...(user?.role === "admin"
+    { label: "Time Tracker", href: "/dashboard/time-tracker", icon: Clock },
+    // ...(use
+    // r?.role === "admin"
     //   ? [
     //       {
     //         label: "Admin Dashboard",
@@ -67,10 +69,16 @@ export function Sidebar() {
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
-        <div className="p-[22px] border-b border-sidebar-border">
-          <div className="flex items-center gap-2 text-sidebar-primary">
-            <Clock className="w-6 h-6" />
-            <span className="text-xl font-bold">TimeTrack</span>
+        <div className="p-3 border-b border-sidebar-border flex items-center justify-center ">
+          <div className="relative w-28 flex items-center justify-center">
+            <Image
+              src="/w_noclaim.png"
+              alt="logo"
+              width={110}
+              height={120}
+              className="object-contain drop-shadow-lg hover:scale-105 transition-transform duration-200"
+              priority
+            />
           </div>
         </div>
 

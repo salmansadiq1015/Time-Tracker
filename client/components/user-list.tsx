@@ -2,8 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trash2, Edit2 } from "lucide-react";
+import { Trash2, Edit2, Clock } from "lucide-react";
 import { useAuthContent } from "@/app/context/authContext";
+import { useRouter } from "next/navigation";
 
 interface User {
   _id: string;
@@ -27,6 +28,8 @@ export function UserList({
   canManage,
 }: UserListProps) {
   const { auth } = useAuthContent();
+  const router = useRouter();
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case "admin":
@@ -106,6 +109,16 @@ export function UserList({
                             size="icon"
                             onClick={() => onEdit(user)}
                             className="text-primary hover:bg-primary/10"
+                          >
+                            <Clock className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() =>
+                              router.push(`/dashboard/users/${user._id}`)
+                            }
+                            className="text-purple-600 hover:bg-primary/10"
                           >
                             <Edit2 className="w-4 h-4" />
                           </Button>
