@@ -158,12 +158,12 @@ export default function LoginPage() {
                   <label className="text-sm font-semibold text-foreground">
                     Password
                   </label>
-                  <a
+                  {/* <a
                     href="#"
                     className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
                   >
                     Forgot password?
-                  </a>
+                  </a> */}
                 </div>
                 <div className="relative group">
                   <Input
@@ -222,7 +222,7 @@ export default function LoginPage() {
                 )}
               </Button>
 
-              <div className="text-center pt-2">
+              {/* <div className="text-center pt-2">
                 <p className="text-sm text-muted-foreground">
                   Don't have an account?{" "}
                   <a
@@ -232,7 +232,7 @@ export default function LoginPage() {
                     Sign up
                   </a>
                 </p>
-              </div>
+              </div> */}
             </form>
           </CardContent>
         </Card>
