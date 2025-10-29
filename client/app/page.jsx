@@ -8,8 +8,11 @@ export default function Home() {
 
   useEffect(() => {
     const token = localStorage.getItem("Ttoken");
+    const user = localStorage.getItem("Tuser");
     if (token) {
-      router.push("/dashboard/time-tracker");
+      router.push(
+        user.role === "user" ? "/dashboard/time-tracker" : "/dashboard/users"
+      );
     } else {
       router.push("/login");
     }
