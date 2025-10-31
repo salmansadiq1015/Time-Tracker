@@ -124,7 +124,7 @@ export function TimeTrackerCards({
           return (
             <Card
               key={entry._id}
-              className={`border-gray-700 bg-gray-900 backdrop-blur-sm hover:border-primary/50 transition-all ${
+              className={`border-gray-300 bg-gray-100 text-black backdrop-blur-sm hover:border-primary/50 transition-all ${
                 entry.isActive ? "ring-2 ring-primary/50" : ""
               }`}
             >

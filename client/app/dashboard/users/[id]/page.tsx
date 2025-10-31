@@ -377,6 +377,7 @@ export default function TimeTrackerPage() {
         {/* Advanced Filters */}
         <AdvancedFilters
           filters={filters}
+          entries={entries}
           users={[]}
           onFilterChange={handleFilterChange}
           onReset={handleResetFilters}

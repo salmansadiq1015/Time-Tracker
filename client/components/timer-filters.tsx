@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Filter, X, RotateCcw } from "lucide-react";
+import { ExportButtons } from "./export-button";
 
 interface FilterState {
   selectedUser: string;
@@ -19,6 +20,8 @@ interface AdvancedFiltersProps {
   showFilters: boolean;
   onToggleFilters: () => void;
   isAdmin: boolean;
+  summary: any;
+  entries: any[];
 }
 
 export function AdvancedFilters({
@@ -29,6 +32,8 @@ export function AdvancedFilters({
   showFilters,
   onToggleFilters,
   isAdmin,
+  entries,
+  summary,
 }: AdvancedFiltersProps) {
   const getDateRange = (range: string) => {
     const now = new Date();
@@ -152,6 +157,7 @@ export function AdvancedFilters({
               </>
             )}
           </Button>
+          <ExportButtons entries={entries} summary={summary} />
         </div>
       </CardHeader>
 
