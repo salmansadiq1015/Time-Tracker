@@ -75,7 +75,7 @@ export function TimeTrackerForm({
   };
 
   return (
-    <Card className="border-primary/50 bg-primary/5">
+    <Card className="border-primary/50 bg-primary/5 text-black">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle>{isStarting ? "Start Timer" : "Stop Timer"}</CardTitle>
         <Button variant="ghost" size="icon" onClick={onCancel}>
@@ -122,7 +122,7 @@ export function TimeTrackerForm({
             <Button
               type="submit"
               disabled={loading || submitting}
-              className="flex-1 bg-primary hover:bg-primary/90"
+              className="flex-1 bg-primary hover:bg-primary/90 text-white"
             >
               {submitting ? (
                 <>

@@ -72,10 +72,10 @@ export function EditTimerModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl border-gray-600 bg-gray-800/90 py-0 overflow-hidden">
+    <div className="fixed inset-0 bg-gray-100/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 text-black">
+      <Card className="w-full max-w-2xl border-gray-100 bg-gray-100/90 py-0 overflow-hidden text-black">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 bg-[#c16840] py-3">
-          <CardTitle>Edit Timer</CardTitle>
+          <CardTitle className="text-white">Edit Timer</CardTitle>
           <Button
             variant="ghost"
             size="icon"
@@ -162,7 +162,7 @@ export function EditTimerModal({
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 bg-primary hover:bg-primary/90"
+              className="flex-1 bg-primary hover:bg-primary/90 text-white"
             >
               {saving ? (
                 <>

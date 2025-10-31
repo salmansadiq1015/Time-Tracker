@@ -42,12 +42,12 @@ export function UserList({
   };
 
   return (
-    <Card className="border-border/50 py-0 px-0 bg-gray-900 overflow-hidden ">
+    <Card className="border-gray-300/90 py-0 px-0 bg-gray-100 overflow-hidden ">
       <CardContent className="py-0 px-0">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-800">
-              <tr className="border-b border-border/30">
+            <thead className="bg-gray-200">
+              <tr className="border-b border-gray-400/30">
                 <th className="text-left py-3 px-4 font-semibold text-foreground">
                   Name
                 </th>
@@ -81,9 +81,14 @@ export function UserList({
                 users?.map((user) => (
                   <tr
                     key={user._id}
-                    className="border-b border-border/30 hover:bg-secondary/30 transition-colors"
+                    className="border-b border-gray-400/50 hover:bg-secondary/30 transition-colors"
                   >
-                    <td className="py-3 px-4 font-medium text-foreground">
+                    <td
+                      className="py-3 px-4 font-medium text-foreground cursor-pointer"
+                      onClick={() =>
+                        router.push(`/dashboard/users/${user._id}`)
+                      }
+                    >
                       {user.name}
                     </td>
                     <td className="py-3 px-4 text-muted-foreground">

@@ -318,7 +318,7 @@ export default function TimeTrackerPage() {
       icon: <PiClipboardTextBold className="w-8 h-8 text-sky-400" />,
       glow: "shadow-[0_0_25px_rgba(56,189,248,0.4)]",
       border: "border-sky-500/30",
-      gradient: "from-sky-950/40 to-sky-900/20",
+      gradient: "from-sky-500 to-sky-400",
     },
     {
       title: "Total Duration",
@@ -326,7 +326,7 @@ export default function TimeTrackerPage() {
       icon: <Clock className="w-8 h-8 text-green-400" />,
       glow: "shadow-[0_0_25px_rgba(74,222,128,0.4)]",
       border: "border-green-500/30",
-      gradient: "from-green-950/40 to-green-900/20",
+      gradient: "from-green-500 to-green-400",
     },
     {
       title: "Total Leaves",
@@ -334,12 +334,12 @@ export default function TimeTrackerPage() {
       icon: <CalendarX className="w-8 h-8 text-pink-400" />,
       glow: "shadow-[0_0_25px_rgba(244,114,182,0.4)]",
       border: "border-pink-500/30",
-      gradient: "from-pink-950/40 to-pink-900/20",
+      gradient: "from-pink-500 to-pink-700",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
+    <div className="min-h-screen bg-white">
       <div className="p-4 md:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -353,7 +353,7 @@ export default function TimeTrackerPage() {
             <Button
               onClick={() => setShowForm(!showForm)}
               disabled={!!activeTimer}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground w-full md:w-auto disabled:opacity-50 shadow-lg"
+              className="bg-primary hover:bg-primary/90 text-white w-full md:w-auto disabled:opacity-50 shadow-lg"
             >
               <Play className="w-4 h-4 mr-2" />
               Start Timer
@@ -366,17 +366,17 @@ export default function TimeTrackerPage() {
           {cards.map((card, i) => (
             <Card
               key={i}
-              className={`relative overflow-hidden ${card.border} bg-gradient-to-br ${card.gradient} 
+              className={`relative overflow-hidden ${card.border} bg-linear-to-br ${card.gradient} 
           backdrop-blur-md border rounded-2xl p-1 transition-all duration-500 hover:scale-[1.03] hover:${card.glow}`}
             >
               <CardContent className="p-6 flex flex-col justify-between h-full">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="p-3 bg-black/40 rounded-xl border border-white/10 backdrop-blur-sm">
+                  <div className="p-3 bg-white/70 rounded-xl border border-white/10 backdrop-blur-sm">
                     {card.icon}
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400 font-medium tracking-wide uppercase">
+                  <p className="text-sm text-gray-100 font-medium tracking-wide uppercase">
                     {card.title}
                   </p>
                   <p className="text-4xl font-extrabold text-white mt-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">

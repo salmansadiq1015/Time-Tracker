@@ -201,7 +201,7 @@ export default function UsersPage() {
   const endIndex = Math.min(page * limit, totalCount);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 p-4 md:p-8 space-y-8">
+    <div className="min-h-screen bg-white p-4 md:p-8 space-y-8">
       {/* Header Section */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">
@@ -252,9 +252,6 @@ export default function UsersPage() {
       {/* Form */}
       {showForm && (
         <Card className="border-primary/30 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle>{editingUser ? "Edit User" : "Add New User"}</CardTitle>
-          </CardHeader>
           <CardContent>
             <UserForm
               user={editingUser}
@@ -270,9 +267,9 @@ export default function UsersPage() {
       )}
 
       {/* Search & Filters */}
-      <Card className="border-gray-700 pb-4 bg-card/50 py-2 backdrop-blur-sm">
+      <Card className="border-gray-300 shadow-md pb-4 bg-card/50 py-2 backdrop-blur-sm text-black">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
-          <CardTitle className="text-lg">Search & Filter</CardTitle>
+          <CardTitle className="text-lg text-black">Search & Filter</CardTitle>
           <div className="flex gap-2">
             <Button
               variant="ghost"
@@ -290,7 +287,7 @@ export default function UsersPage() {
                   setEditingUser(null);
                   setShowForm(!showForm);
                 }}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
+                className="bg-primary hover:bg-primary/90 text-white gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Add User
@@ -299,13 +296,13 @@ export default function UsersPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-2 items-center border border-gray-700  p-2 rounded-full h-[2.8rem] bg-gray-800">
+          <div className="flex gap-2 items-center border border-gray-300  p-2 rounded-full h-[2.8rem] bg-gray-200">
             <Search className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-            <Input
+            <input
               placeholder="Search by name or email..."
               value={filters.search}
               onChange={(e) => handleSearch(e.target.value)}
-              className="bg-transparent outline-none border-none focus:border-none ring-0 rounded-full"
+              className="bg-transparent outline-none border-none px-2 focus:border-none ring-0 rounded-full"
               style={{
                 outline: "none",
               }}
@@ -370,7 +367,7 @@ export default function UsersPage() {
 
       {/* Advanced Pagination */}
       {totalCount > 0 && (
-        <Card className="border-gray-900/50 bg-gray-900/50 backdrop-blur-sm py-2">
+        <Card className="border-gray-300/50 bg-gray-100 backdrop-blur-sm py-2">
           <CardContent className=" sm:self-end">
             <div className="space-y-6">
               {/* Pagination Controls */}
@@ -382,7 +379,7 @@ export default function UsersPage() {
                     size="sm"
                     onClick={() => setPage(1)}
                     disabled={page === 1}
-                    className="transition-all hover:bg-primary/10 disabled:opacity-50"
+                    className="transition-all text-gray-700 hover:bg-primary/10 disabled:opacity-50"
                   >
                     First
                   </Button>
@@ -392,14 +389,14 @@ export default function UsersPage() {
                     size="icon"
                     onClick={() => setPage(Math.max(1, page - 1))}
                     disabled={page === 1}
-                    className="transition-all hover:bg-primary/10 disabled:opacity-50"
+                    className="transition-all  text-gray-700  hover:bg-primary/10 disabled:opacity-50"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
                 </div>
 
                 {/* Page Numbers */}
-                <div className="flex items-center gap-1 flex-wrap justify-center">
+                <div className="flex items-center  text-gray-700  gap-1 flex-wrap justify-center">
                   {(() => {
                     const pages: number[] = [];
                     const maxPages = Math.min(7, totalPages);
@@ -426,7 +423,7 @@ export default function UsersPage() {
                         variant={pageNum === page ? "default" : "outline"}
                         size="sm"
                         onClick={() => setPage(pageNum)}
-                        className={`w-10 transition-all ${
+                        className={`w-10 transition-all  text-gray-700  ${
                           pageNum === page
                             ? "bg-primary text-primary-foreground"
                             : "hover:bg-primary/10"
@@ -445,7 +442,7 @@ export default function UsersPage() {
                     size="icon"
                     onClick={() => setPage(Math.min(totalPages, page + 1))}
                     disabled={page === totalPages}
-                    className="transition-all hover:bg-primary/10 disabled:opacity-50"
+                    className="transition-all  text-gray-700 hover:bg-primary/10 disabled:opacity-50"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -455,7 +452,7 @@ export default function UsersPage() {
                     size="sm"
                     onClick={() => setPage(totalPages)}
                     disabled={page === totalPages}
-                    className="transition-all hover:bg-primary/10 disabled:opacity-50"
+                    className="transition-all  text-gray-700  hover:bg-primary/10 disabled:opacity-50"
                   >
                     Last
                   </Button>

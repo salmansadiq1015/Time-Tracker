@@ -109,8 +109,8 @@ export function TimeTrackerTable({
   const validEntries = entries.filter((entry) => entry && entry._id);
 
   return (
-    <Card className="border-gray-700 bg-gray-900/70 backdrop-blur-sm overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+    <Card className="border-gray-300 bg-gray-100 text-black backdrop-blur-sm overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
         <CardTitle>Time Entries</CardTitle>
         {pagination && (
           <span className="text-sm text-muted-foreground">
@@ -121,7 +121,7 @@ export function TimeTrackerTable({
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-700">
+            <thead className="bg-gray-200">
               <tr className="border-b border-border/50">
                 <th className="text-left py-3 px-4 min-w-[8rem] font-semibold text-foreground">
                   User
@@ -184,7 +184,60 @@ export function TimeTrackerTable({
                         entry.isActive ? "bg-primary/5" : ""
                       }`}
                     >
-                      <td className="py-4 px-4 text-muted-foreground">
+                      <td
+                        className="py-4 px-4 capitalize text-gray-800 hover:text-blue-600 cursor-pointer"
+                        onClick={() => {
+                          const start = entry.start;
+                          const end = entry.end;
+
+                          if (
+                            start?.lat != null &&
+                            start?.lng != null &&
+                            end?.lat != null &&
+                            end?.lng != null
+                          ) {
+                            // Parse coords as floats
+                            const originLat = parseFloat(start.lat);
+                            const originLng = parseFloat(start.lng);
+                            const destLat = parseFloat(end.lat);
+                            const destLng = parseFloat(end.lng);
+
+                            // Validate they are numbers and within valid lat/lng ranges
+                            if (
+                              !isNaN(originLat) &&
+                              !isNaN(originLng) &&
+                              originLat >= -90 &&
+                              originLat <= 90 &&
+                              originLng >= -180 &&
+                              originLng <= 180 &&
+                              !isNaN(destLat) &&
+                              !isNaN(destLng) &&
+                              destLat >= -90 &&
+                              destLat <= 90 &&
+                              destLng >= -180 &&
+                              destLng <= 180
+                            ) {
+                              const mapsUrl =
+                                `https://www.google.com/maps/dir/?api=1` +
+                                `&origin=${encodeURIComponent(
+                                  originLat + "," + originLng
+                                )}` +
+                                `&destination=${encodeURIComponent(
+                                  destLat + "," + destLng
+                                )}` +
+                                `&travelmode=driving`;
+
+                              window.open(mapsUrl, "_blank");
+                            } else {
+                              alert("Invalid latitude or longitude values.");
+                            }
+                          } else {
+                            alert(
+                              "Start or end location missing for this entry."
+                            );
+                          }
+                        }}
+                      >
                         {entry.user?.name || "N/A"}
                       </td>
                       <td className="py-4 px-4 text-muted-foreground text-xs font-mono">

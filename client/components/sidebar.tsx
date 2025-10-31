@@ -56,7 +56,7 @@ export function Sidebar() {
 
       <aside
         className={`
-        fixed md:relative w-64 h-screen bg-gray-950 border-r border-sidebar-border
+        fixed md:relative w-64 h-screen bg-gray-100 border-r border-sidebar-border
         transition-transform duration-300 z-40
         ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
       `}
@@ -72,7 +72,7 @@ export function Sidebar() {
         <div className="p-3 border-b border-sidebar-border flex items-center justify-center ">
           <div className="relative w-28 flex items-center justify-center">
             <Image
-              src="/w_noclaim.png"
+              src="/s_noclaim.png"
               alt="logo"
               width={110}
               height={120}
@@ -83,7 +83,7 @@ export function Sidebar() {
         </div>
 
         <nav className="p-4 space-y-2">
-          {menuItems.map((item) => {
+          {menuItems?.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             return (
@@ -94,7 +94,7 @@ export function Sidebar() {
                   setIsOpen(false);
                 }}
                 className={`
-                  w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
+                  w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors
                   ${
                     isActive
                       ? "bg-sidebar-primary text-sidebar-primary-foreground"
@@ -124,7 +124,7 @@ export function Sidebar() {
           <Button
             onClick={handleLogout}
             variant="outline"
-            className="w-full border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent/20 bg-transparent"
+            className="w-full border-sidebar-border cursor-pointer text-sidebar-foreground hover:bg-red-200 bg-red-100"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout

@@ -116,10 +116,10 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <CardTitle className="text-3xl font-bold text-balance text-center">
+              <CardTitle className="text-3xl font-bold text-balance text-center text-black">
                 Welcome Back
               </CardTitle>
-              <CardDescription className="text-base mt-2 text-center">
+              <CardDescription className="text-base mt-2 text-center text-gray-600">
                 Sign in to your account and continue tracking your time
               </CardDescription>
             </div>

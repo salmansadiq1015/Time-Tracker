@@ -15,7 +15,7 @@ export function Header() {
   }, []);
 
   return (
-    <header className="border-b border-gray-800/50 bg-gray-950 backdrop-blur-sm">
+    <header className="border-b border-gray-200/50 bg-gray-100 backdrop-blur-sm">
       <div className="flex items-center justify-between px-4 md:px-8 py-4">
         <div className="flex-1" />
         <div className="flex items-center gap-4">
