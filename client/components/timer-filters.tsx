@@ -35,6 +35,14 @@ export function AdvancedFilters({
   entries,
   summary,
 }: AdvancedFiltersProps) {
+  // Helper function to format date as YYYY-MM-DD in local timezone
+  const formatLocalDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const getDateRange = (range: string) => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -77,8 +85,8 @@ export function AdvancedFilters({
     }
 
     return {
-      startDate: startDate.toISOString().split("T")[0],
-      endDate: endDate.toISOString().split("T")[0],
+      startDate: formatLocalDate(startDate),
+      endDate: formatLocalDate(endDate),
     };
   };
 
