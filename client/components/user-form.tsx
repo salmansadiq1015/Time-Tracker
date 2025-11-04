@@ -25,7 +25,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"user" | "dispatcher" | "admin">("user");
+  const [role, setRole] = useState<'user' | 'dispatcher' | 'admin' | 'client'>('user');
 
   useEffect(() => {
     if (user) {
@@ -43,9 +43,7 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
   return (
     <Card className="border-primary/50 bg-primary/5 text-black">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 text-black">
-        <CardTitle className="text-black">
-          {user ? "Edit User" : "Add New User"}
-        </CardTitle>
+        <CardTitle className="text-black">{user ? 'Edit User' : 'Add New User'}</CardTitle>
         <Button variant="ghost" size="icon" onClick={onCancel}>
           <X className="w-4 h-4" />
         </Button>
@@ -97,17 +95,15 @@ export function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
               className="w-full px-3 py-2 bg-input border border-border/50 rounded-lg text-foreground"
             >
               <option value="user">User</option>
+              <option value="client">Client</option>
               <option value="dispatcher">Dispatcher</option>
               <option value="admin">Admin</option>
             </select>
           </div>
 
           <div className="flex gap-2">
-            <Button
-              type="submit"
-              className="flex-1 bg-primary hover:bg-primary/90 text-white"
-            >
-              {user ? "Update" : "Create"}
+            <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90 text-white">
+              {user ? 'Update' : 'Create'}
             </Button>
             <Button
               type="button"

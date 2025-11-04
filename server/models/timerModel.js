@@ -7,6 +7,10 @@ const timerModelSchema = new mongoose.Schema(
       ref: "users",
       required: true,
     },
+    project: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+    },
     start: {
       startTime: {
         type: Date,
@@ -41,9 +45,22 @@ const timerModelSchema = new mongoose.Schema(
         required: false,
       },
     },
+    durationMinutes: { type: Number, default: 0 },
     description: {
       type: String,
     },
+    photos: [{ type: String }],
+    notes: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["active", "approved", "flagged", "archived", "pending"],
+      default: "active",
+      index: true,
+    },
+    verifiedByClient: { type: Boolean, default: false },
+    client: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     isActive: {
       type: Boolean,
       default: true,
@@ -51,5 +68,17 @@ const timerModelSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+timerModelSchema.pre("save", function (next) {
+  if (this.startAt && this.endAt) {
+    this.durationMinutes = Math.round(
+      (this.endAt - this.startAt) / (60 * 1000)
+    );
+  }
+  next();
+});
+
+timerModelSchema.index({ project: 1, startAt: 1 });
+timerModelSchema.index({ employee: 1, startAt: 1 });
 
 export default mongoose.model("timer", timerModelSchema);

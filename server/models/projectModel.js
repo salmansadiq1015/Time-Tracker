@@ -1,0 +1,36 @@
+import mongoose from "mongoose";
+
+const projectSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, index: true },
+    client: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+      index: true,
+    },
+    employees:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"users"
+    }],
+    address: {
+        type:String,
+    },
+    city: {
+       type:String,
+    },
+    description: String,
+    startDate: Date,
+    endDate: Date,
+    tags: [String],
+    
+    isActive: { type: Boolean, default: true },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  },
+  { timestamps: true }
+);
+
+// text index for quick search
+projectSchema.index({ name: "text", description: "text" });
+
+export default mongoose.model("Project", projectSchema);

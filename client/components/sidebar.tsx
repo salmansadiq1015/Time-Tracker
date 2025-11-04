@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Clock, Users, BarChart3, LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { FaTools } from 'react-icons/fa';
 
 export function Sidebar() {
   const router = useRouter();
@@ -13,24 +14,26 @@ export function Sidebar() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const userData = localStorage.getItem("Tuser");
+    const userData = localStorage.getItem('Tuser');
     if (userData) {
       setUser(JSON.parse(userData));
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("Ttoken");
-    localStorage.removeItem("Tuser");
-    router.push("/login");
+    localStorage.removeItem('Ttoken');
+    localStorage.removeItem('Tuser');
+    router.push('/login');
   };
 
   const menuItems = [
     // { label: "Dashboard", href: "/dashboard", icon: BarChart3 },
-    ...(user?.role === "admin" || user?.role === "dispatcher"
-      ? [{ label: "Users", href: "/dashboard/users", icon: Users }]
+    ...(user?.role === 'admin' || user?.role === 'dispatcher'
+      ? [{ label: 'Users', href: '/dashboard/users', icon: Users }]
       : []),
-    { label: "Time Tracker", href: "/dashboard/time-tracker", icon: Clock },
+    { label: 'Time Tracker', href: '/dashboard/time-tracker', icon: Clock },
+    { label: 'Projects', href: '/dashboard/projects', icon: BarChart3 },
+    { label: 'Equipments', href: '/dashboard/equipments', icon: FaTools },
     // ...(use
     // r?.role === "admin"
     //   ? [
@@ -48,7 +51,7 @@ export function Sidebar() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`md:hidden fixed top-4 ${
-          isOpen ? "right-3 hidden" : "left-4 "
+          isOpen ? 'right-3 hidden' : 'left-4 '
         } z-50 p-2 bg-primary text-primary-foreground rounded-lg`}
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -58,13 +61,13 @@ export function Sidebar() {
         className={`
         fixed md:relative w-64 h-screen bg-gray-100 border-r border-sidebar-border
         transition-transform duration-300 z-40
-        ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`md:hidden fixed top-4 ${
-            isOpen ? "right-3" : "left-4 "
+            isOpen ? 'right-3' : 'left-4 '
           } z-50 p-2 bg-primary text-primary-foreground rounded-lg`}
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -97,8 +100,8 @@ export function Sidebar() {
                   w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors
                   ${
                     isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent/20"
+                      ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent/20'
                   }
                 `}
               >
@@ -113,9 +116,7 @@ export function Sidebar() {
           <div className="px-4 py-2 bg-sidebar-accent/10 rounded-lg">
             <p className="text-xs text-sidebar-foreground/70">Logged in as</p>
             <div className="flex items-center gap-1">
-              <p className="text-lg font-semibold text-sidebar-foreground">
-                {user?.name}
-              </p>
+              <p className="text-lg font-semibold text-sidebar-foreground">{user?.name}</p>
               <p className="text-xs capitalize bg-green-500 rounded-full px-2 w-fit text-white">
                 {user?.role}
               </p>
