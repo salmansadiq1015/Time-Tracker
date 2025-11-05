@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MapPin, X, Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useAuthContent } from "@/app/context/authContext";
-import { Textarea } from "./ui/textarea";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { MapPin, X, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { useAuthContent } from '@/app/context/authContext';
+import { Textarea } from './ui/textarea';
+import { PhotoCapture } from './photo-capture';
 
 interface TimeTrackerFormProps {
   onSubmit: (data: any) => void;
@@ -16,16 +17,13 @@ interface TimeTrackerFormProps {
   isStarting: boolean;
 }
 
-export function TimeTrackerForm({
-  onSubmit,
-  onCancel,
-  isStarting,
-}: TimeTrackerFormProps) {
+export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerFormProps) {
   const { toast } = useToast();
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState({ lat: 0, lng: 0, address: "" });
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState({ lat: 0, lng: 0, address: '' });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [photos, setPhotos] = useState<string[]>([]);
   const { auth } = useAuthContent();
 
   useEffect(() => {
@@ -35,19 +33,18 @@ export function TimeTrackerForm({
           setLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-            address: `${position.coords.latitude.toFixed(
+            address: `${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(
               4
-            )}, ${position.coords.longitude.toFixed(4)}`,
+            )}`,
           });
           setLoading(false);
         },
         (error) => {
-          console.error("Geolocation error:", error);
+          console.error('Geolocation error:', error);
           toast({
-            title: "Location Error",
-            description:
-              "Could not get your location. Please enable location services.",
-            variant: "destructive",
+            title: 'Location Error',
+            description: 'Could not get your location. Please enable location services.',
+            variant: 'destructive',
           });
           setLoading(false);
         }
@@ -59,16 +56,16 @@ export function TimeTrackerForm({
     e.preventDefault();
     if (!description.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a description",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Please enter a description',
+        variant: 'destructive',
       });
       return;
     }
 
     setSubmitting(true);
     try {
-      onSubmit({ description, location, userId: auth?.user?._id });
+      onSubmit({ description, location, userId: auth?.user?._id, photos });
     } finally {
       setSubmitting(false);
     }
@@ -77,7 +74,7 @@ export function TimeTrackerForm({
   return (
     <Card className="border-primary/50 bg-primary/5 text-black">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle>{isStarting ? "Start Timer" : "Stop Timer"}</CardTitle>
+        <CardTitle>{isStarting ? 'Start Timer' : 'Stop Timer'}</CardTitle>
         <Button variant="ghost" size="icon" onClick={onCancel}>
           <X className="w-4 h-4" />
         </Button>
@@ -104,9 +101,7 @@ export function TimeTrackerForm({
             {loading ? (
               <div className="p-3 bg-secondary/30 rounded-lg border border-border/30 flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm text-muted-foreground">
-                  Getting location...
-                </span>
+                <span className="text-sm text-muted-foreground">Getting location...</span>
               </div>
             ) : (
               <div className="p-3 bg-secondary/30 rounded-lg border border-border/30">
@@ -118,6 +113,8 @@ export function TimeTrackerForm({
             )}
           </div>
 
+          <PhotoCapture onPhotosChange={setPhotos} maxPhotos={5} />
+
           <div className="flex gap-2">
             <Button
               type="submit"
@@ -127,12 +124,12 @@ export function TimeTrackerForm({
               {submitting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {isStarting ? "Starting..." : "Stopping..."}
+                  {isStarting ? 'Starting...' : 'Stopping...'}
                 </>
               ) : isStarting ? (
-                "Start"
+                'Start'
               ) : (
-                "Stop"
+                'Stop'
               )}
             </Button>
             <Button

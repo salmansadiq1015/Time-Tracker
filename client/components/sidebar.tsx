@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useRouter, usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Clock, Users, BarChart3, LogOut, Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { useRouter, usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Clock, Users, BarChart3, LogOut, Menu, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import { FaTools } from 'react-icons/fa';
 
 export function Sidebar() {
@@ -33,7 +33,9 @@ export function Sidebar() {
       : []),
     { label: 'Time Tracker', href: '/dashboard/time-tracker', icon: Clock },
     { label: 'Projects', href: '/dashboard/projects', icon: BarChart3 },
-    { label: 'Equipments', href: '/dashboard/equipments', icon: FaTools },
+    ...(user?.role === 'admin' || user?.role === 'dispatcher'
+      ? [{ label: 'Equipments', href: '/dashboard/equipments', icon: FaTools }]
+      : []),
     // ...(use
     // r?.role === "admin"
     //   ? [

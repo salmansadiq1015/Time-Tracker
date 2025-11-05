@@ -1,15 +1,16 @@
-"use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Filter, X, RotateCcw } from "lucide-react";
-import { ExportButtons } from "./export-button";
+'use client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Filter, X, RotateCcw } from 'lucide-react';
+import { ExportButtons } from './export-button';
 
 interface FilterState {
   selectedUser: string;
   startDate: string;
   endDate: string;
   dateRange: string;
+  searchQuery?: string;
 }
 
 interface AdvancedFiltersProps {
@@ -38,8 +39,8 @@ export function AdvancedFilters({
   // Helper function to format date as YYYY-MM-DD in local timezone
   const formatLocalDate = (date: Date): string => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
@@ -50,38 +51,38 @@ export function AdvancedFilters({
     let endDate = new Date();
 
     switch (range) {
-      case "today":
+      case 'today':
         startDate = new Date(today);
         endDate = new Date(today);
         break;
-      case "yesterday":
+      case 'yesterday':
         startDate = new Date(today);
         startDate.setDate(startDate.getDate() - 1);
         endDate = new Date(today);
         endDate.setDate(endDate.getDate() - 1);
         break;
-      case "last3days":
+      case 'last3days':
         startDate = new Date(today);
         startDate.setDate(startDate.getDate() - 3);
         endDate = new Date(today);
         break;
-      case "last7days":
+      case 'last7days':
         startDate = new Date(today);
         startDate.setDate(startDate.getDate() - 7);
         endDate = new Date(today);
         break;
-      case "last15days":
+      case 'last15days':
         startDate = new Date(today);
         startDate.setDate(startDate.getDate() - 15);
         endDate = new Date(today);
         break;
-      case "last30days":
+      case 'last30days':
         startDate = new Date(today);
         startDate.setDate(startDate.getDate() - 30);
         endDate = new Date(today);
         break;
       default:
-        return { startDate: "", endDate: "" };
+        return { startDate: '', endDate: '' };
     }
 
     return {
@@ -91,10 +92,10 @@ export function AdvancedFilters({
   };
 
   const handleDateRangeChange = (range: string) => {
-    if (range === "custom") {
+    if (range === 'custom') {
       onFilterChange({ ...filters, dateRange: range });
-    } else if (range === "") {
-      onFilterChange({ ...filters, dateRange: "", startDate: "", endDate: "" });
+    } else if (range === '') {
+      onFilterChange({ ...filters, dateRange: '', startDate: '', endDate: '' });
     } else {
       const { startDate, endDate } = getDateRange(range);
       onFilterChange({ ...filters, dateRange: range, startDate, endDate });
@@ -106,15 +107,14 @@ export function AdvancedFilters({
   };
 
   const handleStartDateChange = (date: string) => {
-    onFilterChange({ ...filters, startDate: date, dateRange: "custom" });
+    onFilterChange({ ...filters, startDate: date, dateRange: 'custom' });
   };
 
   const handleEndDateChange = (date: string) => {
-    onFilterChange({ ...filters, endDate: date, dateRange: "custom" });
+    onFilterChange({ ...filters, endDate: date, dateRange: 'custom' });
   };
 
-  const hasActiveFilters =
-    filters.selectedUser || filters.startDate || filters.endDate;
+  const hasActiveFilters = filters.selectedUser || filters.startDate || filters.endDate;
 
   return (
     <Card className="border-gray-400 bg-gray-200/70 backdrop-blur-sm py-3 text-black">
@@ -124,35 +124,19 @@ export function AdvancedFilters({
           <CardTitle>Filters</CardTitle>
           {hasActiveFilters && (
             <span className="ml-2 px-2 py-1 bg-primary/20 text-primary text-xs font-semibold rounded-full">
-              {
-                [
-                  filters.selectedUser,
-                  filters.startDate,
-                  filters.endDate,
-                ].filter(Boolean).length
-              }{" "}
+              {[filters.selectedUser, filters.startDate, filters.endDate].filter(Boolean).length}{' '}
               active
             </span>
           )}
         </div>
         <div className="flex gap-2">
           {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onReset}
-              className="gap-2 bg-transparent"
-            >
+            <Button variant="outline" size="sm" onClick={onReset} className="gap-2 bg-transparent">
               <RotateCcw className="w-4 h-4" />
               Reset
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggleFilters}
-            className="gap-2"
-          >
+          <Button variant="ghost" size="sm" onClick={onToggleFilters} className="gap-2">
             {showFilters ? (
               <>
                 <X className="w-4 h-4" />
@@ -195,7 +179,7 @@ export function AdvancedFilters({
             <div className="space-y-2">
               <label className="text-sm font-medium">Date Range</label>
               <select
-                value={filters.dateRange || ""}
+                value={filters.dateRange || ''}
                 onChange={(e) => handleDateRangeChange(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
               >
@@ -211,7 +195,7 @@ export function AdvancedFilters({
             </div>
 
             {/* Start Date - Only show when Custom is selected */}
-            {filters.dateRange === "custom" && (
+            {filters.dateRange === 'custom' && (
               <div className="space-y-2">
                 <label className="text-sm font-medium">Start Date</label>
                 <Input
@@ -225,7 +209,7 @@ export function AdvancedFilters({
             )}
 
             {/* End Date - Only show when Custom is selected */}
-            {filters.dateRange === "custom" && (
+            {filters.dateRange === 'custom' && (
               <div className="space-y-2">
                 <label className="text-sm font-medium">End Date</label>
                 <Input
@@ -234,11 +218,7 @@ export function AdvancedFilters({
                   onChange={(e) => handleEndDateChange(e.target.value)}
                   className="bg-gray-800 border border-gray-400 rounded-md text-gray-600rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent cursor-pointer"
                   placeholder="Select end date"
-                  min={
-                    filters.startDate
-                      ? filters.startDate.slice(0, 16)
-                      : undefined
-                  }
+                  min={filters.startDate ? filters.startDate.slice(0, 16) : undefined}
                 />
               </div>
             )}

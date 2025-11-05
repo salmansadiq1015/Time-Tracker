@@ -1,17 +1,33 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Trash2, Edit2, Clock } from "lucide-react";
-import { useAuthContent } from "@/app/context/authContext";
-import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Trash2,
+  Edit2,
+  Clock,
+  User,
+  Mail,
+  Phone,
+  Shield,
+  UserCheck,
+  UserCircle,
+  Calendar,
+  AlertCircle,
+  Circle,
+} from 'lucide-react';
+import { useAuthContent } from '@/app/context/authContext';
+import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface User {
   _id: string;
   name: string;
   email: string;
-  role: "user" | "dispatcher" | "admin";
-  createdAt: Date;
+  phone?: string;
+  role: 'user' | 'dispatcher' | 'admin';
+  status?: 'active' | 'inactive';
+  createdAt: Date | string;
 }
 
 interface UserListProps {
@@ -19,6 +35,10 @@ interface UserListProps {
   onEdit: (user: User) => void;
   onDelete: (id: string) => void;
   canManage: boolean;
+  isLoading?: boolean;
+  onSort?: (field: string) => void;
+  sortField?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export function UserList({
@@ -26,96 +46,182 @@ export function UserList({
   onEdit,
   onDelete,
   canManage,
+  isLoading,
+  onSort,
+  sortField,
+  sortOrder,
 }: UserListProps) {
   const { auth } = useAuthContent();
   const router = useRouter();
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case "admin":
-        return "bg-destructive/10 text-destructive";
-      case "dispatcher":
-        return "bg-accent/10 text-accent";
+      case 'admin':
+        return 'bg-red-100 text-red-700 border-red-200';
+      case 'dispatcher':
+        return 'bg-purple-100 text-purple-700 border-purple-200';
       default:
-        return "bg-primary/10 text-primary";
+        return 'bg-blue-100 text-blue-700 border-blue-200';
+    }
+  };
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return <Shield className="w-3 h-3" />;
+      case 'dispatcher':
+        return <UserCheck className="w-3 h-3" />;
+      default:
+        return <UserCircle className="w-3 h-3" />;
+    }
+  };
+
+  const getStatusBadge = (status?: string) => {
+    if (status === 'active') {
+      return (
+        <span className="px-2 py-1 rounded-full text-xs font-semibold border bg-green-100 text-green-700 border-green-200 flex items-center gap-1.5 w-fit">
+          <Circle className="w-2 h-2 fill-green-700" />
+          Active
+        </span>
+      );
+    }
+    return (
+      <span className="px-2 py-1 rounded-full text-xs font-semibold border bg-gray-100 text-gray-700 border-gray-200 flex items-center gap-1.5 w-fit">
+        <Circle className="w-2 h-2 fill-gray-700" />
+        Inactive
+      </span>
+    );
+  };
+
+  const formatDate = (date: Date | string) => {
+    if (!date) return 'N/A';
+    try {
+      return new Date(date).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return 'Invalid';
     }
   };
 
   return (
-    <Card className="border-gray-300/90 py-0 px-0 bg-gray-100 overflow-hidden ">
-      <CardContent className="py-0 px-0">
+    <Card className="border-gray-200 bg-white shadow-lg overflow-hidden py-0">
+      <CardHeader className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white py-4">
+        <CardTitle className="text-white flex items-center gap-2">
+          <User className="w-5 h-5" />
+          Users List
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-200">
-              <tr className="border-b border-gray-400/30">
-                <th className="text-left py-3 px-4 font-semibold text-foreground">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 border-b-2 border-gray-200">
+              <tr>
+                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
                   Name
                 </th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">
+                <th className="text-left py-4 px-4 min-w-[12rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
                   Email
                 </th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">
+                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                  Phone
+                </th>
+                <th className="text-left py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
                   Role
                 </th>
-                <th className="text-left py-3 px-4 font-semibold text-foreground">
+                <th className="text-left py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                  Status
+                </th>
+                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
                   Joined
                 </th>
-                {auth.user?.role === "admin" && (
-                  <th className="text-left py-3 px-4 font-semibold text-foreground">
+                {auth.user?.role === 'admin' && (
+                  <th className="text-center py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
                     Actions
                   </th>
                 )}
               </tr>
             </thead>
             <tbody>
-              {users.length === 0 ? (
+              {isLoading ? (
+                <>
+                  {[...Array(5)].map((_, i) => (
+                    <tr key={i} className="border-b border-gray-100">
+                      <td colSpan={auth.user?.role === 'admin' ? 7 : 6} className="py-4 px-4">
+                        <Skeleton className="h-8 w-full" />
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              ) : users.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={canManage ? 5 : 4}
-                    className="text-center py-8 text-muted-foreground"
+                    colSpan={auth.user?.role === 'admin' ? 7 : 6}
+                    className="py-12 px-4 text-center"
                   >
-                    No users found
+                    <div className="flex flex-col items-center gap-2">
+                      <AlertCircle className="w-12 h-12 text-gray-400" />
+                      <p className="text-gray-500 font-medium">No users found</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 users?.map((user) => (
                   <tr
                     key={user._id}
-                    className="border-b border-gray-400/50 hover:bg-secondary/30 transition-colors"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
-                    <td
-                      className="py-3 px-4 font-medium text-foreground cursor-pointer"
-                      onClick={() =>
-                        router.push(`/dashboard/users/${user._id}`)
-                      }
-                    >
-                      {user.name}
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-gray-400" />
+                        <span
+                          className="font-medium text-gray-900 cursor-pointer hover:text-[#c16840] transition-colors"
+                          onClick={() => router.push(`/dashboard/users/${user._id}`)}
+                        >
+                          {user.name}
+                        </span>
+                      </div>
                     </td>
-                    <td className="py-3 px-4 text-muted-foreground">
-                      {user.email}
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-3 h-3 text-gray-400" />
+                        <span className="text-gray-700 text-sm">{user.email}</span>
+                      </div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-3 h-3 text-gray-400" />
+                        <span className="text-gray-700 text-sm">{user.phone || '-'}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${getRoleColor(
+                        className={`px-3 py-1 rounded-full text-xs font-semibold capitalize border flex items-center gap-1.5 w-fit ${getRoleColor(
                           user.role
                         )}`}
                       >
+                        {getRoleIcon(user.role)}
                         {user.role}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-muted-foreground text-sm">
-                      {new Date(user.createdAt).toLocaleDateString()}
+                    <td className="py-4 px-4">{getStatusBadge(user.status)}</td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-3 h-3 text-gray-400" />
+                        <span className="text-gray-700 text-sm">{formatDate(user.createdAt)}</span>
+                      </div>
                     </td>
-                    {auth.user?.role === "admin" && (
-                      <td className="py-3 px-4">
-                        <div className="flex gap-2">
+                    {auth.user?.role === 'admin' && (
+                      <td className="py-4 px-4">
+                        <div className="flex justify-center gap-1">
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() =>
-                              router.push(`/dashboard/users/${user._id}`)
-                            }
-                            className="text-primary hover:bg-primary/10"
+                            onClick={() => router.push(`/dashboard/users/${user._id}`)}
+                            className="text-yellow-600 hover:bg-yellow-50 h-8 w-8 rounded-lg transition-colors"
+                            title="View Details"
                           >
                             <Clock className="w-4 h-4" />
                           </Button>
@@ -123,7 +229,8 @@ export function UserList({
                             variant="ghost"
                             size="icon"
                             onClick={() => onEdit(user)}
-                            className="text-purple-600 hover:bg-primary/10"
+                            className="text-blue-600 hover:bg-blue-50 h-8 w-8 rounded-lg transition-colors"
+                            title="Edit User"
                           >
                             <Edit2 className="w-4 h-4" />
                           </Button>
@@ -131,7 +238,8 @@ export function UserList({
                             variant="ghost"
                             size="icon"
                             onClick={() => onDelete(user._id)}
-                            className="text-destructive hover:bg-destructive/10"
+                            className="text-red-600 hover:bg-red-50 h-8 w-8 rounded-lg transition-colors"
+                            title="Delete User"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>

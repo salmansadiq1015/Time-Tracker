@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       enum: ['user', 'dispatcher', 'client', 'admin'],
       default: 'user',
+    },
+    status: {
+      type: String,
+      enum: ['active', 'inactive'],
+      default: 'active',
     },
   },
   { timestamps: true }

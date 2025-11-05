@@ -1,20 +1,20 @@
-import { comparePassword, hashPassword } from "../helper/encryption.js";
-import userModel from "../models/userModel.js";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import { comparePassword, hashPassword } from '../helper/encryption.js';
+import userModel from '../models/userModel.js';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 // Create User
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phone } = req.body;
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({
         success: false,
-        message: "Please provide all the required fields",
-        error: "Please provide all the required fields",
+        message: 'Please provide all the required fields',
+        error: 'Please provide all the required fields',
       });
     }
 
@@ -25,18 +25,19 @@ export const createUser = async (req, res) => {
       email,
       password: hashedPassword,
       role,
+      phone,
     });
 
     res.status(201).json({
       success: true,
-      message: "User created successfully",
+      message: 'User created successfully',
       user,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }
@@ -50,8 +51,8 @@ export const loginUser = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Please provide all the required fields",
-        error: "Please provide all the required fields",
+        message: 'Please provide all the required fields',
+        error: 'Please provide all the required fields',
       });
     }
 
@@ -60,8 +61,8 @@ export const loginUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
-        error: "User not found",
+        message: 'User not found',
+        error: 'User not found',
       });
     }
     const isMatch = await comparePassword(password, user.password);
@@ -69,8 +70,16 @@ export const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Invalid Password",
-        error: "Invalid Password",
+        message: 'Invalid Password',
+        error: 'Invalid Password',
+      });
+    }
+
+    if (user.status === 'inactive') {
+      return res.status(401).json({
+        success: false,
+        message: 'Please contact the admin to activate your account',
+        error: 'Please contact the admin to activate your account',
       });
     }
 
@@ -78,13 +87,13 @@ export const loginUser = async (req, res) => {
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "7d",
+        expiresIn: '7d',
       }
     );
 
     res.status(200).json({
       success: true,
-      message: "Login Successful",
+      message: 'Login Successful',
       user: {
         _id: user._id,
         name: user.name,
@@ -97,7 +106,7 @@ export const loginUser = async (req, res) => {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }
@@ -114,8 +123,8 @@ export const updateUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
-        error: "User not found",
+        message: 'User not found',
+        error: 'User not found',
       });
     }
 
@@ -124,8 +133,8 @@ export const updateUser = async (req, res) => {
       if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: "Email already exists",
-          error: "Email already exists",
+          message: 'Email already exists',
+          error: 'Email already exists',
         });
       }
     }
@@ -137,6 +146,8 @@ export const updateUser = async (req, res) => {
         email: data.email ? data.email : user.email,
         password: data.password ? await hashPassword(password) : user.password,
         role: data.role ? data.role : user.role,
+        phone: data.phone ? data.phone : user.phone,
+        status: data.status ? data.status : user.status,
       },
       {
         new: true,
@@ -145,14 +156,14 @@ export const updateUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "User updated successfully",
+      message: 'User updated successfully',
       user: updatedUser,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }
@@ -165,16 +176,17 @@ export const fetchUser = async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const role = req.query.role;
     const search = req.query.search;
+    const status = req.query.status;
 
     // Build dynamic query efficiently
     const query = {};
 
-    if (role && role !== "all") query.role = role;
-
+    if (role && role !== 'all') query.role = role;
+    if (status && status !== 'all') query.status = status;
     if (search) {
       query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
       ];
     }
 
@@ -191,17 +203,17 @@ export const fetchUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Users fetched successfully",
+      message: 'Users fetched successfully',
       results: {
         users,
         total: totalCount,
       },
     });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }
@@ -217,8 +229,8 @@ export const deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
-        error: "User not found",
+        message: 'User not found',
+        error: 'User not found',
       });
     }
 
@@ -226,15 +238,43 @@ export const deleteUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "User deleted successfully",
+      message: 'User deleted successfully',
       user: deletedUser,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
+    });
+  }
+};
+
+// Upload Files
+// Upload File
+export const uploadFile = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No files were uploaded.',
+      });
+    }
+
+    const fileUrls = req.files.map((file) => file.location);
+
+    res.status(200).json({
+      success: true,
+      message: 'File uploaded successfully!',
+      fileUrls,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: 'Internal Server Error!',
+      error: error,
     });
   }
 };

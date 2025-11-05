@@ -10,18 +10,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical, Users, MapPin, Calendar, Edit2, Trash2, UserPlus, Eye } from 'lucide-react';
+import {
+  MoreVertical,
+  Users,
+  MapPin,
+  Calendar,
+  Edit2,
+  Trash2,
+  UserPlus,
+  Eye,
+  Building2,
+} from 'lucide-react';
 import { ProjectDetailModal } from './project-detail-modal';
 import { EditProjectModal } from './edit-project-modal';
 import { ManageEmployeesModal } from './manage-employees-modal';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
+import { useAuthContent } from '@/app/context/authContext';
 
 interface Project {
   _id: string;
   name: string;
-  client: string;
+  client: string | { _id: string; name: string; email: string };
   address: string;
   location?: string;
   description: string;
@@ -42,6 +53,7 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
   const [showEdit, setShowEdit] = useState(false);
   const [showManageEmployees, setShowManageEmployees] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const { auth } = useAuthContent();
 
   const handleDelete = async () => {
     const result = await Swal.fire({
@@ -102,23 +114,27 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
                   <Eye className="mr-2 h-4 w-4" />
                   View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowEdit(true)}>
-                  <Edit2 className="mr-2 h-4 w-4" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowManageEmployees(true)}>
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Manage Team
-                </DropdownMenuItem>
-                
-                <DropdownMenuItem
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="text-destructive"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
+                {(auth.user.role === 'admin' || auth.user.role === 'dispatcher') && (
+                  <>
+                    <DropdownMenuItem onClick={() => setShowEdit(true)}>
+                      <Edit2 className="mr-2 h-4 w-4" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowManageEmployees(true)}>
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Manage Team
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      onClick={handleDelete}
+                      disabled={deleting}
+                      className="text-destructive"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -179,7 +195,13 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
       )}
       {showEdit && (
         <EditProjectModal
-          project={project}
+          project={{
+            ...project,
+            client:
+              typeof project.client === 'object' && project.client !== null
+                ? project.client._id
+                : project.client,
+          }}
           onClose={() => setShowEdit(false)}
           onSuccess={() => {
             setShowEdit(false);

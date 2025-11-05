@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Download, FileText, FileSpreadsheet } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Download, FileText, FileSpreadsheet } from 'lucide-react';
 
 interface TimeEntry {
   _id: string;
@@ -19,6 +19,7 @@ interface TimeEntry {
   duration?: number;
   isActive: boolean;
   createdAt: string;
+  photos?: string[];
   user?: {
     _id: string;
     name: string;
@@ -44,80 +45,102 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   const exportToCSV = () => {
     const headers = [
-      "ID",
-      "User Name",
-      "User Email",
-      "Description",
-      "Start Time",
-      "Start Location",
-      "End Time",
-      "End Location",
-      "Duration (h:m)",
-      "Status",
-      "Created At",
+      'ID',
+      'User Name',
+      'User Email',
+      'Description',
+      'Start Time',
+      'Start Location',
+      'End Time',
+      'End Location',
+      'Duration (h:m)',
+      'Photos Count',
+      'Status',
+      'Created At',
     ];
 
     const rows = entries.map((entry) => [
       entry._id,
-      entry.user?.name || "N/A",
-      entry.user?.email || "N/A",
+      entry.user?.name || 'N/A',
+      entry.user?.email || 'N/A',
       entry.description,
       formatDateTime(entry.start.startTime),
       entry.start.location,
-      entry.end ? formatDateTime(entry.end.endTime) : "N/A",
-      entry.end?.location || "N/A",
-      entry.duration ? formatDuration(entry.duration) : "0h:0m",
-      entry.isActive ? "Active" : "Completed",
+      entry.end ? formatDateTime(entry.end.endTime) : 'N/A',
+      entry.end?.location || 'N/A',
+      entry.duration ? formatDuration(entry.duration) : '0h:0m',
+      entry.photos?.length || 0,
+      entry.isActive ? 'Active' : 'Completed',
       formatDateTime(entry.createdAt),
     ]);
 
     // Add summary row
     rows.push([]);
-    rows.push(["SUMMARY"]);
-    rows.push(["Total Count", summary.totalCount.toString()]);
-    rows.push([
-      "Total Duration",
-      formatDuration(parseFloat(summary.totalDuration)),
-    ]);
-    rows.push(["Total Leaves", summary.totalLeaves.toString()]);
+    rows.push(['SUMMARY']);
+    rows.push(['Total Count', summary.totalCount.toString()]);
+    rows.push(['Total Duration', formatDuration(parseFloat(summary.totalDuration))]);
+    rows.push(['Total Leaves', summary.totalLeaves.toString()]);
 
     const csvContent = [
-      headers.join(","),
-      ...rows.map((row) =>
-        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
-      ),
-    ].join("\n");
+      headers.join(','),
+      ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
+    ].join('\n');
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `time-tracker-${new Date().toISOString().split("T")[0]}.csv`
-    );
-    link.style.visibility = "hidden";
+    link.setAttribute('href', url);
+    link.setAttribute('download', `time-tracker-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     const pageWidth = 210; // A4 width in mm
     const pageHeight = 297; // A4 height in mm
     const margin = 10;
     const contentWidth = pageWidth - 2 * margin;
+
+    // Helper function to convert image URL to base64
+    const imageToBase64 = async (url: string): Promise<string> => {
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      } catch (error) {
+        console.error('Error converting image to base64:', error);
+        return url; // Fallback to URL if conversion fails
+      }
+    };
+
+    // Convert all images to base64
+    const entriesWithImages = await Promise.all(
+      entries.map(async (entry) => {
+        if (entry.photos && entry.photos.length > 0) {
+          const base64Images = await Promise.all(entry.photos.map((url) => imageToBase64(url)));
+          return { ...entry, base64Photos: base64Images };
+        }
+        return entry;
+      })
+    );
 
     let html = `
       <!DOCTYPE html>
@@ -196,6 +219,7 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
           td {
             padding: 6px 4px;
             border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
           }
           tr:nth-child(even) {
             background-color: #f9fafb;
@@ -217,6 +241,35 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
             border-radius: 4px;
             font-size: 7pt;
             font-weight: bold;
+          }
+          .photo-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+          }
+          .photo-item {
+            width: 100%;
+            min-width: 20px;
+            min-height: 20px;
+            max-width: 200px;
+            height: auto;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            display: block;
+            margin-bottom: 8px;
+          }
+          .photo-link {
+            color: #0ea5e9;
+            text-decoration: underline;
+            font-size: 7pt;
+            display: block;
+            margin-top: 2px;
+          }
+          .photo-count {
+            font-size: 7pt;
+            color: #666;
+            margin-top: 2px;
           }
           .footer {
             text-align: center;
@@ -241,9 +294,7 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
           </div>
           <div class="summary-item">
             <div class="summary-label">Total Duration</div>
-            <div class="summary-value">${formatDuration(
-              parseFloat(summary.totalDuration)
-            )}</div>
+            <div class="summary-value">${formatDuration(parseFloat(summary.totalDuration))}</div>
           </div>
           <div class="summary-item">
             <div class="summary-label">Total Leaves</div>
@@ -254,34 +305,56 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
         <table>
           <thead>
             <tr>
-              <th style="width: 12%;">User</th>
-              <th style="width: 18%;">Description</th>
-              <th style="width: 14%;">Start Time</th>
-              <th style="width: 14%;">End Time</th>
-              <th style="width: 15%;">Start Location</th>
-              <th style="width: 15%;">End Location</th>
+              <th style="width: 10%;">User</th>
+              <th style="width: 15%;">Description</th>
+              <th style="width: 12%;">Start Time</th>
+              <th style="width: 12%;">End Time</th>
+              <th style="width: 12%;">Start Location</th>
+              <th style="width: 12%;">End Location</th>
               <th style="width: 8%;">Duration</th>
+              <th style="width: 6%;">Photos</th>
               <th style="width: 4%;">Status</th>
             </tr>
           </thead>
           <tbody>
     `;
 
-    entries.forEach((entry) => {
+    entriesWithImages.forEach((entry: any) => {
+      let photosHtml = '';
+      if (entry.base64Photos && entry.base64Photos.length > 0) {
+        photosHtml = '<div class="photo-grid">';
+        entry.base64Photos.forEach((base64: string, idx: number) => {
+          const originalUrl = entry.photos && entry.photos[idx] ? entry.photos[idx] : '';
+          const photoNumber = idx + 1;
+          photosHtml += `
+            <div>
+              <img src="${base64}" alt="Photo ${photoNumber}" class="photo-item" style="min-width: 20px; min-height: 20px;" />
+              ${
+                originalUrl
+                  ? `<a href="${originalUrl}" target="_blank" class="photo-link">Open Photo ${photoNumber} in New Tab</a>`
+                  : ''
+              }
+            </div>
+          `;
+        });
+        photosHtml += '</div>';
+      } else {
+        photosHtml = '<span class="photo-count">-</span>';
+      }
+
       html += `
         <tr>
-          <td>${entry.user?.name || "N/A"}</td>
+          <td>${entry.user?.name || 'N/A'}</td>
           <td>${entry.description}</td>
           <td>${formatDateTime(entry.start.startTime)}</td>
-          <td>${entry.end ? formatDateTime(entry.end.endTime) : "N/A"}</td>
+          <td>${entry.end ? formatDateTime(entry.end.endTime) : 'N/A'}</td>
           <td>${entry.start.location}</td>
-          <td>${entry.end?.location || "N/A"}</td>
-          <td>${entry.duration ? formatDuration(entry.duration) : "N/A"}</td>
+          <td>${entry.end?.location || 'N/A'}</td>
+          <td>${entry.duration ? formatDuration(entry.duration) : 'N/A'}</td>
+          <td>${photosHtml}</td>
           <td>
-            <span class="${
-              entry.isActive ? "status-active" : "status-completed"
-            }">
-              ${entry.isActive ? "Active" : "Done"}
+            <span class="${entry.isActive ? 'status-active' : 'status-completed'}">
+              ${entry.isActive ? 'Active' : 'Done'}
             </span>
           </td>
         </tr>
@@ -299,7 +372,7 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
       </html>
     `;
 
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(html);
       printWindow.document.close();

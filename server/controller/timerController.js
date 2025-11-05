@@ -1,15 +1,15 @@
-import timerModel from "../models/timerModel.js";
+import timerModel from '../models/timerModel.js';
 
 // Start Timer
 export const startTimer = async (req, res) => {
   try {
-    const { user, start, description } = req.body;
+    const { user, start, description, photos } = req.body;
 
     if (!start) {
       return res.status(400).json({
         success: false,
-        message: "Please provide all the required fields",
-        error: "Please provide all the required fields",
+        message: 'Please provide all the required fields',
+        error: 'Please provide all the required fields',
       });
     }
 
@@ -17,19 +17,20 @@ export const startTimer = async (req, res) => {
       user: user ? user : req.user._id,
       start,
       description,
+      photos,
       isActive: true,
     });
 
     res.status(201).json({
       success: true,
-      message: "Timer started successfully",
+      message: 'Timer started successfully',
       timer,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }
@@ -39,21 +40,30 @@ export const startTimer = async (req, res) => {
 export const stopTimer = async (req, res) => {
   try {
     const timerId = req.params.id;
-    const { end, description } = req.body;
+    const { end, description, photos } = req.body;
 
     if (!end) {
       return res.status(400).json({
         success: false,
-        message: "Please provide all the required fields",
-        error: "Please provide all the required fields",
+        message: 'Please provide all the required fields',
+        error: 'Please provide all the required fields',
       });
     }
 
-    const timer = await timerModel.findByIdAndUpdate(
+    const timer = await timerModel.findById(timerId);
+
+    // Merge existing photos with new photos if provided
+    let updatedPhotos = timer.photos || [];
+    if (photos && Array.isArray(photos)) {
+      updatedPhotos = [...updatedPhotos, ...photos];
+    }
+
+    const updatedTimer = await timerModel.findByIdAndUpdate(
       timerId,
       {
         end,
-        description,
+        description: description || timer.description,
+        photos: updatedPhotos,
         isActive: false,
       },
       {
@@ -63,14 +73,14 @@ export const stopTimer = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Timer stopped successfully",
-      timer,
+      message: 'Timer stopped successfully',
+      timer: updatedTimer,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }
@@ -87,8 +97,8 @@ export const updateTimer = async (req, res) => {
     if (!timer) {
       return res.status(404).json({
         success: false,
-        message: "Timer not found",
-        error: "Timer not found",
+        message: 'Timer not found',
+        error: 'Timer not found',
       });
     }
 
@@ -100,23 +110,29 @@ export const updateTimer = async (req, res) => {
           start: data.start ? data.start : timer.start,
           end: data.end ? data.end : timer.end,
           description: data.description ? data.description : timer.description,
+          photos: data.photos !== undefined ? data.photos : timer.photos,
+          status: data.status !== undefined ? data.status : timer.status,
+          verifiedByClient:
+            data.verifiedByClient !== undefined ? data.verifiedByClient : timer.verifiedByClient,
+          client: data.client !== undefined ? data.client : timer.client,
         },
         {
           new: true,
         }
       )
-      .populate("user", "name email");
+      .populate('user', 'name email')
+      .populate('client', 'name email');
 
     res.status(200).json({
       success: true,
-      message: "Timer updated successfully",
-      timer,
+      message: 'Timer updated successfully',
+      timer: updateTimer,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }
@@ -289,14 +305,15 @@ export const fetchTimers = async (req, res) => {
     const [timers, totalCount, allTimersForLeaveCalc] = await Promise.all([
       timerModel
         .find(query)
-        .populate("user", "name email")
-        .sort({ "start.startTime": -1 })
+        .populate('user', 'name email')
+        .populate('client', 'name email')
+        .sort({ 'start.startTime': -1 })
         .skip((page - 1) * limit)
         .limit(limit)
         .lean(),
       timerModel.countDocuments(query),
       // Fetch ALL timers (just dates) for accurate leave calculation
-      timerModel.find(query).select("start.startTime").lean(),
+      timerModel.find(query).select('start.startTime').lean(),
     ]);
 
     // ⏱️ Compute duration for each timer dynamically
@@ -348,7 +365,7 @@ export const fetchTimers = async (req, res) => {
               workDate.getDate()
             )
               .toISOString()
-              .split("T")[0];
+              .split('T')[0];
             workedDays.add(dateKey);
           }
         });
@@ -360,12 +377,8 @@ export const fetchTimers = async (req, res) => {
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        for (
-          let d = new Date(firstEntryDate);
-          d <= yesterday;
-          d.setDate(d.getDate() + 1)
-        ) {
-          const dateKey = d.toISOString().split("T")[0];
+        for (let d = new Date(firstEntryDate); d <= yesterday; d.setDate(d.getDate() + 1)) {
+          const dateKey = d.toISOString().split('T')[0];
           if (!workedDays.has(dateKey)) {
             totalLeaves++;
           }
@@ -378,7 +391,7 @@ export const fetchTimers = async (req, res) => {
     // 📤 Send response
     res.status(200).json({
       success: true,
-      message: "Timers fetched successfully",
+      message: 'Timers fetched successfully',
       data: {
         timers: timersWithDuration,
         summary: {
@@ -397,10 +410,10 @@ export const fetchTimers = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching timers:", error);
+    console.error('Error fetching timers:', error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }
@@ -480,8 +493,8 @@ export const deleteTimer = async (req, res) => {
     if (!timer) {
       return res.status(404).json({
         success: false,
-        message: "Timer not found",
-        error: "Timer not found",
+        message: 'Timer not found',
+        error: 'Timer not found',
       });
     }
 
@@ -489,14 +502,14 @@ export const deleteTimer = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Timer deleted successfully",
+      message: 'Timer deleted successfully',
       timer: deletedTimer,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: error.message,
     });
   }

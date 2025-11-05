@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Plus,
   Search,
@@ -12,22 +12,29 @@ import {
   ChevronLeft,
   ChevronRight,
   Users,
-} from "lucide-react";
-import { UserForm } from "@/components/user-form";
-import { UserList } from "@/components/user-list";
-import { useAuth } from "@/hooks/use-auth";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import axios from "axios";
-import toast from "react-hot-toast";
+  UserPlus,
+  Shield,
+  UserCheck,
+  AlertCircle,
+  TrendingUp,
+} from 'lucide-react';
+import { UserForm } from '@/components/user-form';
+import { UserList } from '@/components/user-list';
+import { useAuth } from '@/hooks/use-auth';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 interface User {
-  _id?: string;
+  _id: string;
   id?: string;
   name: string;
   email: string;
-  role: "user" | "dispatcher" | "admin";
-  createdAt: Date;
+  role: 'user' | 'dispatcher' | 'admin';
+  createdAt: Date | string;
+  phone?: string;
+  status?: 'active' | 'inactive';
 }
 
 interface PaginationData {
@@ -49,8 +56,11 @@ export default function UsersPage() {
   const totalPages = Math.ceil(totalCount / limit);
 
   const [filters, setFilters] = useState({
-    search: "",
-    role: "all",
+    search: '',
+    role: 'all',
+    status: 'all',
+    sortBy: '',
+    sortOrder: 'asc' as 'asc' | 'desc',
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -60,7 +70,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     if (!isLoading && user) {
-      requirePermission("view_all_users");
+      requirePermission('view_all_users');
     }
   }, [user, isLoading, requirePermission]);
 
@@ -71,7 +81,8 @@ export default function UsersPage() {
         page: page.toString(),
         limit: limit.toString(),
         ...(filters.search && { search: filters.search }),
-        ...(filters.role !== "all" && { role: filters.role }),
+        ...(filters.role !== 'all' && { role: filters.role }),
+        ...(filters.status !== 'all' && { status: filters.status }),
       });
 
       const response = await axios.get(
@@ -83,8 +94,8 @@ export default function UsersPage() {
         setTotalCount(response.data.results.total);
       }
     } catch (error: any) {
-      console.error("Error fetching users:", error);
-      toast.error(error.response?.data?.message || "Failed to fetch users");
+      console.error('Error fetching users:', error);
+      toast.error(error.response?.data?.message || 'Failed to fetch users');
     } finally {
       setLoading(false);
     }
@@ -103,14 +114,14 @@ export default function UsersPage() {
       );
 
       if (response.data?.user) {
-        toast.success("User created successfully");
+        toast.success('User created successfully');
         setShowForm(false);
         setPage(1);
         await fetchUsers();
       }
     } catch (error: any) {
-      console.error("Error creating user:", error);
-      toast.error(error.response?.data?.message || "Failed to create user");
+      console.error('Error creating user:', error);
+      toast.error(error.response?.data?.message || 'Failed to create user');
     } finally {
       setCreating(false);
     }
@@ -127,14 +138,14 @@ export default function UsersPage() {
       );
 
       if (response.data) {
-        toast.success("User updated successfully");
+        toast.success('User updated successfully');
         setEditingUser(null);
         setShowForm(false);
         await fetchUsers();
       }
     } catch (error: any) {
-      console.error("Error updating user:", error);
-      toast.error(error.response?.data?.message || "Failed to update user");
+      console.error('Error updating user:', error);
+      toast.error(error.response?.data?.message || 'Failed to update user');
     } finally {
       setCreating(false);
     }
@@ -142,15 +153,13 @@ export default function UsersPage() {
 
   const handleDeleteUser = async (id: string) => {
     try {
-      await axios.delete(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/delete/${id}`
-      );
+      await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/delete/${id}`);
 
-      toast.success("User deleted successfully");
+      toast.success('User deleted successfully');
       await fetchUsers();
     } catch (error: any) {
-      console.error("Error deleting user:", error);
-      toast.error(error.response?.data?.message || "Failed to delete user");
+      console.error('Error deleting user:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete user');
     }
   };
 
@@ -158,8 +167,7 @@ export default function UsersPage() {
     setFilters((prev) => ({
       ...prev,
       sortBy: field,
-      sortOrder:
-        prev.sortBy === field && prev.sortOrder === "asc" ? "desc" : "asc",
+      sortOrder: prev.sortBy === field && prev.sortOrder === 'asc' ? 'desc' : 'asc',
     }));
     setPage(1);
   };
@@ -174,7 +182,12 @@ export default function UsersPage() {
     setPage(1);
   };
 
-  const canManageUsers = user?.role === "admin" || user?.role === "dispatcher";
+  const handleStatusFilter = (status: string) => {
+    setFilters((prev) => ({ ...prev, status }));
+    setPage(1);
+  };
+
+  const canManageUsers = user?.role === 'admin' || user?.role === 'dispatcher';
 
   if (isLoading) {
     return (
@@ -189,9 +202,7 @@ export default function UsersPage() {
       <div className="p-4 md:p-8">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            You do not have permission to access this page.
-          </AlertDescription>
+          <AlertDescription>You do not have permission to access this page.</AlertDescription>
         </Alert>
       </div>
     );
@@ -200,125 +211,135 @@ export default function UsersPage() {
   const startIndex = (page - 1) * limit + 1;
   const endIndex = Math.min(page * limit, totalCount);
 
+  // Calculate role counts
+  const adminCount = users.filter((u) => u.role === 'admin').length;
+  const dispatcherCount = users.filter((u) => u.role === 'dispatcher').length;
+  const userCount = users.filter((u) => u.role === 'user').length;
+
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8 space-y-8">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8 space-y-6">
       {/* Header Section */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Users className="w-6 h-6 text-primary" />
+          <div className="p-3 bg-gradient-to-br from-[#c16840] to-[#d17a4f] rounded-xl shadow-lg">
+            <Users className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-4xl font-bold text-foreground">
-              Users Management
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Manage team members and their roles
-            </p>
+            <h1 className="text-4xl font-bold text-gray-900">Users Management</h1>
+            <p className="text-gray-600 mt-1">Manage team members, roles, and permissions</p>
           </div>
         </div>
       </div>
 
-      {/* Stats Card */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-green-500 bg-green-100/20 py-3 backdrop-blur-sm hover:border-primary/30 transition-colors">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="border-0 bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg hover:shadow-xl transition-all">
           <CardContent className="pt-6">
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Total Users</p>
-              <p className="text-3xl font-bold text-foreground">{totalCount}</p>
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <p className="text-sm text-blue-100 font-medium">Total Users</p>
+                <p className="text-3xl font-bold text-white">{totalCount}</p>
+              </div>
+              <div className="p-3 bg-white/20 rounded-full">
+                <Users className="w-6 h-6 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-pink-500 bg-pink-100/20 py-3 backdrop-blur-sm hover:border-primary/30 transition-colors">
+        <Card className="border-0 bg-gradient-to-br from-red-500 to-red-600 shadow-lg hover:shadow-xl transition-all">
           <CardContent className="pt-6">
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Current Page</p>
-              <p className="text-3xl font-bold text-foreground">
-                {page} of {totalPages}
-              </p>
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <p className="text-sm text-red-100 font-medium">Admins</p>
+                <p className="text-3xl font-bold text-white">{adminCount}</p>
+              </div>
+              <div className="p-3 bg-white/20 rounded-full">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-yellow-500 bg-yellow-100/20 py-3 backdrop-blur-sm hover:border-primary/30 transition-colors">
+        <Card className="border-0 bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg hover:shadow-xl transition-all">
           <CardContent className="pt-6">
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Items Per Page</p>
-              <p className="text-3xl font-bold text-foreground">{limit}</p>
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <p className="text-sm text-purple-100 font-medium">Dispatchers</p>
+                <p className="text-3xl font-bold text-white">{dispatcherCount}</p>
+              </div>
+              <div className="p-3 bg-white/20 rounded-full">
+                <UserCheck className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-0 bg-gradient-to-br from-green-500 to-green-600 shadow-lg hover:shadow-xl transition-all">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <p className="text-sm text-green-100 font-medium">Regular Users</p>
+                <p className="text-3xl font-bold text-white">{userCount}</p>
+              </div>
+              <div className="p-3 bg-white/20 rounded-full">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Form */}
-      {showForm && (
-        <Card className="border-primary/30 bg-card/50 backdrop-blur-sm">
-          <CardContent>
-            <UserForm
-              user={editingUser}
-              onSubmit={editingUser ? handleUpdateUser : handleAddUser}
-              onCancel={() => {
-                setShowForm(false);
-                setEditingUser(null);
-              }}
-              isLoading={creating}
-            />
-          </CardContent>
-        </Card>
-      )}
-
       {/* Search & Filters */}
-      <Card className="border-gray-300 shadow-md pb-4 bg-card/50 py-2 backdrop-blur-sm text-black">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
-          <CardTitle className="text-lg text-black">Search & Filter</CardTitle>
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowFilters(!showFilters)}
-              className={`transition-colors ${
-                showFilters ? "bg-primary/10 text-primary" : ""
-              }`}
-            >
-              <Filter className="w-4 h-4" />
-            </Button>
-            {user?.role === "admin" && (
+      <Card className="border-gray-200 bg-white shadow-lg py-0 pb-3 overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white py-4">
+          <div className="flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-white flex items-center gap-2">
+              <Search className="w-5 h-5" />
+              Search & Filter Users
+            </CardTitle>
+            <div className="flex gap-2">
               <Button
-                onClick={() => {
-                  setEditingUser(null);
-                  setShowForm(!showForm);
-                }}
-                className="bg-primary hover:bg-primary/90 text-white gap-2"
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowFilters(!showFilters)}
+                className={`text-white hover:bg-white/20 transition-colors ${
+                  showFilters ? 'bg-white/20' : ''
+                }`}
               >
-                <Plus className="w-4 h-4" />
-                Add User
+                <Filter className="w-4 h-4" />
               </Button>
-            )}
+              {user?.role === 'admin' && (
+                <Button
+                  onClick={() => {
+                    setEditingUser(null);
+                    setShowForm(!showForm);
+                  }}
+                  className="bg-white text-[#c16840] hover:bg-white/90 gap-2 font-medium shadow-md"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Add User
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-2 items-center border border-gray-300  p-2 rounded-full h-[2.8rem] bg-gray-200">
-            <Search className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+        <CardContent className="p-6 space-y-4">
+          <div className="flex gap-3 items-center border-2 border-gray-200 rounded-lg p-3 bg-gray-50 focus-within:border-[#c16840] transition-colors">
+            <Search className="w-5 h-5 text-gray-400 shrink-0" />
             <input
               placeholder="Search by name or email..."
               value={filters.search}
               onChange={(e) => handleSearch(e.target.value)}
-              className="bg-transparent outline-none border-none px-2 focus:border-none ring-0 rounded-full"
-              style={{
-                outline: "none",
-              }}
+              className="bg-transparent outline-none border-none flex-1 text-gray-900 placeholder:text-gray-500"
             />
           </div>
 
           {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border/30">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
-                  Role Filter
-                </label>
+                <label className="text-sm font-semibold text-gray-700">Role Filter</label>
                 <select
                   value={filters.role}
                   onChange={(e) => handleRoleFilter(e.target.value)}
-                  className="w-full px-3 py-2 bg-input border border-border/50 rounded-lg text-foreground focus:border-primary/50 focus:outline-none transition-colors"
+                  className="w-full px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
                 >
                   <option value="all">All Roles</option>
                   <option value="user">User</option>
@@ -328,16 +349,27 @@ export default function UsersPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
-                  Items Per Page
-                </label>
+                <label className="text-sm font-semibold text-gray-700">Status Filter</label>
+                <select
+                  value={filters.status}
+                  onChange={(e) => handleStatusFilter(e.target.value)}
+                  className="w-full px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
+                >
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">Items Per Page</label>
                 <select
                   value={limit}
                   onChange={(e) => {
                     setLimit(Number.parseInt(e.target.value));
                     setPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-input border border-border/50 rounded-lg text-foreground focus:border-primary/50 focus:outline-none transition-colors"
+                  className="w-full px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
                 >
                   <option value="5">5 items</option>
                   <option value="10">10 items</option>
@@ -349,6 +381,37 @@ export default function UsersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Form Modal */}
+      <Dialog
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowForm(false);
+            setEditingUser(null);
+          }
+        }}
+      >
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white shidden">
+          <DialogHeader className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white -m-6 mb-4 p-6 rounded-t-lg">
+            <DialogTitle className="text-white text-xl font-semibold flex items-center gap-2">
+              <UserPlus className="w-5 h-5" />
+              {editingUser ? 'Edit User' : 'Add New User'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <UserForm
+              user={editingUser}
+              onSubmit={editingUser ? handleUpdateUser : handleAddUser}
+              onCancel={() => {
+                setShowForm(false);
+                setEditingUser(null);
+              }}
+              isLoading={creating}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* User List */}
       <UserList
@@ -367,47 +430,45 @@ export default function UsersPage() {
 
       {/* Advanced Pagination */}
       {totalCount > 0 && (
-        <Card className="border-gray-300/50 bg-gray-100 backdrop-blur-sm py-2">
-          <CardContent className=" sm:self-end">
-            <div className="space-y-6">
-              {/* Pagination Controls */}
-              <div className="flex flex-row md:items-center md:justify-between gap-4">
-                {/* Left Controls */}
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(1)}
-                    disabled={page === 1}
-                    className="transition-all text-gray-700 hover:bg-primary/10 disabled:opacity-50"
-                  >
-                    First
-                  </Button>
+        <Card className="border-gray-200 bg-white shadow-lg py-0">
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              {/* Info */}
+              <div className="text-sm text-gray-600">
+                Showing <span className="font-semibold text-gray-900">{startIndex}</span> to{' '}
+                <span className="font-semibold text-gray-900">{endIndex}</span> of{' '}
+                <span className="font-semibold text-gray-900">{totalCount}</span> users
+              </div>
 
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setPage(Math.max(1, page - 1))}
-                    disabled={page === 1}
-                    className="transition-all  text-gray-700  hover:bg-primary/10 disabled:opacity-50"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </Button>
-                </div>
+              {/* Pagination Controls */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                  className="transition-all text-gray-700 hover:bg-[#c16840] hover:text-white disabled:opacity-50 border-gray-300"
+                >
+                  First
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  disabled={page === 1}
+                  className="transition-all text-gray-700 hover:bg-[#c16840] hover:text-white disabled:opacity-50 border-gray-300"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
 
                 {/* Page Numbers */}
-                <div className="flex items-center  text-gray-700  gap-1 flex-wrap justify-center">
+                <div className="flex items-center gap-1">
                   {(() => {
                     const pages: number[] = [];
                     const maxPages = Math.min(7, totalPages);
-                    let startPage = Math.max(
-                      1,
-                      page - Math.floor(maxPages / 2)
-                    );
-                    const endPage = Math.min(
-                      totalPages,
-                      startPage + maxPages - 1
-                    );
+                    let startPage = Math.max(1, page - Math.floor(maxPages / 2));
+                    const endPage = Math.min(totalPages, startPage + maxPages - 1);
 
                     if (endPage - startPage + 1 < maxPages) {
                       startPage = Math.max(1, endPage - maxPages + 1);
@@ -420,13 +481,13 @@ export default function UsersPage() {
                     return pages.map((pageNum) => (
                       <Button
                         key={`page-${pageNum}`}
-                        variant={pageNum === page ? "default" : "outline"}
+                        variant={pageNum === page ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => setPage(pageNum)}
-                        className={`w-10 transition-all  text-gray-700  ${
+                        className={`w-10 transition-all ${
                           pageNum === page
-                            ? "bg-primary text-primary-foreground"
-                            : "hover:bg-primary/10"
+                            ? 'bg-[#c16840] text-white border-[#c16840]'
+                            : 'text-gray-700 hover:bg-[#c16840] hover:text-white border-gray-300'
                         }`}
                       >
                         {pageNum}
@@ -435,28 +496,25 @@ export default function UsersPage() {
                   })()}
                 </div>
 
-                {/* Right Controls */}
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setPage(Math.min(totalPages, page + 1))}
-                    disabled={page === totalPages}
-                    className="transition-all  text-gray-700 hover:bg-primary/10 disabled:opacity-50"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage(Math.min(totalPages, page + 1))}
+                  disabled={page === totalPages}
+                  className="transition-all text-gray-700 hover:bg-[#c16840] hover:text-white disabled:opacity-50 border-gray-300"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(totalPages)}
-                    disabled={page === totalPages}
-                    className="transition-all  text-gray-700  hover:bg-primary/10 disabled:opacity-50"
-                  >
-                    Last
-                  </Button>
-                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(totalPages)}
+                  disabled={page === totalPages}
+                  className="transition-all text-gray-700 hover:bg-[#c16840] hover:text-white disabled:opacity-50 border-gray-300"
+                >
+                  Last
+                </Button>
               </div>
             </div>
           </CardContent>

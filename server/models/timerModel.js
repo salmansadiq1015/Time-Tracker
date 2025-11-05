@@ -1,15 +1,15 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const timerModelSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: 'users',
       required: true,
     },
     project: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
+      ref: 'Project',
     },
     start: {
       startTime: {
@@ -50,17 +50,14 @@ const timerModelSchema = new mongoose.Schema(
       type: String,
     },
     photos: [{ type: String }],
-    notes: {
-      type: String,
-    },
     status: {
       type: String,
-      enum: ["active", "approved", "flagged", "archived", "pending"],
-      default: "active",
+      enum: ['active', 'approved', 'flagged', 'archived', 'pending'],
+      default: 'active',
       index: true,
     },
     verifiedByClient: { type: Boolean, default: false },
-    client: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    client: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
     isActive: {
       type: Boolean,
       default: true,
@@ -69,11 +66,9 @@ const timerModelSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-timerModelSchema.pre("save", function (next) {
+timerModelSchema.pre('save', function (next) {
   if (this.startAt && this.endAt) {
-    this.durationMinutes = Math.round(
-      (this.endAt - this.startAt) / (60 * 1000)
-    );
+    this.durationMinutes = Math.round((this.endAt - this.startAt) / (60 * 1000));
   }
   next();
 });
@@ -81,4 +76,4 @@ timerModelSchema.pre("save", function (next) {
 timerModelSchema.index({ project: 1, startAt: 1 });
 timerModelSchema.index({ employee: 1, startAt: 1 });
 
-export default mongoose.model("timer", timerModelSchema);
+export default mongoose.model('timer', timerModelSchema);

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Pagination,
   PaginationContent,
@@ -9,7 +9,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
 
 interface AdvancedPaginationProps {
   currentPage: number;
@@ -43,7 +43,7 @@ export function AdvancedPagination({
     if (startPage > 1) {
       pages.push(1);
       if (startPage > 2) {
-        pages.push("...");
+        pages.push('...');
       }
     }
 
@@ -55,7 +55,7 @@ export function AdvancedPagination({
     // Add last page if not visible
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
-        pages.push("...");
+        pages.push('...');
       }
       pages.push(totalPages);
     }
@@ -67,10 +67,10 @@ export function AdvancedPagination({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div className="text-sm text-muted-foreground">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between sm:gap-4">
+      {/* <div className="text-sm text-muted-foreground">
         Showing {startItem} to {endItem} of {totalItems} items
-      </div>
+      </div> */}
 
       <Pagination>
         <PaginationContent className="flex-wrap">
@@ -88,17 +88,13 @@ export function AdvancedPagination({
           <PaginationItem>
             <PaginationPrevious
               onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-              className={
-                currentPage === 1
-                  ? "pointer-events-none opacity-50"
-                  : "cursor-pointer"
-              }
+              className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
             />
           </PaginationItem>
 
           {getPageNumbers().map((page, index) => (
             <PaginationItem key={`${page}-${index}`}>
-              {page === "..." ? (
+              {page === '...' ? (
                 <PaginationEllipsis />
               ) : (
                 <PaginationLink
@@ -114,13 +110,9 @@ export function AdvancedPagination({
 
           <PaginationItem>
             <PaginationNext
-              onClick={() =>
-                onPageChange(Math.min(totalPages, currentPage + 1))
-              }
+              onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
               className={
-                currentPage === totalPages
-                  ? "pointer-events-none opacity-50"
-                  : "cursor-pointer"
+                currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'
               }
             />
           </PaginationItem>

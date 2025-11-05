@@ -82,30 +82,39 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
           )}
 
           <div>
-            <Label htmlFor="edit-name">Equipment Name</Label>
+            <Label htmlFor="edit-name" className="pb-1">
+              Equipment Name
+            </Label>
             <Input
               id="edit-name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="border border-gray-300"
             />
           </div>
 
           <div>
-            <Label htmlFor="edit-serial">Serial Number</Label>
+            <Label htmlFor="edit-serial" className="pb-1">
+              Serial Number
+            </Label>
             <Input
               id="edit-serial"
               value={formData.serial}
               onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
+              className="border border-gray-300"
             />
           </div>
 
           <div>
-            <Label htmlFor="edit-purchaseDate">Purchase Date</Label>
+            <Label htmlFor="edit-purchaseDate" className="pb-1">
+              Purchase Date
+            </Label>
             <Input
               id="edit-purchaseDate"
               type="date"
               value={formData.purchaseDate}
               onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
+              className="border border-gray-300"
             />
           </div>
 

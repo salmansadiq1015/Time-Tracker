@@ -2,16 +2,25 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Plus,
+  Search,
+  AlertCircle,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  LayoutGrid,
+  List,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ProjectList } from './_components/project-list';
 import { CreateProjectModal } from './_components/create-project-modal';
 import axios from 'axios';
 import { useDebounce } from '@/hooks/use-debounce';
-
-
+import { useAuthContent } from '@/app/context/authContext';
 
 export default function ProjectDashboard() {
+  const { auth } = useAuthContent();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState([]);
@@ -21,7 +30,7 @@ export default function ProjectDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProjects, setTotalProjects] = useState(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [limit, setLimit] = useState(10);
   const [client, setClient] = useState('');
   const [employeeId, setEmployeeId] = useState('');
@@ -30,6 +39,7 @@ export default function ProjectDashboard() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
 
   // Debounce search term
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -38,8 +48,8 @@ export default function ProjectDashboard() {
     const fetchClients = async () => {
       try {
         const { data } = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/all`);
-        const filterEmployees = data.results?.users.filter((user:any) => user.role === 'user');
-        const clientEmployees = data.results?.users.filter((user:any) => user.role === 'client');
+        const filterEmployees = data.results?.users.filter((user: any) => user.role === 'user');
+        const clientEmployees = data.results?.users.filter((user: any) => user.role === 'client');
         setEmployees(filterEmployees || []);
         setClients(clientEmployees || []);
       } catch (error) {
@@ -66,11 +76,12 @@ export default function ProjectDashboard() {
     startDate,
     endDate,
     refreshTrigger,
+    auth?.user,
   ]);
 
   const fetchProjects = async () => {
     setLoading(true);
-    setError("");
+    setError('');
     try {
       const params: {
         page: number;
@@ -85,9 +96,11 @@ export default function ProjectDashboard() {
         limit: limit,
       };
 
+      const employee = auth?.user?.role === 'user' ? auth?.user?._id : employeeId;
+
       // Only add params if they have values
-      if (client) params.client = client || "";
-      if (employeeId) params.employeeId = employeeId;
+      if (client) params.client = client || '';
+      if (employee) params.employeeId = employee;
       if (debouncedSearchTerm.trim()) params.search = debouncedSearchTerm.trim();
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
@@ -206,145 +219,181 @@ export default function ProjectDashboard() {
               <p className="text-xs text-muted-foreground">Manage your projects efficiently</p>
             </div>
           </div>
-          <Button
-            onClick={() => setShowCreateModal(true)}
-            className="gap-2 bg-amber-700 hover:bg-amber-800 text-white" 
-          >
-            <Plus className="h-4 w-4" />
-            New Project
-          </Button>
+          {auth.user.role === 'admin' && (
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              className="gap-2 bg-amber-700 hover:bg-amber-800 text-white"
+            >
+              <Plus className="h-4 w-4" />
+              New Project
+            </Button>
+          )}
         </div>
       </header>
 
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-6 py-8">
-       
-        {/* Search Bar with Loading Indicator */}
-        <div className="mb-6 flex items-center gap-2 rounded-xl border border-amber-200 bg-white p-3 shadow-sm">
-          <Search
-            className={`h-5 w-5 ${
-              loading && searchTerm ? 'text-amber-600 animate-pulse' : 'text-muted-foreground'
-            }`}
-          />
-          <Input
-            type="text"
-            placeholder="Search projects by name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border-0 bg-transparent focus:ring-0"
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-
-        <div className="mb-6 space-y-4">
-          <button
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            className="flex items-center gap-2 text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
-          >
-            <svg
-              className={`h-5 w-5 transition-transform ${showAdvancedFilters ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
-            Advanced Filters{' '}
-            {activeFilterCount > 0 && (
-              <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-xs font-bold text-white">
-                {activeFilterCount}
-              </span>
+        {/* Search Bar with Loading Indicator & View Toggle */}
+        <div className="mb-6 flex items-center gap-4">
+          <div className="flex-1 flex items-center gap-2 rounded-xl border border-amber-200 bg-white p-3 shadow-sm">
+            <Search
+              className={`h-5 w-5 ${
+                loading && searchTerm ? 'text-amber-600 animate-pulse' : 'text-muted-foreground'
+              }`}
+            />
+            <Input
+              type="text"
+              placeholder="Search projects by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border-0 bg-transparent focus:ring-0"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
             )}
-          </button>
-
-          {showAdvancedFilters && (
-            <div className="rounded-xl border border-amber-200 bg-white p-6 shadow-sm space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Client Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Client</label>
-                  <select
-                    value={client}
-                    onChange={(e) => setClient(e.target.value)}
-                    className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
-                  >
-                    <option value="">All Clients</option>
-                    {clients.map((c:any) => (
-                      <option key={c._id} value={c._id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Employee Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Employee</label>
-                  <select
-                    value={employeeId}
-                    onChange={(e) => setEmployeeId(e.target.value)}
-                    className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
-                  >
-                    <option value="">All Employees</option>
-                    {employees.map((e:any) => (
-                      <option key={e._id} value={e._id}>
-                        {e.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Start Date Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Start Date (From)
-                  </label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
-                  />
-                </div>
-
-                {/* End Date Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    End Date (To)
-                  </label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
-                  />
-                </div>
-              </div>
-
-              {activeFilterCount > 0 && (
-                <button
-                  onClick={resetFilters}
-                  className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-700 transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                  Clear All Filters
-                </button>
-              )}
-            </div>
-          )}
+          </div>
+          {/* View Toggle */}
+          <div className="flex items-center gap-2 bg-white rounded-lg p-1 border-2 border-amber-200 shadow-sm">
+            <Button
+              variant={viewMode === 'card' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('card')}
+              className={`h-9 px-3 transition-all duration-300 ${
+                viewMode === 'card'
+                  ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-lg'
+                  : 'hover:bg-amber-50'
+              }`}
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </Button>
+            <Button
+              variant={viewMode === 'table' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('table')}
+              className={`h-9 px-3 transition-all duration-300 ${
+                viewMode === 'table'
+                  ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-lg'
+                  : 'hover:bg-amber-50'
+              }`}
+            >
+              <List className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
+
+        {(auth.user.role === 'admin' || auth.user.role === 'dispatcher') && (
+          <div className="mb-6 space-y-4">
+            <button
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className="flex items-center gap-2 text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
+            >
+              <svg
+                className={`h-5 w-5 transition-transform ${
+                  showAdvancedFilters ? 'rotate-180' : ''
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
+              </svg>
+              Advanced Filters{' '}
+              {activeFilterCount > 0 && (
+                <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-xs font-bold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+
+            {showAdvancedFilters && (
+              <div className="rounded-xl border border-amber-200 bg-white p-6 shadow-sm space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Client Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">Client</label>
+                    <select
+                      value={client}
+                      onChange={(e) => setClient(e.target.value)}
+                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                    >
+                      <option value="">All Clients</option>
+                      {clients.map((c: any) => (
+                        <option key={c._id} value={c._id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Employee Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Employee
+                    </label>
+                    <select
+                      value={employeeId}
+                      onChange={(e) => setEmployeeId(e.target.value)}
+                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                    >
+                      <option value="">All Employees</option>
+                      {employees.map((e: any) => (
+                        <option key={e._id} value={e._id}>
+                          {e.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Start Date Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Start Date (From)
+                    </label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                    />
+                  </div>
+
+                  {/* End Date Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      End Date (To)
+                    </label>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                    />
+                  </div>
+                </div>
+
+                {activeFilterCount > 0 && (
+                  <button
+                    onClick={resetFilters}
+                    className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-700 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                    Clear All Filters
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Items Per Page & Sorting */}
         <div className="mb-6 flex items-center justify-between">
@@ -375,6 +424,7 @@ export default function ProjectDashboard() {
         <ProjectList
           projects={projects}
           loading={loading}
+          viewMode={viewMode}
           onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
         />
 
