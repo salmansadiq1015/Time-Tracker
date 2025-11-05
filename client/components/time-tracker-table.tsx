@@ -161,61 +161,48 @@ export function TimeTrackerTable({
 
   return (
     <Card className="border-gray-200 bg-white shadow-lg overflow-hidden py-0">
-      <CardHeader className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white py-2">
-        <div className="flex flex-row items-center justify-between space-y-0 pb-0">
-          <CardTitle className="text-white flex items-center gap-2">
-            <Clock className="w-5 h-5" />
-            Time Entries
-          </CardTitle>
-          {pagination && (
-            <span className="text-sm text-white/90 bg-white/10 px-3 py-1 rounded-full">
-              {pagination.total} total entries
-            </span>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className="p-0 -mt-8">
+      <CardContent className="p-0 ">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b-2 border-gray-200">
+            <thead className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white border-b-2 border-gray-200">
               <tr>
-                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   User
                 </th>
-                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Date
                 </th>
-                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Start Time
                 </th>
-                <th className="text-left py-4 px-4 font-semibold min-w-[9rem] text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold min-w-[9rem] text-gray-50 uppercase text-xs tracking-wider">
                   Start Location
                 </th>
-                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   End Time
                 </th>
-                <th className="text-left py-4 px-4 font-semibold min-w-[9rem] text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold min-w-[9rem] text-gray-50 uppercase text-xs tracking-wider">
                   End Location
                 </th>
-                <th className="text-right py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-right py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Duration
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider min-w-[15rem]">
+                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider min-w-[15rem]">
                   Description
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Status
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Client
                 </th>
-                <th className="text-center py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Verified
                 </th>
-                <th className="text-center py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Photo
                 </th>
-                <th className="text-center py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Actions
                 </th>
               </tr>

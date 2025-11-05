@@ -61,9 +61,11 @@ export function Sidebar() {
 
       <aside
         className={`
-        fixed md:relative w-64 h-screen bg-gray-100 border-r border-sidebar-border
+        fixed md:relative w-64 h-screen bg-gradient-to-b from-[#1f1f1f] via-[#252525] to-[#1b1b1b]
+        text-gray-100 border-r border-black/20 shadow-xl shadow-black/20 backdrop-blur-sm
         transition-transform duration-300 z-40
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        custom-scrollbar
       `}
       >
         <button
@@ -74,20 +76,20 @@ export function Sidebar() {
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
-        <div className="p-3 border-b border-sidebar-border flex items-center justify-center ">
-          <div className="relative w-28 flex items-center justify-center">
+        <div className="px-4 py-[8.5px] border-b border-white/10 flex items-center justify-center bg-gradient-to-r from-[#c16840] via-[#d17a4f] to-[#c16840]">
+          <div className="relative w-24 flex items-center justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
             <Image
-              src="/s_noclaim.png"
+              src="/w_noclaim.png"
               alt="logo"
               width={110}
               height={120}
-              className="object-contain drop-shadow-lg hover:scale-105 transition-transform duration-200"
+              className="object-contain hover:scale-105 transition-transform duration-200"
               priority
             />
           </div>
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="p-3 space-y-1">
           {menuItems?.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -99,35 +101,51 @@ export function Sidebar() {
                   setIsOpen(false);
                 }}
                 className={`
-                  w-full flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors
+                  w-full group flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer
+                  transition-all duration-200
                   ${
                     isActive
-                      ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent/20'
+                      ? 'bg-white/10 text-white ring-1 ring-white/10'
+                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
                   }
                 `}
               >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                <span
+                  className={`h-5 w-1 rounded-full transition-colors ${
+                    isActive ? 'bg-[#d17a4f]' : 'bg-transparent group-hover:bg-white/30'
+                  }`}
+                />
+                <Icon
+                  className={`w-5 h-5 ${
+                    isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'
+                  }`}
+                />
+                <span
+                  className={`font-medium tracking-wide ${
+                    isActive ? 'text-white' : 'text-gray-200 group-hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </span>
               </button>
             );
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border space-y-3">
-          <div className="px-4 py-2 bg-sidebar-accent/10 rounded-lg">
-            <p className="text-xs text-sidebar-foreground/70">Logged in as</p>
-            <div className="flex items-center gap-1">
-              <p className="text-lg font-semibold text-sidebar-foreground">{user?.name}</p>
-              <p className="text-xs capitalize bg-green-500 rounded-full px-2 w-fit text-white">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10 space-y-3 bg-black/10">
+          <div className="px-4 py-3 bg-white/5 rounded-lg">
+            <p className="text-xs text-gray-400">Logged in as</p>
+            <div className="mt-1 flex items-center gap-2">
+              <p className="text-sm font-semibold text-white truncate max-w-[9rem]">{user?.name}</p>
+              <span className="text-[10px] capitalize bg-green-500/90 rounded-full px-2 py-0.5 text-white tracking-wide">
                 {user?.role}
-              </p>
+              </span>
             </div>
           </div>
           <Button
             onClick={handleLogout}
             variant="outline"
-            className="w-full border-sidebar-border cursor-pointer text-sidebar-foreground hover:bg-red-200 bg-red-100"
+            className="w-full border-white/10 cursor-pointer text-white bg-red-500/10 hover:bg-red-500/20 hover:text-red-200"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout
@@ -137,7 +155,7 @@ export function Sidebar() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 md:hidden z-30"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm md:hidden z-30"
           onClick={() => setIsOpen(false)}
         />
       )}

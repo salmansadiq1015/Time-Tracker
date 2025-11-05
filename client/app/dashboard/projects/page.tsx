@@ -39,7 +39,7 @@ export default function ProjectDashboard() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [sortBy, setSortBy] = useState('newest');
-  const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
+  const [viewMode, setViewMode] = useState<'card' | 'table'>('table');
 
   // Debounce search term
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -95,11 +95,11 @@ export default function ProjectDashboard() {
         page: currentPage,
         limit: limit,
       };
-
+      const clientId = auth?.user?.role === 'client' ? auth?.user?._id : client;
       const employee = auth?.user?.role === 'user' ? auth?.user?._id : employeeId;
 
       // Only add params if they have values
-      if (client) params.client = client || '';
+      if (clientId) params.client = clientId || '';
       if (employee) params.employeeId = employee;
       if (debouncedSearchTerm.trim()) params.search = debouncedSearchTerm.trim();
       if (startDate) params.startDate = startDate;

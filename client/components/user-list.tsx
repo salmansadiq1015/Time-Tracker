@@ -108,37 +108,31 @@ export function UserList({
 
   return (
     <Card className="border-gray-200 bg-white shadow-lg overflow-hidden py-0">
-      <CardHeader className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white py-4">
-        <CardTitle className="text-white flex items-center gap-2">
-          <User className="w-5 h-5" />
-          Users List
-        </CardTitle>
-      </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b-2 border-gray-200">
+            <thead className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white border-b-2 border-gray-200">
               <tr>
-                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Name
                 </th>
-                <th className="text-left py-4 px-4 min-w-[12rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[12rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Email
                 </th>
-                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Phone
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Role
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Status
                 </th>
-                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Joined
                 </th>
                 {auth.user?.role === 'admin' && (
-                  <th className="text-center py-4 px-4 font-semibold text-gray-700 uppercase text-xs tracking-wider">
+                  <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                     Actions
                   </th>
                 )}

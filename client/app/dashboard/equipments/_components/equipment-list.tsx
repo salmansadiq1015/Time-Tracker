@@ -60,7 +60,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [editingEquipment, setEditingEquipment] = useState<Equipment | null>(null);
   const [assigningEquipment, setAssigningEquipment] = useState<Equipment | null>(null);
-  const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
+  const [viewMode, setViewMode] = useState<'card' | 'table'>('table');
 
   const fetchEquipment = useCallback(async () => {
     setLoading(true);

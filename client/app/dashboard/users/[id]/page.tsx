@@ -54,7 +54,8 @@ interface FilterState {
   selectedUser: string;
   startDate: string;
   endDate: string;
-  searchQuery: string;
+  searchQuery?: string;
+  dateRange: string;
 }
 
 export default function TimeTrackerPage() {
@@ -83,6 +84,7 @@ export default function TimeTrackerPage() {
     startDate: '',
     endDate: '',
     searchQuery: '',
+    dateRange: '',
   });
 
   const [users, setUsers] = useState<any[]>([]);
@@ -274,6 +276,7 @@ export default function TimeTrackerPage() {
       startDate: '',
       endDate: '',
       searchQuery: '',
+      dateRange: '',
     });
     setPage(1);
   };
@@ -341,24 +344,24 @@ export default function TimeTrackerPage() {
       </header>
       <div className="px-4 md:px-8 pb-6 space-y-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {cards.map((card, i) => (
             <Card
               key={i}
               className={`relative overflow-hidden ${card.border} bg-linear-to-br ${card.gradient} 
-          backdrop-blur-md border rounded-2xl p-1 transition-all duration-500 hover:scale-[1.03] hover:${card.glow}`}
+          backdrop-blur-md border rounded-xl p-0.5 transition-all duration-300 hover:shadow-xl hover:${card.glow}`}
             >
-              <CardContent className="p-6 flex flex-col justify-between h-full">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="p-3 bg-white/70 rounded-xl border border-white/10 backdrop-blur-sm">
+              <CardContent className="p-4 flex flex-col justify-between h-full">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2.5 bg-white/70 rounded-lg border border-white/10 backdrop-blur-sm">
                     {card.icon}
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-100 font-medium tracking-wide uppercase">
+                  <p className="text-[11px] text-gray-100/90 font-semibold tracking-wider uppercase">
                     {card.title}
                   </p>
-                  <p className="text-4xl font-extrabold text-white mt-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                  <p className="text-3xl font-extrabold text-white mt-1 drop-shadow-[0_0_8px_rgba(255,255,255,0.08)]">
                     {card.value}
                   </p>
                 </div>
