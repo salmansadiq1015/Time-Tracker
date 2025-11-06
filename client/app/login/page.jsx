@@ -1,76 +1,58 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  AlertCircle,
-  Clock,
-  Loader2,
-  Eye,
-  EyeOff,
-  ArrowRight,
-} from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import axios from "axios";
-import toast from "react-hot-toast";
-import { useAuthContent } from "../context/authContext";
-import Image from "next/image";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertCircle, Clock, Loader2, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { useAuthContent } from '../context/authContext';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { auth, setAuth } = useAuthContent();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
 
     try {
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/login`, {
+        email,
+        password,
+      });
 
       if (data.success) {
-        localStorage.setItem("Ttoken", data.token);
-        localStorage.setItem("Tuser", JSON.stringify(data.user));
+        localStorage.setItem('Ttoken', data.token);
+        localStorage.setItem('Tuser', JSON.stringify(data.user));
         setAuth((prev) => ({ ...prev, token: data.token, user: data.user }));
         if (rememberMe) {
-          localStorage.setItem("rememberMe", "true");
+          localStorage.setItem('rememberMe', 'true');
         }
         router.push(
-          data.user.role === "admin" || data.user.role === "dispatcher"
-            ? "/dashboard/users"
-            : "/dashboard/time-tracker"
+          data.user.role === 'admin' || data.user.role === 'dispatcher'
+            ? '/dashboard/users'
+            : data.user.role === 'client'
+            ? '/dashboard/projects'
+            : '/dashboard/time-tracker'
         );
-        toast.success("Login Successful");
+        toast.success('Login Successful');
       }
     } catch (err) {
-      setError(
-        err?.response?.data?.message || "An error occurred. Please try again."
-      );
+      setError(err?.response?.data?.message || 'An error occurred. Please try again.');
       console.log(err);
-      toast.error(
-        err?.response?.data?.message || "An error occurred. Please try again."
-      );
+      toast.error(err?.response?.data?.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -82,7 +64,7 @@ export default function LoginPage() {
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-pulse" />
         <div
           className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/5 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "1s" }}
+          style={{ animationDelay: '1s' }}
         />
       </div>
 
@@ -138,9 +120,7 @@ export default function LoginPage() {
               )}
 
               <div className="space-y-2.5">
-                <label className="text-sm font-semibold text-foreground">
-                  Email Address
-                </label>
+                <label className="text-sm font-semibold text-foreground">Email Address</label>
                 <div className="relative group">
                   <Input
                     type="email"
@@ -155,9 +135,7 @@ export default function LoginPage() {
 
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-foreground">
-                    Password
-                  </label>
+                  <label className="text-sm font-semibold text-foreground">Password</label>
                   {/* <a
                     href="#"
                     className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
@@ -167,7 +145,7 @@ export default function LoginPage() {
                 </div>
                 <div className="relative group">
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -179,11 +157,7 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>

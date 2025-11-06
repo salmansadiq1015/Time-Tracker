@@ -1,19 +1,24 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import compression from "compression";
-import cookieParser from "cookie-parser";
-import bodyParser from "body-parser";
-import session from "express-session";
-import MongoStore from "connect-mongo";
-import morgan from "morgan";
-import colors from "colors";
-import helmet from "helmet";
-import { connectDB } from "./config/db.js";
-import authRoutes from "./routes/authRoutes.js";
-import timerRoutes from "./routes/timerRoute.js";
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import morgan from 'morgan';
+import colors from 'colors';
+import helmet from 'helmet';
+import { connectDB } from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import timerRoutes from './routes/timerRoute.js';
 import projectRoutes from './routes/projectRoutes.js';
 import equipmentRouters from './routes/equipmentRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
+
+// Socket Server
+import http from 'http';
+import { initialSocketServer } from './socketServer.js';
 
 //Dotenv Config
 dotenv.config();
@@ -59,24 +64,30 @@ app.use(
   })
 );
 
+// Socket Server
+const server = http.createServer(app);
+initialSocketServer(server);
+
 // Routes Config
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/time-tracker', timerRoutes);
 app.use('/api/v1/projects', projectRoutes);
 app.use('/api/v1/equipment', equipmentRouters);
 
+// Messages
+app.use('/api/v1/chat', chatRoutes);
+
 // Rest API Config
-app.use("/", (req, res) => {
+app.use('/', (req, res) => {
   res.send(`<h1>Server is running on post ${process.env.PORT}</h1>`);
 });
 
 // PORT
 const port = process.env.PORT || 8098;
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(
-    `Server is running on port ${colors.green(port)} in ${colors.blue(
-      "development"
-    )} mode`.bgMagenta.white
+    `Server is running on port ${colors.green(port)} in ${colors.blue('development')} mode`
+      .bgMagenta.white
   );
 });

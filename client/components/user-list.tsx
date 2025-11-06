@@ -15,10 +15,15 @@ import {
   Calendar,
   AlertCircle,
   Circle,
+  MessageCircle,
+  Loader2,
 } from 'lucide-react';
 import { useAuthContent } from '@/app/context/authContext';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
+import axios from 'axios';
 
 interface User {
   _id: string;
@@ -53,6 +58,8 @@ export function UserList({
 }: UserListProps) {
   const { auth } = useAuthContent();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [loadingUser, setLoadingUser] = useState<string | null>(null);
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -103,6 +110,29 @@ export function UserList({
       });
     } catch {
       return 'Invalid';
+    }
+  };
+
+  // Create Chat
+  const createChat = async (userId: any) => {
+    setLoading(true);
+    setLoadingUser(userId);
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/chat/create`,
+        {
+          userId,
+        }
+      );
+      if (data?.success) {
+        toast.success('Chat created successfully');
+        router.push(`/dashboard/chat?chat=${data?.chat?._id}`);
+      }
+    } catch (error: any) {
+      console.error('Error creating chat:', error);
+      toast.error(error?.response?.data?.message || 'Failed to create chat');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -218,6 +248,20 @@ export function UserList({
                             title="View Details"
                           >
                             <Clock className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => createChat(user._id)}
+                            className="text-green-600 hover:bg-green-50 h-8 w-8 rounded-lg transition-colors"
+                            title="Create Chat"
+                            disabled={loading}
+                          >
+                            {loading && loadingUser === user._id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <MessageCircle className="w-4 h-4" />
+                            )}
                           </Button>
                           <Button
                             variant="ghost"

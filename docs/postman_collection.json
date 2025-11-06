@@ -1,0 +1,609 @@
+{
+  "info": {
+    "_postman_id": "4d3b4c2c-6a2b-4b18-9a6c-apis-docs",
+    "name": "Total Dashboard API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for Total Dashboard. Set the variables in the collection or use an environment with baseUrl and token."
+  },
+  "item": [
+    {
+      "name": "Auth / Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/all?page=1&limit=10&role=all&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "all"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "role", "value": "all"},
+                {"key": "search", "value": ""}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Passw0rd!\",\n  \"phone\": \"+11234567890\",\n  \"role\": \"user\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "create"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Edited\",\n  \"phone\": \"+11230000000\",\n  \"role\": \"dispatcher\",\n  \"status\": \"inactive\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/update/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "update", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/delete/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "delete", "{{userId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Time Tracker",
+      "item": [
+        {
+          "name": "List Timers",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/time-tracker/all?page=1&limit=10&user={{userId}}&start=&end=&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "time-tracker", "all"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "user", "value": "{{userId}}"},
+                {"key": "start", "value": ""},
+                {"key": "end", "value": ""},
+                {"key": "search", "value": ""}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Start Timer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": \"{{userId}}\",\n  \"start\": {\n    \"startTime\": \"{{nowIso}}\",\n    \"location\": \"NYC\",\n    \"lat\": 40.7128,\n    \"lng\": -74.006\n  },\n  \"description\": \"Demo start\",\n  \"photos\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/time-tracker/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "time-tracker", "start"]
+            }
+          }
+        },
+        {
+          "name": "Stop Timer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"end\": {\n    \"endTime\": \"{{nowIso}}\",\n    \"location\": \"NYC\",\n    \"lat\": 40.7129,\n    \"lng\": -74.005\n  },\n  \"description\": \"Stopped work\",\n  \"photos\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/time-tracker/stop/{{timerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "time-tracker", "stop", "{{timerId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Timer (status/client/photos)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Edited\",\n  \"photos\": [],\n  \"status\": \"approved\",\n  \"verifiedByClient\": true,\n  \"client\": \"{{clientId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/time-tracker/update/{{timerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "time-tracker", "update", "{{timerId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Timer",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/time-tracker/delete/{{timerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "time-tracker", "delete", "{{timerId}}"]
+            }
+          }
+        }
+      ]
+    },
+
+    
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "List Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/all?page=1&limit=10&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "all"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "search", "value": ""}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Project Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/details/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "details", "{{projectId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Project A\",\n  \"client\": \"{{clientId}}\",\n  \"employees\": [],\n  \"address\": \"123 Street\",\n  \"city\": \"NYC\",\n  \"description\": \"Test\",\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-02-01\",\n  \"tags\": [\"demo\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "create"]
+            }
+          }
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {"mode": "raw", "raw": "{\n  \"name\": \"Edited Project\"\n}"},
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/update/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "update", "{{projectId}}"]
+            }
+          }
+        },
+        {
+          "name": "Add Employee to Project",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {"mode": "raw", "raw": "{\n  \"employeeId\": \"{{userId}}\"\n}"},
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/add/employee/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "add", "employee", "{{projectId}}"]
+            }
+          }
+        },
+        {
+          "name": "Remove Employee from Project",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {"mode": "raw", "raw": "{\n  \"employeeId\": \"{{userId}}\"\n}"},
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/remove/employee/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "remove", "employee", "{{projectId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/delete/{{projectId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects", "delete", "{{projectId}}"]
+            }
+          }
+        }
+      ]
+    },
+    
+    {
+      "name": "Equipment",
+      "item": [
+        {
+          "name": "List Equipment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/equipment/all?page=1&limit=10&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "equipment", "all"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "search", "value": ""}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Equipment Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/equipment/details/{{equipmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "equipment", "details", "{{equipmentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Equipment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Excavator\",\n  \"serial\": \"EX-123\",\n  \"brand\": \"CAT\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/equipment/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "equipment", "create"]
+            }
+          }
+        },
+        {
+          "name": "Update Equipment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {"mode": "raw", "raw": "{\n  \"name\": \"Excavator X\"\n}"},
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/equipment/update/{{equipmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "equipment", "update", "{{equipmentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Equipment Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {"mode": "raw", "raw": "{\n  \"status\": \"inactive\"\n}"},
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/equipment/status/{{equipmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "equipment", "status", "{{equipmentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Equipment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {"key": "Authorization", "value": "{{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/equipment/delete/{{equipmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "equipment", "delete", "{{equipmentId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Create One-to-One Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "create"]
+            }
+          }
+        },
+        {
+          "name": "List My Chats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/all/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "all", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Group Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chatName\": \"Team Alpha\",\n  \"users\": \"[\\\"{{userId}}\\\", \\\"{{userId}}\\\"]\",\n  \"avatar\": \"https://example.com/group.png\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/group/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "group", "create"]
+            }
+          }
+        },
+        {
+          "name": "Get Group Chat Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/group/{{chatId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "group", "{{chatId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Group Chat",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chatName\": \"Team Alpha (Edited)\",\n  \"users\": \"[\\\"{{userId}}\\\"]\",\n  \"avatar\": \"https://example.com/group2.png\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/group/update/{{chatId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "group", "update", "{{chatId}}"]
+            }
+          }
+        },
+        {
+          "name": "Rename Group Chat",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chatName\": \"Team Beta\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/group/rename/{{chatId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "group", "rename", "{{chatId}}"]
+            }
+          }
+        },
+        {
+          "name": "Add User to Group",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/group/add/{{chatId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "group", "add", "{{chatId}}"]
+            }
+          }
+        },
+        {
+          "name": "Remove User from Group",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/group/remove/{{chatId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "group", "remove", "{{chatId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Chat",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/delete/{{chatId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "delete", "{{chatId}}"]
+            }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Hello team\",\n  \"contentType\": \"text\",\n  \"chatId\": \"{{chatId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/message/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "message", "create"]
+            }
+          }
+        },
+        {
+          "name": "List Messages by Chat",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/chat/message/{{chatId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "chat", "message", "{{chatId}}"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "chatId", "value": "" },
+    { "key": "timerId", "value": "" },
+    { "key": "clientId", "value": "" },
+    { "key": "projectId", "value": "" },
+    { "key": "equipmentId", "value": "" },
+    { "key": "nowIso", "value": "{{$isoTimestamp}}" }
+  ]
+}
+
+

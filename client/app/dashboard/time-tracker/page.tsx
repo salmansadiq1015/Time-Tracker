@@ -404,7 +404,9 @@ export default function TimeTrackerPage() {
           )}
 
           {/* Active Timer Display */}
-          <ActiveTimerDisplay activeTimer={activeTimer} onStop={handleStopTimer} />
+          {auth?.user?.role === 'user' && (
+            <ActiveTimerDisplay activeTimer={activeTimer} onStop={handleStopTimer} />
+          )}
 
           {/* Advanced Filters */}
           <AdvancedFilters

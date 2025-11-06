@@ -219,7 +219,7 @@ export function ActiveTimerDisplay({ activeTimer, onStop }: ActiveTimerDisplayPr
                 placeholder="What did you complete?"
                 value={endDescription}
                 onChange={(e) => setEndDescription(e.target.value)}
-                className="bg-gray-800 border-gray-800 resize-none h-20"
+                className="bg-gray-50 border-gray-300 resize-none h-20"
               />
             </div>
 

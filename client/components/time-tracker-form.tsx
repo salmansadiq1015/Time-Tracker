@@ -89,7 +89,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
               onChange={(e) => setDescription(e.target.value)}
               required
               disabled={submitting}
-              className="bg-gray-800 border-gray-800 resize-none h-20 "
+              className="bg-gray-50 border-gray-300 resize-none h-20 "
             />
           </div>
 

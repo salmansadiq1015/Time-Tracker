@@ -11,7 +11,7 @@ export default function Home() {
     const user = localStorage.getItem("Tuser");
     if (token) {
       router.push(
-        user.role === "user" ? "/dashboard/time-tracker" : "/dashboard/users"
+        user.role === "user" ? "/dashboard/time-tracker": user.role === "client" ?"/dashboard/projects" : "/dashboard/users"
       );
     } else {
       router.push("/login");
