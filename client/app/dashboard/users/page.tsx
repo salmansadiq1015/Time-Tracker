@@ -248,55 +248,55 @@ export default function UsersPage() {
       </header>
 
       {/* Stats Cards */}
-      <div className="px-4 md:px-8 pb-6 space-y-4">
+      <div className="px-4 md:px-8 pb-6 space-y-4 mt-2">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border-0 bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg hover:shadow-xl transition-all">
+          <Card className="border border-blue-100 bg-gradient-to-br from-blue-50 via-blue-50/50 to-indigo-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                  <p className="text-sm text-blue-100 font-medium">Total Users</p>
-                  <p className="text-3xl font-bold text-white">{totalCount}</p>
+                <div className="space-y-1">
+                  <p className="text-sm text-blue-600/70 font-medium">Total Users</p>
+                  <p className="text-3xl font-bold text-blue-700">{totalCount}</p>
                 </div>
-                <div className="p-3 bg-white/20 rounded-full">
+                <div className="p-3 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl shadow-sm">
                   <Users className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="border-0 bg-gradient-to-br from-red-500 to-red-600 shadow-lg hover:shadow-xl transition-all">
+          <Card className="border border-rose-100 bg-gradient-to-br from-rose-50 via-pink-50/50 to-red-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                  <p className="text-sm text-red-100 font-medium">Admins</p>
-                  <p className="text-3xl font-bold text-white">{adminCount}</p>
+                <div className="space-y-1">
+                  <p className="text-sm text-rose-600/70 font-medium">Admins</p>
+                  <p className="text-3xl font-bold text-rose-700">{adminCount}</p>
                 </div>
-                <div className="p-3 bg-white/20 rounded-full">
+                <div className="p-3 bg-gradient-to-br from-rose-400 to-pink-500 rounded-xl shadow-sm">
                   <Shield className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="border-0 bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg hover:shadow-xl transition-all">
+          <Card className="border border-purple-100 bg-gradient-to-br from-purple-50 via-violet-50/50 to-fuchsia-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                  <p className="text-sm text-purple-100 font-medium">Dispatchers</p>
-                  <p className="text-3xl font-bold text-white">{dispatcherCount}</p>
+                <div className="space-y-1">
+                  <p className="text-sm text-purple-600/70 font-medium">Dispatchers</p>
+                  <p className="text-3xl font-bold text-purple-700">{dispatcherCount}</p>
                 </div>
-                <div className="p-3 bg-white/20 rounded-full">
+                <div className="p-3 bg-gradient-to-br from-purple-400 to-violet-500 rounded-xl shadow-sm">
                   <UserCheck className="w-6 h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="border-0 bg-gradient-to-br from-green-500 to-green-600 shadow-lg hover:shadow-xl transition-all">
+          <Card className="border border-emerald-100 bg-gradient-to-br from-emerald-50 via-teal-50/50 to-green-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                  <p className="text-sm text-green-100 font-medium">Regular Users</p>
-                  <p className="text-3xl font-bold text-white">{userCount}</p>
+                <div className="space-y-1">
+                  <p className="text-sm text-emerald-600/70 font-medium">Regular Users</p>
+                  <p className="text-3xl font-bold text-emerald-700">{userCount}</p>
                 </div>
-                <div className="p-3 bg-white/20 rounded-full">
+                <div className="p-3 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl shadow-sm">
                   <TrendingUp className="w-6 h-6 text-white" />
                 </div>
               </div>

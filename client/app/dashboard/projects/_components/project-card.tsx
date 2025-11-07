@@ -20,6 +20,7 @@ import {
   UserPlus,
   Eye,
   Building2,
+  MessageCircle,
 } from 'lucide-react';
 import { ProjectDetailModal } from './project-detail-modal';
 import { EditProjectModal } from './edit-project-modal';
@@ -28,6 +29,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import { useAuthContent } from '@/app/context/authContext';
+import { useRouter } from 'next/navigation';
 
 interface Project {
   _id: string;
@@ -53,7 +55,9 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
   const [showEdit, setShowEdit] = useState(false);
   const [showManageEmployees, setShowManageEmployees] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [creatingChat, setCreatingChat] = useState(false);
   const { auth } = useAuthContent();
+  const router = useRouter();
 
   const handleDelete = async () => {
     const result = await Swal.fire({
@@ -87,6 +91,87 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
     }
   };
 
+  const handleCreateGroupChat = async () => {
+    setCreatingChat(true);
+    try {
+      // First, check if a group chat with this project name already exists
+      const { data: chatsData } = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/chat/all/${auth.user._id}`
+      );
+
+      const existingChat = chatsData?.results?.find(
+        (chat: any) => chat.isGroupChat && chat.chatName === project.name
+      );
+
+      if (existingChat) {
+        // Chat already exists, redirect to it
+        toast.success('Opening existing group chat');
+        router.push(`/dashboard/chat?chat=${existingChat._id}`);
+        return;
+      }
+
+      // Extract employee IDs (handle both populated and non-populated cases)
+      // Note: Server automatically adds the current user, so we don't include auth.user._id
+      let employeeIds: string[] = [];
+
+      if (project.employees && project.employees.length > 0) {
+        // Filter out current user if present (server will add it automatically)
+        employeeIds = project.employees
+          .map((emp: any) => (typeof emp === 'object' && emp !== null ? emp._id : emp))
+          .filter((id: string) => id !== auth.user._id);
+      }
+
+      // If no employees, add project client (current user will be added by server)
+      if (employeeIds.length === 0) {
+        if (project.client) {
+          const clientId =
+            typeof project.client === 'object' && project.client !== null
+              ? project.client._id
+              : project.client;
+          // Only add client if it's different from current user
+          if (clientId && clientId !== auth.user._id) {
+            employeeIds.push(clientId);
+          }
+        }
+
+        // Server requires at least 2 users total (current user + at least 1 other)
+        // If we only have current user, we can't create a group chat
+        if (employeeIds.length === 0) {
+          toast.error('Cannot create group chat. Need at least 2 users (add employees or client).');
+          return;
+        }
+      }
+
+      // Generate avatar URL
+      const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        project.name
+      )}&background=ea580c&color=fff&size=128`;
+
+      // Create group chat
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/chat/group/create`,
+        {
+          users: JSON.stringify(employeeIds),
+          chatName: project.name,
+          avatar: avatar,
+        }
+      );
+
+      if (data.success && data.groupChat) {
+        toast.success('Group chat created successfully!');
+        // Redirect to chat page with the new chat
+        router.push(`/dashboard/chat?chat=${data.groupChat._id}`);
+      }
+    } catch (error: any) {
+      console.error('Failed to create group chat:', error);
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Failed to create group chat';
+      toast.error(errorMessage);
+    } finally {
+      setCreatingChat(false);
+    }
+  };
+
   const startDate = new Date(project.startDate).toLocaleDateString();
   const endDate = new Date(project.endDate).toLocaleDateString();
 
@@ -113,6 +198,10 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
                 <DropdownMenuItem onClick={() => setShowDetail(true)}>
                   <Eye className="mr-2 h-4 w-4" />
                   View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCreateGroupChat} disabled={creatingChat}>
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  {creatingChat ? 'Creating...' : 'Create Group Chat'}
                 </DropdownMenuItem>
                 {(auth.user.role === 'admin' || auth.user.role === 'dispatcher') && (
                   <>
