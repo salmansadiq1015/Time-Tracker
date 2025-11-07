@@ -580,7 +580,7 @@ export default function ChatPage() {
         `,
         }}
       />
-      <div className="fixed inset-0 z-50 bg-white">
+      <div className="fixed inset-0  z-[999989] bg-white">
         {/* Top bar */}
         <div className="h-12 border-b flex items-center justify-between px-3">
           <div className="flex items-center gap-2">

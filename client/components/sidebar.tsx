@@ -66,7 +66,7 @@ export function Sidebar() {
         className={`
         fixed md:relative w-64 h-screen bg-gradient-to-b from-[#1f1f1f] via-[#252525] to-[#1b1b1b]
         text-gray-100 border-r border-black/20 shadow-xl shadow-black/20 backdrop-blur-sm
-        transition-transform duration-300 z-[999999998]
+        transition-transform duration-300 z-[99998]
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         custom-scrollbar
       `}
