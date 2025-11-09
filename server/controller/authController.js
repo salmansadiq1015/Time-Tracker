@@ -10,11 +10,20 @@ export const createUser = async (req, res) => {
   try {
     const { name, email, password, role, phone } = req.body;
 
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password || !phone || !role) {
       return res.status(400).json({
         success: false,
         message: 'Please provide all the required fields',
         error: 'Please provide all the required fields',
+      });
+    }
+
+    const existingUser = await userModel.findOne({ phone });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User with this phone number already exists',
+        error: 'User with this phone number already exists',
       });
     }
 
@@ -46,9 +55,9 @@ export const createUser = async (req, res) => {
 // Login User
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { password, phone } = req.body;
 
-    if (!email || !password) {
+    if (!phone || !password) {
       return res.status(400).json({
         success: false,
         message: 'Please provide all the required fields',
@@ -56,7 +65,7 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne({ phone });
 
     if (!user) {
       return res.status(404).json({

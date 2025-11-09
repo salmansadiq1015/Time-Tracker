@@ -14,13 +14,13 @@ import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { auth, setAuth } = useAuthContent();
+  const { setAuth } = useAuthContent();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,7 +29,7 @@ export default function LoginPage() {
 
     try {
       const { data } = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/login`, {
-        email,
+        phone: phone.trim(),
         password,
       });
 
@@ -102,7 +102,7 @@ export default function LoginPage() {
                 Welcome Back
               </CardTitle>
               <CardDescription className="text-base mt-2 text-center text-gray-600">
-                Sign in to your account and continue tracking your time
+                Sign in with your phone number to continue tracking your time
               </CardDescription>
             </div>
           </CardHeader>
@@ -120,13 +120,15 @@ export default function LoginPage() {
               )}
 
               <div className="space-y-2.5">
-                <label className="text-sm font-semibold text-foreground">Email Address</label>
+                <label className="text-sm font-semibold text-foreground">Phone Number</label>
                 <div className="relative group">
                   <Input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                    placeholder="e.g. 9876543210"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     required
                     className="bg-input border border-border/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-200 pl-4 h-11 text-base"
                   />
