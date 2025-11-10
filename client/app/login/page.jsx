@@ -1,12 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, Clock, Loader2, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuthContent } from '../context/authContext';
@@ -20,6 +29,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
   const { setAuth } = useAuthContent();
 
   const handleLogin = async (e) => {
@@ -138,12 +148,13 @@ export default function LoginPage() {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-semibold text-foreground">Password</label>
-                  {/* <a
-                    href="#"
-                    className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
-                  >
-                    Forgot password?
-                  </a> */}
+                <button
+                  type="button"
+                  onClick={() => setForgotOpen(true)}
+                  className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+                >
+                  Forgot password?
+                </button>
                 </div>
                 <div className="relative group">
                   <Input
@@ -217,6 +228,271 @@ export default function LoginPage() {
           <p>🔒 Your data is encrypted and secure</p>
         </div>
       </div>
+
+      <ForgotPasswordDialog
+        open={forgotOpen}
+        onOpenChange={setForgotOpen}
+        initialPhone={phone}
+      />
     </div>
+  );
+}
+
+function ForgotPasswordDialog({ open, onOpenChange, initialPhone }) {
+  const [phone, setPhone] = useState(initialPhone ?? '');
+  const [step, setStep] = useState('request');
+  const [code, setCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+
+  useEffect(() => {
+    if (open) {
+      setPhone(initialPhone ?? '');
+      setStep('request');
+      setCode('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setError('');
+      setResendCooldown(0);
+    }
+  }, [open, initialPhone]);
+
+  useEffect(() => {
+    if (!open || resendCooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [resendCooldown, open]);
+
+  const handleRequestCode = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!serverUrl) {
+      setError('Server URL is not configured.');
+      return;
+    }
+
+    if (!phone.trim()) {
+      setError('Please enter your registered phone number.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${serverUrl}/api/v1/auth/forgot-password`, {
+        phone: phone.trim(),
+      });
+      toast.success('Reset code sent. Check your SMS messages.');
+      setStep('verify');
+      setResendCooldown(60);
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to send reset code. Please try again.');
+      toast.error(err?.response?.data?.message || 'Failed to send reset code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (resendCooldown > 0) return;
+    setError('');
+
+    if (!serverUrl) {
+      setError('Server URL is not configured.');
+      return;
+    }
+
+    if (!phone.trim()) {
+      setError('Please enter your registered phone number.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${serverUrl}/api/v1/auth/forgot-password`, {
+        phone: phone.trim(),
+      });
+      toast.success('A new reset code has been sent.');
+      setResendCooldown(60);
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to resend code. Please try again.');
+      toast.error(err?.response?.data?.message || 'Failed to resend code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!serverUrl) {
+      setError('Server URL is not configured.');
+      return;
+    }
+
+    if (code.trim().length !== 6) {
+      setError('Please enter the 6-digit code sent to your phone.');
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      setError('New password must be at least 6 characters long.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${serverUrl}/api/v1/auth/reset-password`, {
+        token: code.trim(),
+        newPassword,
+      });
+      toast.success('Password updated successfully. You can now sign in.');
+      onOpenChange(false);
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to reset password. Please try again.');
+      toast.error(err?.response?.data?.message || 'Failed to reset password.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Reset your password</DialogTitle>
+          <DialogDescription>
+            {step === 'request'
+              ? 'Enter your registered phone number to receive a reset code via SMS.'
+              : 'Enter the code sent to your phone and choose a new password.'}
+          </DialogDescription>
+        </DialogHeader>
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {step === 'request' ? (
+          <form onSubmit={handleRequestCode} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Phone number</label>
+              <Input
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                placeholder="e.g. 9876543210"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending code...
+                  </>
+                ) : (
+                  'Send code'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        ) : (
+          <form onSubmit={handleResetPassword} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">
+                Verification code
+              </label>
+              <InputOTP
+                value={code}
+                onChange={(value) => setCode(value)}
+                maxLength={6}
+                containerClassName="justify-start"
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+              <div className="text-xs text-muted-foreground">
+                Didn&apos;t receive the code?{' '}
+                <button
+                  type="button"
+                  onClick={handleResendCode}
+                  disabled={loading || resendCooldown > 0}
+                  className="text-primary hover:text-primary/80 font-medium disabled:opacity-60"
+                >
+                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend code'}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">New password</label>
+              <Input
+                type="password"
+                placeholder="••••••••"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Confirm password</label>
+              <Input
+                type="password"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <DialogFooter>
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating password...
+                  </>
+                ) : (
+                  'Update password'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

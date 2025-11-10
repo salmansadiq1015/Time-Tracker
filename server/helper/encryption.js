@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
-import crypto from "crypto";
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 // Hash password
 export const hashPassword = async (password) => {
@@ -15,9 +15,7 @@ export const comparePassword = async (password, hashedPassword) => {
 };
 
 // Generate random string
-export const generateRandomString = () => {
-  const resetToken = crypto.randomBytes(22).toString("hex");
-  crypto.createHash("sha256").update(resetToken).digest("hex");
-
+export const createRandomToken = () => {
+  const resetToken = crypto.randomInt(0, 1_000_000).toString().padStart(6, '0');
   return resetToken;
 };

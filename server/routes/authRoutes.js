@@ -4,7 +4,9 @@ import {
   deleteUser,
   fetchUser,
   loginUser,
+  sendResetPasswordRequest,
   updateUser,
+  updatePassword,
   uploadFile,
 } from '../controller/authController.js';
 import { isAdmin, isAuthenticated } from '../middlewares/authMiddleware.js';
@@ -17,6 +19,12 @@ router.post('/create', isAuthenticated, isAdmin, createUser);
 
 // Login User
 router.post('/login', loginUser);
+
+// Forgot Password (Phone-based OTP)
+router.post('/forgot-password', sendResetPasswordRequest);
+
+// Reset Password
+router.post('/reset-password', updatePassword);
 
 // Update User
 router.patch('/update/:id', isAuthenticated, isAdmin, updateUser);

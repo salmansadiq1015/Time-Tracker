@@ -49,6 +49,44 @@
           }
         },
         {
+          "name": "Forgot Password (Send Code)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+11234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "forgot-password"]
+            },
+            "description": "Trigger an SMS reset code to the registered phone number. Code expires after 10 minutes."
+          }
+        },
+        {
+          "name": "Reset Password (Verify Code)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"123456\",\n  \"newPassword\": \"NewPassw0rd!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "reset-password"]
+            },
+            "description": "Complete password reset using the 6-digit code received via SMS."
+          }
+        },
+        {
           "name": "Update User",
           "request": {
             "method": "PATCH",

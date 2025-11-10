@@ -1,7 +1,8 @@
-import { comparePassword, hashPassword } from '../helper/encryption.js';
+import { comparePassword, createRandomToken, hashPassword } from '../helper/encryption.js';
 import userModel from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import sendSMS from '../utils/sendSMS.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ export const createUser = async (req, res) => {
     }
 
     const existingUser = await userModel.findOne({ phone });
+
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -116,6 +118,131 @@ export const loginUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Internal Server Error',
+      error: error.message,
+    });
+  }
+};
+
+// Send Reset Password Request
+export const sendResetPasswordRequest = async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone number is required',
+        error: null,
+      });
+    }
+
+    const sanitizedPhone = phone.trim();
+
+    const user = await userModel.findOne({ phone: sanitizedPhone });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: null,
+      });
+    }
+
+    const token = createRandomToken();
+    const expireAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await userModel.findByIdAndUpdate(
+      user._id,
+      {
+        passwordResetToken: token,
+        passwordResetTokenExpire: expireAt,
+      },
+      { new: true }
+    );
+
+    try {
+      await sendSMS({
+        to: user.phone,
+        message: `Your password reset code is ${token}. It expires in 10 minutes. If you didn't request this, please ignore the message.`,
+      });
+    } catch (smsError) {
+      console.error('Failed to send SMS:', smsError);
+      return res.status(502).json({
+        success: false,
+        message: 'Unable to send reset code via SMS. Please try again later.',
+        error: smsError.message,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Reset code sent to ${user.phone}`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    });
+  }
+};
+
+// Update Password
+export const updatePassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: 'Reset password token is required',
+        error: null,
+      });
+    }
+
+    if (!newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password is required',
+        error: null,
+      });
+    }
+
+    const user = await userModel.findOne({
+      passwordResetToken: token,
+      passwordResetTokenExpire: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired token',
+        error: null,
+      });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    await userModel.findByIdAndUpdate(
+      user._id,
+      {
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetTokenExpire: null,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
       error: error.message,
     });
   }

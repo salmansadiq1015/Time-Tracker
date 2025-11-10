@@ -38,6 +38,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
     },
+    passwordResetToken: {
+      type: String,
+      default: null,
+    },
+    passwordResetTokenExpire: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );
