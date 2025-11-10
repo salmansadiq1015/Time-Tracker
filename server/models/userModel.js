@@ -46,6 +46,11 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    createdby: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      default: null,
+    },
   },
   { timestamps: true }
 );

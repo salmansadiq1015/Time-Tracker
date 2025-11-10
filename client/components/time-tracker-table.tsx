@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +9,7 @@ import {
   Edit2,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Map,
   Image as ImageIcon,
   CheckCircle2,
@@ -19,7 +20,6 @@ import {
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BiMap } from 'react-icons/bi';
-import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAuthContent } from '@/app/context/authContext';
 
@@ -30,12 +30,14 @@ interface TimeEntry {
     location: string;
     lat: number;
     lng: number;
+    photos?: string[];
   };
   end?: {
     endTime: string;
     location: string;
     lat: number;
     lng: number;
+    photos?: string[];
   };
   description: string;
   duration?: number;
@@ -49,6 +51,9 @@ interface TimeEntry {
     _id: string;
     name: string;
     email: string;
+    phone?: string;
+    role?: string;
+    status?: string;
   };
 }
 
@@ -68,6 +73,17 @@ interface TimeTrackerTableProps {
   loading?: boolean;
   pagination?: PaginationData;
   onPageChange?: (page: number) => void;
+  onFilterByUser?: (
+    userId: string,
+    userDetails?: {
+      _id: string;
+      name?: string;
+      email?: string;
+      phone?: string;
+      role?: string;
+      status?: string;
+    }
+  ) => void;
 }
 
 export function TimeTrackerTable({
@@ -77,9 +93,12 @@ export function TimeTrackerTable({
   loading = false,
   pagination,
   onPageChange,
+  onFilterByUser,
 }: TimeTrackerTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [selectedPhotos, setSelectedPhotos] = useState<string[] | null>(null);
+  const [photoModalTitle, setPhotoModalTitle] = useState<string>('Photos');
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const { auth } = useAuthContent();
 
   const formatTime = (dateString: string | null) => {
@@ -108,13 +127,24 @@ export function TimeTrackerTable({
     }
   };
 
-  const calculateDuration = (start: string | null, end?: string | null) => {
+  const getDurationDisplay = (entry: TimeEntry) => {
+    if (typeof entry.duration === 'number') {
+      const hours = entry.duration / 60;
+      if (Number.isFinite(hours) && hours > 0) {
+        return hours.toFixed(2);
+      }
+    }
+
+    const start = entry.start?.startTime;
+    const end = entry.end?.endTime;
     if (!start || !end) return null;
+
     try {
       const startTime = new Date(start).getTime();
       const endTime = new Date(end).getTime();
-      const hours = (endTime - startTime) / 3600000;
-      return hours.toFixed(2);
+      const diffHours = (endTime - startTime) / 3600000;
+      if (!Number.isFinite(diffHours) || diffHours <= 0) return null;
+      return diffHours.toFixed(2);
     } catch {
       return null;
     }
@@ -157,6 +187,146 @@ export function TimeTrackerTable({
     return client.name || client.email || '-';
   };
 
+  const normalizeCoordinate = (value: unknown): number | null => {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) return null;
+      const parsed = Number(trimmed);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+    return null;
+  };
+
+  const isValidLatLng = (lat: number | null, lng: number | null) => {
+    if (lat === null || lng === null) return false;
+    return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+  };
+
+  const openLocationOnMap = (lat?: unknown, lng?: unknown) => {
+    const normalizedLat = normalizeCoordinate(lat);
+    const normalizedLng = normalizeCoordinate(lng);
+
+    if (!isValidLatLng(normalizedLat, normalizedLng)) {
+      alert('Invalid latitude or longitude values.');
+      return;
+    }
+
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      `${normalizedLat},${normalizedLng}`
+    )}`;
+    window.open(mapsUrl, '_blank');
+  };
+
+  const openRouteInMaps = (
+    startCoords?: { lat?: unknown; lng?: unknown },
+    endCoords?: { lat?: unknown; lng?: unknown }
+  ) => {
+    const startLat = normalizeCoordinate(startCoords?.lat);
+    const startLng = normalizeCoordinate(startCoords?.lng);
+    const endLat = normalizeCoordinate(endCoords?.lat);
+    const endLng = normalizeCoordinate(endCoords?.lng);
+
+    if (!isValidLatLng(startLat, startLng) || !isValidLatLng(endLat, endLng)) {
+      alert('Start or end location missing or invalid for this entry.');
+      return;
+    }
+
+    const mapsUrl =
+      `https://www.google.com/maps/dir/?api=1` +
+      `&origin=${encodeURIComponent(`${startLat},${startLng}`)}` +
+      `&destination=${encodeURIComponent(`${endLat},${endLng}`)}` +
+      `&travelmode=driving`;
+
+    window.open(mapsUrl, '_blank');
+  };
+
+  const toggleRow = (id: string) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const openPhotoModal = (photos: string[] | undefined, title: string) => {
+    if (!photos || photos.length === 0) return;
+    setSelectedPhotos(photos);
+    setPhotoModalTitle(title);
+  };
+
+  const renderPhotoPreview = (photos: string[] | undefined, title: string) => {
+    if (!photos || photos.length === 0) {
+      return <p className="text-xs text-muted-foreground">No photos uploaded.</p>;
+    }
+
+    const previewPhotos = photos.slice(0, 3);
+
+    return (
+      <div className="flex flex-wrap gap-3">
+        {previewPhotos.map((photoUrl, idx) => (
+          <button
+            type="button"
+            key={`${title}-${idx}`}
+            onClick={() => openPhotoModal(photos, title)}
+            className="relative h-16 w-16 overflow-hidden rounded-lg border border-gray-200 shadow-sm hover:border-[#c16840] hover:shadow-md transition"
+            title={`View ${title.toLowerCase()}`}
+          >
+            <img
+              src={photoUrl}
+              alt={`${title} ${idx + 1}`}
+              className="h-full w-full object-cover"
+            />
+            {idx === previewPhotos.length - 1 && photos.length > previewPhotos.length && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                <span className="text-xs font-semibold text-white">
+                  +{photos.length - previewPhotos.length}
+                </span>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const renderLocationContent = (
+    address?: string,
+    lat?: number | null,
+    lng?: number | null,
+    fallbackLabel: string = 'Unknown'
+  ) => {
+    const hasCoords = isValidLatLng(lat ?? null, lng ?? null);
+    const cleanedAddress = address
+      ?.replace(/\r?\n|\r/g, ' ')
+      ?.replace(/\s+/g, ' ')
+      ?.trim();
+
+    let label: string | null = null;
+
+    if (hasCoords && lat != null && lng != null) {
+      label = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    } else if (cleanedAddress) {
+      label = cleanedAddress;
+    } else {
+      label = fallbackLabel;
+    }
+
+    if (hasCoords && lat != null && lng != null) {
+      return (
+        <button
+          type="button"
+          onClick={() => openLocationOnMap(lat, lng)}
+          className="text-left text-xs font-medium text-[#c16840] hover:text-[#9e4f2b] hover:underline underline-offset-2 transition"
+          title="Open in Google Maps"
+        >
+          {label}
+        </button>
+      );
+    }
+
+    return <span className="text-xs text-gray-700">{label}</span>;
+  };
+
   const validEntries = entries.filter((entry) => entry && entry._id);
 
   return (
@@ -164,43 +334,32 @@ export function TimeTrackerTable({
       <CardContent className="p-0 ">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white border-b-2 border-gray-200">
+            <thead className="bg-linear-to-r from-[#c16840] to-[#d17a4f] text-white border-b-2 border-gray-200">
               <tr>
-                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="w-12 px-4" />
+                <th className="text-left py-4 px-4 min-w-40 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   User
                 </th>
-                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-36 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Date
                 </th>
-                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-36 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Start Time
                 </th>
-                <th className="text-left py-4 px-4 font-semibold min-w-[9rem] text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold min-w-42 text-gray-50 uppercase text-xs tracking-wider">
                   Start Location
                 </th>
-                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-36 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   End Time
                 </th>
-                <th className="text-left py-4 px-4 font-semibold min-w-[9rem] text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold min-w-42 text-gray-50 uppercase text-xs tracking-wider">
                   End Location
                 </th>
                 <th className="text-right py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Duration
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider min-w-[15rem]">
+                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider min-w-60">
                   Description
-                </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
-                  Status
-                </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
-                  Client
-                </th>
-                <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
-                  Verified
-                </th>
-                <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
-                  Photo
                 </th>
                 <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Actions
@@ -212,7 +371,7 @@ export function TimeTrackerTable({
                 <>
                   {[...Array(3)].map((_, i) => (
                     <tr key={i} className="border-b border-gray-100">
-                      <td colSpan={13} className="py-4 px-4">
+                      <td colSpan={10} className="py-4 px-4">
                         <Skeleton className="h-8 w-full" />
                       </td>
                     </tr>
@@ -220,7 +379,7 @@ export function TimeTrackerTable({
                 </>
               ) : validEntries.length === 0 ? (
                 <tr>
-                  <td colSpan={13} className="py-12 px-4 text-center">
+                  <td colSpan={10} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <AlertCircle className="w-12 h-12 text-gray-400" />
                       <p className="text-gray-500 font-medium">No time entries found</p>
@@ -231,289 +390,370 @@ export function TimeTrackerTable({
                 validEntries.map((entry) => {
                   const startTime = entry.start?.startTime;
                   const endTime = entry.end?.endTime;
-                  const duration = calculateDuration(startTime, endTime);
+                  const duration = getDurationDisplay(entry);
+                  const startLat = normalizeCoordinate(entry.start?.lat);
+                  const startLng = normalizeCoordinate(entry.start?.lng);
+                  const endLat = normalizeCoordinate(entry.end?.lat);
+                  const endLng = normalizeCoordinate(entry.end?.lng);
+                  const startPhotos = entry.start?.photos || [];
+                  const endPhotos = entry.end?.photos || [];
+                  const startPhotoSet = new Set(startPhotos);
+                  const endPhotoSet = new Set(endPhotos);
+                  const additionalPhotos =
+                    entry.photos?.filter(
+                      (photo) => !startPhotoSet.has(photo) && !endPhotoSet.has(photo)
+                    ) || [];
 
                   return (
-                    <tr
-                      key={entry._id}
-                      className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                        entry.isActive ? 'bg-orange-50/50' : ''
-                      }`}
-                    >
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <User className="w-4 h-4 text-gray-400" />
-                          <span className="font-medium text-gray-900 capitalize">
-                            {entry.user?.name || 'N/A'}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div
-                          className="text-gray-600 text-xs font-mono cursor-pointer hover:text-[#c16840] transition-colors"
-                          onClick={() => {
-                            const start = entry.start;
-                            const end = entry.end;
-
-                            if (
-                              start?.lat != null &&
-                              start?.lng != null &&
-                              end?.lat != null &&
-                              end?.lng != null
-                            ) {
-                              // Parse coords as floats
-                              const originLat =
-                                typeof start.lat === 'string' ? parseFloat(start.lat) : start.lat;
-                              const originLng =
-                                typeof start.lng === 'string' ? parseFloat(start.lng) : start.lng;
-                              const destLat =
-                                typeof end.lat === 'string' ? parseFloat(end.lat) : end.lat;
-                              const destLng =
-                                typeof end.lng === 'string' ? parseFloat(end.lng) : end.lng;
-
-                              // Validate they are numbers and within valid lat/lng ranges
-                              if (
-                                !isNaN(originLat) &&
-                                !isNaN(originLng) &&
-                                originLat >= -90 &&
-                                originLat <= 90 &&
-                                originLng >= -180 &&
-                                originLng <= 180 &&
-                                !isNaN(destLat) &&
-                                !isNaN(destLng) &&
-                                destLat >= -90 &&
-                                destLat <= 90 &&
-                                destLng >= -180 &&
-                                destLng <= 180
-                              ) {
-                                const mapsUrl =
-                                  `https://www.google.com/maps/dir/?api=1` +
-                                  `&origin=${encodeURIComponent(originLat + ',' + originLng)}` +
-                                  `&destination=${encodeURIComponent(destLat + ',' + destLng)}` +
-                                  `&travelmode=driving`;
-
-                                window.open(mapsUrl, '_blank');
-                              } else {
-                                alert('Invalid latitude or longitude values.');
-                              }
-                            } else {
-                              alert('Start or end location missing for this entry.');
+                    <Fragment key={entry._id}>
+                      <tr
+                        className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+                          entry.isActive ? 'bg-orange-50/50' : ''
+                        }`}
+                      >
+                        <td className="py-4 px-4 align-top">
+                          <button
+                            type="button"
+                            onClick={() => toggleRow(entry._id)}
+                            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:border-[#c16840] hover:text-[#c16840] transition"
+                            aria-label={
+                              expandedRows[entry._id] ? 'Collapse details' : 'Expand details'
                             }
-                          }}
-                        >
-                          {formatDate(startTime)}
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-gray-400" />
-                          <span className="text-gray-700 text-xs font-mono">
-                            {formatTime(startTime)}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-1 max-w-[200px]">
-                          <MapPin className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                          <span
-                            className="text-gray-700 text-xs truncate"
-                            title={entry.start?.location || 'Unknown'}
                           >
-                            {entry.start?.location || 'Unknown'}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        {endTime ? (
+                            {expandedRows[entry._id] ? (
+                              <ChevronDown className="h-4 w-4" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4" />
+                            )}
+                          </button>
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2">
+                            <User className="w-4 h-4 text-gray-400" />
+                            <div className="min-w-0">
+                              {entry.user?._id ? (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    entry.user?._id &&
+                                    onFilterByUser?.(entry.user._id, {
+                                      _id: entry.user._id,
+                                      name: entry.user.name,
+                                      email: entry.user.email,
+                                      phone: entry.user.phone,
+                                      role: entry.user.role,
+                                      status: entry.user.status,
+                                    })
+                                  }
+                                  className="text-left text-sm font-semibold text-[#c16840] hover:text-[#9e4f2b] hover:underline underline-offset-2 transition truncate"
+                                  title="Filter timers by this user"
+                                >
+                                  {entry.user?.name || 'Unknown'}
+                                </button>
+                              ) : (
+                                <span className="text-sm font-medium text-gray-700">N/A</span>
+                              )}
+                              {entry.user?.email && (
+                                <p className="text-xs text-gray-500 truncate">{entry.user.email}</p>
+                              )}
+                              {entry.user?.role && (
+                                <p className="text-[11px] uppercase tracking-wide text-gray-400">
+                                  {entry.user.role}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          <button
+                            type="button"
+                            className="text-gray-600 text-xs font-mono hover:text-[#c16840] transition-colors"
+                            onClick={() => openRouteInMaps(entry.start, entry.end)}
+                          >
+                            {formatDate(startTime)}
+                          </button>
+                        </td>
+                        <td className="py-4 px-4">
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3 text-gray-400" />
                             <span className="text-gray-700 text-xs font-mono">
-                              {formatTime(endTime)}
+                              {formatTime(startTime)}
                             </span>
                           </div>
-                        ) : (
-                          <span className="text-gray-400 text-xs">-</span>
-                        )}
-                      </td>
-                      <td className="py-4 px-4">
-                        {entry.end?.location ? (
-                          <div className="flex items-center gap-1 max-w-[200px]">
-                            <MapPin className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                            <span
-                              className="text-gray-700 text-xs truncate"
-                              title={entry.end.location}
-                            >
-                              {entry.end.location}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-gray-400 text-xs">-</span>
-                        )}
-                      </td>
-                      <td className="py-4 px-4 text-right">
-                        {duration ? (
-                          <span className="font-bold text-[#c16840] text-sm">{duration}h</span>
-                        ) : (
-                          <span className="text-gray-400 text-xs">-</span>
-                        )}
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2 max-w-[250px]">
-                          <span
-                            className="text-gray-800 text-sm truncate line-clamp-2"
-                            title={entry.description}
-                          >
-                            {entry.description || 'Untitled'}
-                          </span>
-                          {entry.isActive && (
-                            <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full border border-orange-200">
-                              Active
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">{getStatusBadge(entry.status)}</td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-1 max-w-[150px]">
-                          <User className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                          <span
-                            className="text-gray-700 text-xs truncate"
-                            title={getClientName(entry.client)}
-                          >
-                            {getClientName(entry.client)}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4 text-center">
-                        {entry.verifiedByClient ? (
-                          <CheckCircle2 className="w-5 h-5 text-green-500 mx-auto" />
-                        ) : (
-                          <XCircle className="w-5 h-5 text-gray-300 mx-auto" />
-                        )}
-                      </td>
-                      <td className="py-4 px-4 text-center">
-                        {entry.photos && entry.photos.length > 0 ? (
-                          <button
-                            onClick={() => {
-                              setSelectedPhotos(entry.photos || []);
-                            }}
-                            className="relative group"
-                            title={`Click to view all ${entry.photos.length} photo(s)`}
-                          >
-                            <div className="relative">
-                              <img
-                                src={entry.photos[0]}
-                                alt="Photo"
-                                className="w-12 h-12 object-cover rounded-lg border-2 border-gray-200 hover:border-[#c16840] transition-all cursor-pointer shadow-sm hover:shadow-md"
-                              />
-                              {entry.photos.length > 1 && (
-                                <div className="absolute -top-1 -right-1 bg-[#c16840] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white shadow-sm">
-                                  {entry.photos.length}
-                                </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-start gap-2 max-w-[220px]">
+                            <MapPin className="w-3 h-3 text-gray-400 shrink-0 mt-0.5" />
+                            <div className="space-y-1">
+                              {renderLocationContent(entry.start?.location, startLat, startLng)}
+                              {!isValidLatLng(startLat, startLng) && (
+                                <p className="text-[11px] text-gray-400">Lat/Lng unavailable</p>
                               )}
                             </div>
-                          </button>
-                        ) : (
-                          <span className="text-gray-400 text-xs">-</span>
-                        )}
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex justify-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              const start = entry.start;
-                              const end = entry.end;
-
-                              if (
-                                start?.lat != null &&
-                                start?.lng != null &&
-                                end?.lat != null &&
-                                end?.lng != null
-                              ) {
-                                const originLat =
-                                  typeof start.lat === 'string'
-                                    ? parseFloat(start.lat)
-                                    : Number(start.lat);
-                                const originLng =
-                                  typeof start.lng === 'string'
-                                    ? parseFloat(start.lng)
-                                    : Number(start.lng);
-                                const destLat =
-                                  typeof end.lat === 'string'
-                                    ? parseFloat(end.lat)
-                                    : Number(end.lat);
-                                const destLng =
-                                  typeof end.lng === 'string'
-                                    ? parseFloat(end.lng)
-                                    : Number(end.lng);
-
-                                if (
-                                  !isNaN(originLat) &&
-                                  !isNaN(originLng) &&
-                                  originLat >= -90 &&
-                                  originLat <= 90 &&
-                                  originLng >= -180 &&
-                                  originLng <= 180 &&
-                                  !isNaN(destLat) &&
-                                  !isNaN(destLng) &&
-                                  destLat >= -90 &&
-                                  destLat <= 90 &&
-                                  destLng >= -180 &&
-                                  destLng <= 180
-                                ) {
-                                  const mapsUrl =
-                                    `https://www.google.com/maps/dir/?api=1` +
-                                    `&origin=${encodeURIComponent(originLat + ',' + originLng)}` +
-                                    `&destination=${encodeURIComponent(destLat + ',' + destLng)}` +
-                                    `&travelmode=driving`;
-
-                                  window.open(mapsUrl, '_blank');
-                                } else {
-                                  alert('Invalid latitude or longitude values.');
-                                }
-                              } else {
-                                alert('Start or end location missing for this entry.');
-                              }
-                            }}
-                            className="text-yellow-600 hover:bg-yellow-50 h-8 w-8 rounded-lg transition-colors"
-                            title="View on Map"
-                          >
-                            <BiMap className="w-4 h-4" />
-                          </Button>
-
-                          {(auth.user.role === 'admin' ||
-                            auth.user.role === 'dispatcher' ||
-                            auth.user.role === 'client') && (
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          {endTime ? (
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-gray-400" />
+                              <span className="text-gray-700 text-xs font-mono">
+                                {formatTime(endTime)}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-xs">-</span>
+                          )}
+                        </td>
+                        <td className="py-4 px-4">
+                          {entry.end?.location || isValidLatLng(endLat, endLng) ? (
+                            <div className="flex items-start gap-2 max-w-[220px]">
+                              <MapPin className="w-3 h-3 text-gray-400 shrink-0 mt-0.5" />
+                              <div className="space-y-1">
+                                {renderLocationContent(entry.end?.location, endLat, endLng)}
+                                {entry.end?.location && !isValidLatLng(endLat, endLng) && (
+                                  <p className="text-[11px] text-gray-400">Lat/Lng unavailable</p>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-xs">-</span>
+                          )}
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          {duration ? (
+                            <span className="font-bold text-[#c16840] text-sm">{duration}h</span>
+                          ) : (
+                            <span className="text-gray-400 text-xs">-</span>
+                          )}
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2 max-w-[250px]">
+                            <span
+                              className="text-gray-800 text-sm truncate line-clamp-2"
+                              title={entry.description}
+                            >
+                              {entry.description || 'Untitled'}
+                            </span>
+                            {entry.isActive && (
+                              <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full border border-orange-200">
+                                Active
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="flex justify-center gap-1">
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => onEdit(entry)}
-                              className="text-blue-600 hover:bg-blue-50 h-8 w-8 rounded-lg transition-colors"
-                              title="Edit Entry"
+                              onClick={() => openRouteInMaps(entry.start, entry.end)}
+                              className="text-yellow-600 hover:bg-yellow-50 h-8 w-8 rounded-lg transition-colors"
+                              title="View on Map"
                             >
-                              <Edit2 className="w-4 h-4" />
+                              <BiMap className="w-4 h-4" />
                             </Button>
-                          )}
-                          {(auth.user.role === 'admin' || auth.user.role === 'dispatcher') && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                setDeletingId(entry._id);
-                                onDelete(entry._id);
-                              }}
-                              disabled={deletingId === entry._id}
-                              className="text-red-600 hover:bg-red-50 h-8 w-8 rounded-lg transition-colors disabled:opacity-50"
-                              title="Delete Entry"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
+
+                            {(auth.user.role === 'admin' ||
+                              auth.user.role === 'dispatcher' ||
+                              auth.user.role === 'client') && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => onEdit(entry)}
+                                className="text-blue-600 hover:bg-blue-50 h-8 w-8 rounded-lg transition-colors"
+                                title="Edit Entry"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </Button>
+                            )}
+                            {(auth.user.role === 'admin' || auth.user.role === 'dispatcher') && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  setDeletingId(entry._id);
+                                  onDelete(entry._id);
+                                }}
+                                disabled={deletingId === entry._id}
+                                className="text-red-600 hover:bg-red-50 h-8 w-8 rounded-lg transition-colors disabled:opacity-50"
+                                title="Delete Entry"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                      {expandedRows[entry._id] && (
+                        <tr className="bg-gray-50/70">
+                          <td colSpan={10} className="px-6 py-5">
+                            <div className="flex flex-col gap-6">
+                              <div className="flex flex-wrap items-center justify-between gap-3">
+                                <div className="space-y-1">
+                                  <p className="text-xs uppercase tracking-wide text-gray-500">
+                                    Selected Timer
+                                  </p>
+                                  <h4 className="text-lg font-semibold text-gray-900">
+                                    {entry.description || 'Untitled'}
+                                  </h4>
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-2"
+                                    onClick={() => openRouteInMaps(entry.start, entry.end)}
+                                  >
+                                    <Map className="h-4 w-4" />
+                                    View Route
+                                  </Button>
+                                  {startPhotos.length > 0 && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="gap-2"
+                                      onClick={() => openPhotoModal(startPhotos, 'Start Photos')}
+                                    >
+                                      <ImageIcon className="h-4 w-4" />
+                                      Start Photos
+                                    </Button>
+                                  )}
+                                  {endPhotos.length > 0 && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="gap-2"
+                                      onClick={() => openPhotoModal(endPhotos, 'End Photos')}
+                                    >
+                                      <ImageIcon className="h-4 w-4" />
+                                      End Photos
+                                    </Button>
+                                  )}
+                                  {additionalPhotos.length > 0 && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="gap-2"
+                                      onClick={() =>
+                                        openPhotoModal(additionalPhotos, 'Additional Photos')
+                                      }
+                                    >
+                                      <ImageIcon className="h-4 w-4" />
+                                      Extra Photos
+                                    </Button>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="grid gap-6 md:grid-cols-2">
+                                <div className="space-y-3">
+                                  <h5 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                                    <Clock className="h-4 w-4 text-[#c16840]" />
+                                    Start Details
+                                  </h5>
+                                  <div className="space-y-1 text-sm text-gray-700">
+                                    <p>
+                                      <span className="font-medium text-gray-900">Time:</span>{' '}
+                                      {formatDate(startTime)} • {formatTime(startTime)}
+                                    </p>
+                                    <div className="flex flex-col gap-1">
+                                      <span className="font-medium text-gray-900">Location:</span>
+                                      {renderLocationContent(
+                                        entry.start?.location,
+                                        startLat,
+                                        startLng
+                                      )}
+                                      {!isValidLatLng(startLat, startLng) && (
+                                        <span className="text-[11px] text-gray-400">
+                                          Lat/Lng unavailable
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
+                                      Start Photos
+                                    </p>
+                                    {renderPhotoPreview(startPhotos, 'Start Photos')}
+                                  </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                  <h5 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                                    <Clock className="h-4 w-4 text-[#c16840]" />
+                                    End Details
+                                  </h5>
+                                  <div className="space-y-1 text-sm text-gray-700">
+                                    <p>
+                                      <span className="font-medium text-gray-900">Time:</span>{' '}
+                                      {endTime
+                                        ? `${formatDate(endTime)} • ${formatTime(endTime)}`
+                                        : 'N/A'}
+                                    </p>
+                                    <div className="flex flex-col gap-1">
+                                      <span className="font-medium text-gray-900">Location:</span>
+                                      {renderLocationContent(entry.end?.location, endLat, endLng)}
+                                      {entry.end?.location && !isValidLatLng(endLat, endLng) && (
+                                        <span className="text-[11px] text-gray-400">
+                                          Lat/Lng unavailable
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
+                                      End Photos
+                                    </p>
+                                    {renderPhotoPreview(endPhotos, 'End Photos')}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {additionalPhotos.length > 0 && (
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
+                                    Uploaded Photos
+                                  </p>
+                                  {renderPhotoPreview(additionalPhotos, 'Additional Photos')}
+                                </div>
+                              )}
+
+                              <div className="grid gap-4 md:grid-cols-3">
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
+                                    Status
+                                  </p>
+                                  {getStatusBadge(entry.status)}
+                                </div>
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
+                                    Client
+                                  </p>
+                                  <div className="flex items-center gap-1 text-sm text-gray-700">
+                                    <User className="h-3 w-3 text-gray-400 shrink-0" />
+                                    <span>{getClientName(entry.client)}</span>
+                                  </div>
+                                </div>
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
+                                    Verified
+                                  </p>
+                                  {entry.verifiedByClient ? (
+                                    <span className="inline-flex items-center gap-1 text-sm text-green-600">
+                                      <CheckCircle2 className="h-4 w-4" /> Approved
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 text-sm text-gray-500">
+                                      <XCircle className="h-4 w-4" /> Pending
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   );
                 })
               )}
@@ -590,10 +830,10 @@ export function TimeTrackerTable({
         onOpenChange={(open) => !open && setSelectedPhotos(null)}
       >
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-white">
-          <DialogHeader className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white -m-6 mb-4 p-6 rounded-t-lg">
+          <DialogHeader className="bg-linear-to-r from-[#c16840] to-[#d17a4f] text-white -m-6 mb-4 p-6 rounded-t-lg">
             <DialogTitle className="text-white flex items-center gap-2">
               <ImageIcon className="w-5 h-5" />
-              Photos ({selectedPhotos?.length || 0})
+              {photoModalTitle} ({selectedPhotos?.length || 0})
             </DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">

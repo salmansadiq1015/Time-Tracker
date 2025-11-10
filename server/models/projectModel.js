@@ -1,36 +1,38 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const projectSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, index: true },
-    client: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-      required: true,
-      index: true,
-    },
-    employees:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"users"
-    }],
+    // client: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'users',
+    //   required: false,
+    //   index: false,
+    // },
+    employees: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+      },
+    ],
     address: {
-        type:String,
+      type: String,
     },
     city: {
-       type:String,
+      type: String,
     },
     description: String,
     startDate: Date,
     endDate: Date,
     tags: [String],
-    
+
     isActive: { type: Boolean, default: true },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   },
   { timestamps: true }
 );
 
 // text index for quick search
-projectSchema.index({ name: "text", description: "text" });
+projectSchema.index({ name: 'text', description: 'text' });
 
-export default mongoose.model("Project", projectSchema);
+export default mongoose.model('Project', projectSchema);

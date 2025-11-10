@@ -319,7 +319,7 @@ export default function ProjectDashboard() {
               <div className="rounded-xl border border-amber-200 bg-white p-6 shadow-sm space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Client Filter */}
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-medium text-foreground mb-2">Client</label>
                     <select
                       value={client}
@@ -333,7 +333,7 @@ export default function ProjectDashboard() {
                         </option>
                       ))}
                     </select>
-                  </div>
+                  </div> */}
 
                   {/* Employee Filter */}
                   <div>

@@ -27,6 +27,7 @@ const timerModelSchema = new mongoose.Schema(
         type: Number,
         required: true,
       },
+      photos: [{ type: String }],
     },
     end: {
       endTime: {
@@ -44,6 +45,7 @@ const timerModelSchema = new mongoose.Schema(
         type: Number,
         required: false,
       },
+      photos: [{ type: String }],
     },
     durationMinutes: { type: Number, default: 0 },
     description: {

@@ -119,7 +119,7 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
           className="w-full px-4 py-2 bg-gray-50 border-2 border-gray-300 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
         >
           <option value="user">User</option>
-          <option value="client">Client</option>
+          {/* <option value="client">Client</option> */}
           <option value="dispatcher">Dispatcher</option>
           <option value="admin">Admin</option>
         </select>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { CalendarX, Clock, Play, Users, Download } from 'lucide-react';
+import { CalendarX, Clock, Play, Users } from 'lucide-react';
 import { TimeTrackerForm } from '@/components/time-tracker-form';
 import { ActiveTimerDisplay } from '@/components/active-timer-display';
 import axios from 'axios';
@@ -13,6 +13,7 @@ import { TimeTrackerTable } from '@/components/time-tracker-table';
 import { EditTimerModal } from '@/components/edit-timer-modal';
 import { AdvancedFilters } from '@/components/timer-filters';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { PiClipboardTextBold } from 'react-icons/pi';
 import { ExportButtons } from '@/components/export-button';
 
@@ -23,12 +24,14 @@ interface TimeEntry {
     location: string;
     lat: number;
     lng: number;
+    photos?: string[];
   };
   end?: {
     endTime: string;
     location: string;
     lat: number;
     lng: number;
+    photos?: string[];
   };
   description: string;
   duration?: number;
@@ -42,6 +45,9 @@ interface TimeEntry {
     _id: string;
     name: string;
     email: string;
+    phone?: string;
+    role?: string;
+    status?: string;
   };
 }
 
@@ -60,6 +66,15 @@ interface FilterState {
   endDate: string;
   searchQuery?: string;
   dateRange: string;
+}
+
+interface SelectedUserDetails {
+  _id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  status?: string;
 }
 
 export default function TimeTrackerPage() {
@@ -90,6 +105,7 @@ export default function TimeTrackerPage() {
   });
 
   const [users, setUsers] = useState<any[]>([]);
+  const [selectedUserDetails, setSelectedUserDetails] = useState<SelectedUserDetails | null>(null);
   const { auth } = useAuthContent();
 
   // Check if mobile
@@ -159,6 +175,77 @@ export default function TimeTrackerPage() {
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  const handleFilterByUser = (userId: string, userInfo?: SelectedUserDetails) => {
+    if (!userId) return;
+
+    setFilters((prev) => ({
+      ...prev,
+      selectedUser: userId,
+    }));
+
+    if (userInfo) {
+      setSelectedUserDetails({
+        _id: userId,
+        name: userInfo.name,
+        email: userInfo.email,
+        phone: userInfo.phone,
+        role: userInfo.role,
+        status: userInfo.status,
+      });
+    }
+
+    setPage(1);
+  };
+
+  const clearUserFilter = () => {
+    setFilters((prev) => ({
+      ...prev,
+      selectedUser: '',
+    }));
+    setSelectedUserDetails(null);
+    setPage(1);
+  };
+
+  useEffect(() => {
+    if (!filters.selectedUser) {
+      setSelectedUserDetails(null);
+      return;
+    }
+
+    setSelectedUserDetails((prev) => {
+      const entryMatch = entries.find((entry) => entry.user?._id === filters.selectedUser)?.user;
+      const userMatch = users.find((user) => user._id === filters.selectedUser);
+      const source = entryMatch || userMatch;
+
+      if (!source) {
+        return prev || null;
+      }
+
+      const nextDetails: SelectedUserDetails = {
+        _id: filters.selectedUser,
+        name: source.name,
+        email: source.email,
+        phone: source.phone,
+        role: source.role,
+        status: source.status,
+      };
+
+      if (
+        prev &&
+        prev._id === nextDetails._id &&
+        prev.name === nextDetails.name &&
+        prev.email === nextDetails.email &&
+        prev.phone === nextDetails.phone &&
+        prev.role === nextDetails.role &&
+        prev.status === nextDetails.status
+      ) {
+        return prev;
+      }
+
+      return nextDetails;
+    });
+  }, [filters.selectedUser, entries, users]);
 
   // Handle Starting Timer
   const handleStartTimer = async (data: any) => {
@@ -290,6 +377,9 @@ export default function TimeTrackerPage() {
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
     setPage(1);
+    if (!newFilters.selectedUser) {
+      setSelectedUserDetails(null);
+    }
   };
 
   const handleResetFilters = () => {
@@ -301,6 +391,7 @@ export default function TimeTrackerPage() {
       dateRange: '',
     });
     setPage(1);
+    setSelectedUserDetails(null);
   };
 
   const formatDuration = (minutes: number) => {
@@ -408,6 +499,49 @@ export default function TimeTrackerPage() {
             <ActiveTimerDisplay activeTimer={activeTimer} onStop={handleStopTimer} />
           )}
 
+          {/* Selected User Summary */}
+          {selectedUserDetails && (
+            <Card className="border-amber-200 bg-amber-50/50 shadow-sm">
+              <CardContent className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4">
+                <div className="space-y-1">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Showing entries for
+                  </p>
+                  <h3 className="text-xl font-semibold text-foreground">
+                    {selectedUserDetails.name || 'Unknown User'}
+                  </h3>
+                  <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
+                    {selectedUserDetails.email && <span>Email: {selectedUserDetails.email}</span>}
+                    {selectedUserDetails.phone && <span>Phone: {selectedUserDetails.phone}</span>}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedUserDetails.role && (
+                      <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+                        {selectedUserDetails.role}
+                      </Badge>
+                    )}
+                    {selectedUserDetails.status && (
+                      <Badge
+                        variant={
+                          selectedUserDetails.status === 'active' ? 'outline' : 'destructive'
+                        }
+                      >
+                        {selectedUserDetails.status}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={clearUserFilter}
+                  className="self-start md:self-auto"
+                >
+                  Clear user filter
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Advanced Filters */}
           <AdvancedFilters
             filters={filters}
@@ -435,6 +569,7 @@ export default function TimeTrackerPage() {
               loading={loading}
               pagination={pagination || undefined}
               onPageChange={(newPage) => setPage(newPage)}
+              onFilterByUser={handleFilterByUser}
             />
           ) : (
             <TimeTrackerTable
@@ -444,6 +579,7 @@ export default function TimeTrackerPage() {
               loading={loading}
               pagination={pagination || undefined}
               onPageChange={(newPage) => setPage(newPage)}
+              onFilterByUser={handleFilterByUser}
             />
           )}
         </div>

@@ -76,9 +76,9 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
         const client = data.results?.users.find((user: any) => user._id === project.client);
         console.log('client:', client);
 
-      if (client) {
-        setSelectedClient(client.name);
-      }
+        if (client) {
+          setSelectedClient(client.name);
+        }
       } catch (error) {
         console.error('Failed to fetch clients:', error);
       } finally {
@@ -198,7 +198,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
 
           {/* Client Name */}
           {/* Client Selection Section */}
-          <div className="rounded-lg border border-amber-100 bg-white p-4">
+          {/* <div className="rounded-lg border border-amber-100 bg-white p-4">
             <div className="flex items-center gap-2 mb-3">
               <Building2 className="h-5 w-5 text-amber-600" />
               <Label className="text-sm font-semibold text-amber-900">Select Client *</Label>
@@ -237,8 +237,6 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                   </button>
                 )}
               </div>
-
-              {/* Client Dropdown */}
               {showClientDropdown && (
                 <div className="absolute top-full left-0 right-0 z-50 mt-2 max-h-64 overflow-y-auto rounded-lg border-2 border-amber-200 bg-white shadow-lg">
                   {clientsLoading ? (
@@ -269,7 +267,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
             {errors.client && (
               <p className="mt-2 text-xs text-destructive font-medium">{errors.client}</p>
             )}
-          </div>
+          </div> */}
 
           {/* Address & Location */}
           <div className="grid gap-4 sm:grid-cols-2">

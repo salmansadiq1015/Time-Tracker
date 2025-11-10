@@ -580,7 +580,7 @@ export default function ChatPage() {
         `,
         }}
       />
-      <div className="fixed inset-0  z-[999989] bg-white">
+      <div className="fixed inset-0  z-999989 bg-white">
         {/* Top bar */}
         <div className="h-12 border-b flex items-center justify-between px-3">
           <div className="flex items-center gap-2">
@@ -671,7 +671,7 @@ export default function ChatPage() {
                         active ? 'bg-gray-50' : ''
                       }`}
                     >
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-rose-400 flex items-center justify-center text-white text-sm">
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-amber-400 to-rose-400 flex items-center justify-center text-white text-sm">
                         {c.isGroupChat ? <Users className="w-4 h-4" /> : (title || '?').slice(0, 1)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -804,7 +804,12 @@ export default function ChatPage() {
                 messages.map((m) => {
                   const mine = String(m?.sender?._id) === String(userId);
                   const currentChat = chats.find((c) => c._id === selectedChatId);
-                  const showSender = currentChat?.isGroupChat && !mine;
+                  const otherParticipant = currentChat?.users?.find((u) => u._id !== userId);
+                  const showSender =
+                    !mine &&
+                    (currentChat?.isGroupChat
+                      ? true
+                      : Boolean(otherParticipant?.name || otherParticipant?.email));
 
                   // Check if message is read (not in unreadMessages for other users)
                   const isRead =
@@ -825,7 +830,10 @@ export default function ChatPage() {
                       >
                         {showSender && (
                           <div className="text-[11px] font-semibold text-gray-500 mb-1">
-                            {m?.sender?.name || 'Member'}
+                            {m?.sender?.name ||
+                              otherParticipant?.name ||
+                              otherParticipant?.email ||
+                              'Member'}
                           </div>
                         )}
                         {m.contentType === 'image' ? (
@@ -839,12 +847,12 @@ export default function ChatPage() {
                             href={m.content}
                             target="_blank"
                             rel="noreferrer"
-                            className="underline break-words"
+                            className="underline wrap-break-word"
                           >
                             Download file
                           </a>
                         ) : (
-                          <div className="whitespace-pre-wrap break-words">{m.content}</div>
+                          <div className="whitespace-pre-wrap wrap-break-word">{m.content}</div>
                         )}
                         {/* Reactions row */}
                         {Array.isArray(m.reactions) && m.reactions.length > 0 && (
@@ -893,7 +901,7 @@ export default function ChatPage() {
                               <button
                                 key={e}
                                 onClick={() => sendReaction(m._id, e)}
-                                className="relative text-lg leading-none p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-125 active:scale-95 flex-shrink-0"
+                                className="relative text-lg leading-none p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-125 active:scale-95 shrink-0"
                                 style={{
                                   transform: 'perspective(1000px) rotateX(0deg)',
                                 }}
@@ -970,7 +978,7 @@ export default function ChatPage() {
                   😊
                 </Button>
                 {emojiOpen && (
-                  <div className="absolute bottom-12 left-0 bg-white border rounded-md shadow-md p-2 grid grid-cols-4 gap-1 w-[10rem]">
+                  <div className="absolute bottom-12 left-0 bg-white border rounded-md shadow-md p-2 grid grid-cols-4 gap-1 w-40">
                     {['😀', '😂', '😍', '👍', '🙌', '🎉', '🙏', '🔥'].map((e) => (
                       <button
                         key={e}
@@ -1053,7 +1061,7 @@ export default function ChatPage() {
                           active ? 'bg-gray-50' : ''
                         }`}
                       >
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-rose-400 flex items-center justify-center text-white text-sm">
+                        <div className="w-10 h-10 rounded-full bg-linear-to-br from-amber-400 to-rose-400 flex items-center justify-center text-white text-sm">
                           {c.isGroupChat ? (
                             <Users className="w-4 h-4" />
                           ) : (
@@ -1094,7 +1102,7 @@ export default function ChatPage() {
               onClick={() => setGroupModalOpen(false)}
             />
             <div className="absolute inset-0 m-auto w-[95%] max-w-xl max-h-[97vh] bg-white rounded-lg shadow-xl flex flex-col overflow-hidden">
-              <div className="p-4 border-b flex items-center justify-between flex-shrink-0">
+              <div className="p-4 border-b flex items-center justify-between shrink-0">
                 <div className="font-semibold">Create group</div>
                 <Button
                   variant="ghost"
@@ -1230,7 +1238,7 @@ export default function ChatPage() {
                   </div>
                 </div>
               </div>
-              <div className="p-4 border-t flex justify-end gap-2 flex-shrink-0">
+              <div className="p-4 border-t flex justify-end gap-2 shrink-0">
                 <Button variant="ghost" onClick={() => setGroupModalOpen(false)}>
                   Cancel
                 </Button>

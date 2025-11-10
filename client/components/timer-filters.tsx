@@ -91,11 +91,45 @@ export function AdvancedFilters({
     };
   };
 
+  const generateMonthOptions = () => {
+    const options: { label: string; value: string }[] = [];
+    const now = new Date();
+
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = date.toLocaleString(undefined, { month: 'long', year: 'numeric' });
+      const value = `month:${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      options.push({ label, value });
+    }
+
+    return options;
+  };
+
+  const monthOptions = generateMonthOptions();
+
   const handleDateRangeChange = (range: string) => {
     if (range === 'custom') {
       onFilterChange({ ...filters, dateRange: range });
     } else if (range === '') {
       onFilterChange({ ...filters, dateRange: '', startDate: '', endDate: '' });
+    } else if (range.startsWith('month:')) {
+      const [, payload] = range.split(':');
+      const [yearStr, monthStr] = payload.split('-');
+      const year = Number(yearStr);
+      const monthIndex = Number(monthStr) - 1;
+
+      if (!Number.isNaN(year) && !Number.isNaN(monthIndex)) {
+        const start = new Date(year, monthIndex, 1);
+        const end = new Date(year, monthIndex + 1, 0);
+        onFilterChange({
+          ...filters,
+          dateRange: range,
+          startDate: formatLocalDate(start),
+          endDate: formatLocalDate(end),
+        });
+      } else {
+        onFilterChange({ ...filters, dateRange: range });
+      }
     } else {
       const { startDate, endDate } = getDateRange(range);
       onFilterChange({ ...filters, dateRange: range, startDate, endDate });
@@ -191,6 +225,15 @@ export function AdvancedFilters({
                 <option value="last15days">Last 15 Days</option>
                 <option value="last30days">Last 30 Days</option>
                 <option value="custom">Custom Date Range</option>
+                {monthOptions.length > 0 && (
+                  <optgroup label="By Month">
+                    {monthOptions.map((month) => (
+                      <option key={month.value} value={month.value}>
+                        {month.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
               </select>
             </div>
 

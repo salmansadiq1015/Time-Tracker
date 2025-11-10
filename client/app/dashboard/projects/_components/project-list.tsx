@@ -210,7 +210,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
             <TableHeader>
               <TableRow className="bg-gradient-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 hover:bg-amber-600/15 border-b-2 border-amber-200">
                 <TableHead className="h-16 px-6 font-bold text-base">Project Name</TableHead>
-                <TableHead className="h-16 px-6 font-bold text-base">Client</TableHead>
+                {/* <TableHead className="h-16 px-6 font-bold text-base">Client</TableHead> */}
                 <TableHead className="h-16 px-6 font-bold text-base">Location</TableHead>
                 <TableHead className="h-16 px-6 font-bold text-base">Dates</TableHead>
                 <TableHead className="h-16 px-6 font-bold text-base">Team Size</TableHead>
@@ -224,9 +224,9 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                   <TableCell>
                     <Skeleton className="h-5 w-32" />
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Skeleton className="h-5 w-24" />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Skeleton className="h-5 w-28" />
                   </TableCell>
@@ -287,7 +287,6 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
               <TableHeader>
                 <TableRow className="bg-gradient-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 hover:bg-amber-600/15 border-b-2 border-amber-200">
                   <TableHead className="h-16 px-6 font-bold text-base">Project Name</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base">Client</TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base">Location</TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base">Dates</TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base">Team Size</TableHead>
@@ -332,7 +331,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="px-6 py-4">
+                      {/* <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
                           <span className="text-sm text-foreground font-medium truncate max-w-[150px]">
@@ -341,7 +340,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                               : project.client || 'N/A'}
                           </span>
                         </div>
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-amber-600 shrink-0" />

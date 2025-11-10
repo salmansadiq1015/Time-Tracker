@@ -13,11 +13,16 @@ export const startTimer = async (req, res) => {
       });
     }
 
+    const startPhotos = Array.isArray(photos) ? photos : [];
+
     const timer = await timerModel.create({
       user: user ? user : req.user._id,
-      start,
+      start: {
+        ...start,
+        photos: startPhotos,
+      },
       description,
-      photos,
+      photos: startPhotos,
       isActive: true,
     });
 
@@ -52,16 +57,24 @@ export const stopTimer = async (req, res) => {
 
     const timer = await timerModel.findById(timerId);
 
-    // Merge existing photos with new photos if provided
-    let updatedPhotos = timer.photos || [];
-    if (photos && Array.isArray(photos)) {
-      updatedPhotos = [...updatedPhotos, ...photos];
+    const newEndPhotos = Array.isArray(photos) ? photos : [];
+    const existingEndPhotos = timer.end?.photos || [];
+
+    let updatedPhotos = timer.photos ? [...timer.photos] : [];
+    if (newEndPhotos.length > 0) {
+      updatedPhotos = [...updatedPhotos, ...newEndPhotos];
     }
+
+    const endPayload = {
+      ...(timer.end?.toObject ? timer.end.toObject() : timer.end),
+      ...end,
+      photos: newEndPhotos.length > 0 ? [...existingEndPhotos, ...newEndPhotos] : existingEndPhotos,
+    };
 
     const updatedTimer = await timerModel.findByIdAndUpdate(
       timerId,
       {
-        end,
+        end: endPayload,
         description: description || timer.description,
         photos: updatedPhotos,
         isActive: false,
@@ -102,13 +115,32 @@ export const updateTimer = async (req, res) => {
       });
     }
 
+    const startPayload =
+      data.start !== undefined
+        ? {
+            ...(timer.start?.toObject ? timer.start.toObject() : timer.start),
+            ...data.start,
+            photos:
+              data.start?.photos !== undefined ? data.start.photos : timer.start?.photos || [],
+          }
+        : timer.start;
+
+    const endPayload =
+      data.end !== undefined
+        ? {
+            ...(timer.end?.toObject ? timer.end.toObject() : timer.end),
+            ...data.end,
+            photos: data.end?.photos !== undefined ? data.end.photos : timer.end?.photos || [],
+          }
+        : timer.end;
+
     const updateTimer = await timerModel
       .findByIdAndUpdate(
         timerId,
         {
           user: data.user ? data.user : timer.user,
-          start: data.start ? data.start : timer.start,
-          end: data.end ? data.end : timer.end,
+          start: startPayload,
+          end: endPayload,
           description: data.description ? data.description : timer.description,
           photos: data.photos !== undefined ? data.photos : timer.photos,
           status: data.status !== undefined ? data.status : timer.status,

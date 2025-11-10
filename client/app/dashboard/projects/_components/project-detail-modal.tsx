@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MapPin, Calendar, Users, FileText, Loader2, User } from 'lucide-react';
 import axios from 'axios';
 
@@ -28,10 +27,10 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
 
   const fetchProject = async () => {
     try {
-       const { data } = await axios.get(
-         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/projects/details/${projectId}`
-       );
-      
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/projects/details/${projectId}`
+      );
+
       setProject(data.project);
     } catch (error) {
       console.error('Failed to fetch project details:', error);
@@ -67,6 +66,7 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
         </DialogHeader>
 
         <div className="space-y-6">
+          {/*
           <div className="mb-2 flex items-center gap-2">
             <User className="h-4 w-4 text-amber-600" />
             <h3 className="font-semibold text-foreground">Client</h3>
@@ -74,14 +74,17 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
           <div className="flex items-center gap-3 rounded-lg border border-sky-200 bg-white p-3">
             <Avatar className="h-8 w-8 bg-sky-600">
               <AvatarFallback className="text-white">
-                {project?.client.name?.[0] || 'U'}
+                {project?.client?.name?.[0] || 'U'}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{project?.client.name}</p>
+              <p className="text-sm font-medium text-foreground truncate">
+                {project?.client?.name}
+              </p>
               <p className="text-xs text-muted-foreground truncate">{project?.client?.email}</p>
             </div>
           </div>
+          */}
           {/* Description */}
           {project.description && (
             <div>

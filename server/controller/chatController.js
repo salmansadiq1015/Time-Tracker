@@ -73,8 +73,18 @@ export const fetchChats = async (req, res) => {
       return res.status(400).send({ success: false, message: 'User id is required!' });
     }
 
+    const requester = await userModel.findById(req.user?._id || userId).select('role');
+
+    if (!requester) {
+      return res.status(404).send({ success: false, message: 'Requesting user not found!' });
+    }
+
+    const isAdmin = requester.role === 'admin';
+
+    const query = isAdmin ? {} : { users: { $elemMatch: { $eq: userId } } };
+
     await chatModel
-      .find({ users: { $elemMatch: { $eq: userId } } })
+      .find(query)
       .populate('users', '-password ')
       .populate('groupAdmin', '-password ')
       .populate('latestMessage')

@@ -176,8 +176,8 @@ export const fetchAllProjects = async (req, res) => {
       .limit(limit)
       .populate('createdBy', 'name email')
       .populate('employees', 'name email')
-      .populate('client', 'name email') 
       .lean();
+    // .populate('client', 'name email')
 
     return res.status(200).json({
       success: true,
