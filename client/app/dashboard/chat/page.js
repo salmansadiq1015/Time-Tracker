@@ -19,11 +19,29 @@ import {
   Dot,
   Paperclip,
   ArrowLeft,
+  Trash2,
+  UserCircle2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
 import toast from 'react-hot-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -64,6 +82,11 @@ export default function ChatPage() {
   const [projectSearch, setProjectSearch] = useState('');
   const [selectedProject, setSelectedProject] = useState(null);
   const [loadingProjects, setLoadingProjects] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [membersDialogOpen, setMembersDialogOpen] = useState(false);
+  const [groupMembers, setGroupMembers] = useState([]);
+  const [groupMembersLoading, setGroupMembersLoading] = useState(false);
 
   const userId = auth?.user?._id;
   const canCreateGroup = useMemo(
@@ -74,6 +97,52 @@ export default function ChatPage() {
     () => ['admin', 'courier'].includes(auth?.user?.role || ''),
     [auth?.user?.role]
   );
+
+  const activeChat = useMemo(
+    () => chats.find((c) => c._id === selectedChatId) || null,
+    [chats, selectedChatId]
+  );
+
+  const canDeleteChat = useMemo(() => {
+    if (!activeChat) return false;
+    const role = auth?.user?.role;
+    if (role === 'admin') return true;
+    if (activeChat.isGroupChat) {
+      const adminId =
+        typeof activeChat.groupAdmin === 'object'
+          ? activeChat.groupAdmin?._id
+          : activeChat.groupAdmin;
+      return String(adminId) === String(userId);
+    }
+    return activeChat.users?.some((u) => String(u?._id) === String(userId));
+  }, [activeChat, auth?.user?.role, userId]);
+
+  const canViewMembers = useMemo(
+    () => Boolean(activeChat?.isGroupChat && Array.isArray(activeChat?.users)),
+    [activeChat]
+  );
+
+  useEffect(() => {
+    if (!canViewMembers) {
+      setMembersDialogOpen(false);
+      setGroupMembers([]);
+    }
+  }, [canViewMembers]);
+
+  useEffect(() => {
+    const loadMembers = async () => {
+      if (!membersDialogOpen || !activeChat) return;
+      setGroupMembersLoading(true);
+      if (activeChat.isGroupChat) {
+        setGroupMembers(Array.isArray(activeChat.users) ? activeChat.users : []);
+      } else {
+        const other = activeChat.users?.find((u) => String(u._id) !== String(userId));
+        setGroupMembers(other ? [other] : []);
+      }
+      setGroupMembersLoading(false);
+    };
+    loadMembers();
+  }, [membersDialogOpen, activeChat, userId]);
 
   const setActiveChat = (chatId) => {
     if (!chatId) return;
@@ -368,7 +437,7 @@ export default function ChatPage() {
   };
 
   const openEditGroup = () => {
-    const current = chats.find((c) => c._id === selectedChatId);
+    const current = activeChat;
     if (!current) return;
     setGroupName(current?.chatName || '');
     setGroupAvatar(current?.avatar || '');
@@ -409,6 +478,43 @@ export default function ChatPage() {
       toast.error(e?.response?.data?.message || 'Failed to update group');
     } finally {
       setSavingEditGroup(false);
+    }
+  };
+
+  const handleDeleteChatClick = () => {
+    if (!activeChat) return;
+    setConfirmDeleteOpen(true);
+    setMenuOpen(false);
+  };
+
+  const handleConfirmDeleteChat = async () => {
+    if (!activeChat) return;
+    try {
+      setDeleteLoading(true);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/chat/delete/${activeChat._id}`
+      );
+      toast.success('Chat deleted');
+      setChats((prev) => prev.filter((chat) => chat._id !== activeChat._id));
+      setSelectedChatId('');
+      setMessages([]);
+      setConfirmDeleteOpen(false);
+      try {
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/chat/all/${userId}`
+        );
+        setChats(data?.results || []);
+      } catch (error) {
+        console.error('Failed to refresh chats:', error);
+      }
+      try {
+        router.replace('/dashboard/chat');
+      } catch {}
+    } catch (error) {
+      console.error('Failed to delete chat:', error);
+      toast.error(error?.response?.data?.message || 'Failed to delete chat');
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -601,9 +707,7 @@ export default function ChatPage() {
             >
               <Menu className="w-4 h-4" />
             </Button>
-            <div className="text-sm font-semibold">
-              {getChatTitle(chats.find((c) => c._id === selectedChatId)) || 'Messages'}
-            </div>
+            <div className="text-sm font-semibold">{getChatTitle(activeChat) || 'Messages'}</div>
           </div>
           <div className="flex items-center gap-2">
             {auth?.user?.role === 'user' && (
@@ -705,7 +809,7 @@ export default function ChatPage() {
                 <div className="w-8 h-8 rounded-full bg-gray-200" />
                 <div>
                   <div className="text-sm font-semibold">
-                    {getChatTitle(chats.find((c) => c._id === selectedChatId)) || 'Select a chat'}
+                    {getChatTitle(activeChat) || 'Select a chat'}
                   </div>
                   {isTyping && (
                     <div className="flex items-center gap-1 text-[11px] text-gray-500">
@@ -715,9 +819,32 @@ export default function ChatPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2 relative">
-                {canEditGroup && chats.find((c) => c._id === selectedChatId)?.isGroupChat && (
+                {canEditGroup && activeChat?.isGroupChat && (
                   <Button variant="outline" size="sm" onClick={openEditGroup}>
                     Edit group
+                  </Button>
+                )}
+                {canViewMembers && (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setMembersDialogOpen(true)}
+                    title="View members"
+                  >
+                    <UserCircle2 className="w-4 h-4" />
+                  </Button>
+                )}
+                {canDeleteChat && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-rose-600 hover:text-rose-700"
+                    onClick={handleDeleteChatClick}
+                    title="Delete chat"
+                    disabled={deleteLoading}
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 )}
                 <Button
@@ -803,18 +930,17 @@ export default function ChatPage() {
               ) : (
                 messages.map((m) => {
                   const mine = String(m?.sender?._id) === String(userId);
-                  const currentChat = chats.find((c) => c._id === selectedChatId);
-                  const otherParticipant = currentChat?.users?.find((u) => u._id !== userId);
+                  const otherParticipant = activeChat?.users?.find((u) => u._id !== userId);
                   const showSender =
                     !mine &&
-                    (currentChat?.isGroupChat
+                    (activeChat?.isGroupChat
                       ? true
                       : Boolean(otherParticipant?.name || otherParticipant?.email));
 
                   // Check if message is read (not in unreadMessages for other users)
                   const isRead =
-                    mine && currentChat?.unreadMessages
-                      ? !currentChat.unreadMessages.some(
+                    mine && activeChat?.unreadMessages
+                      ? !activeChat.unreadMessages.some(
                           (um) => String(um.messageId) === String(m._id)
                         )
                       : false;
@@ -1320,6 +1446,120 @@ export default function ChatPage() {
             </div>
           </div>
         )}
+
+        <Dialog
+          open={membersDialogOpen}
+          onOpenChange={(open) => {
+            setMembersDialogOpen(open);
+            if (!open) {
+              setGroupMembers([]);
+            }
+          }}
+        >
+          <DialogContent className="max-w-lg rounded-2xl border border-amber-200 bg-white/95 shadow-xl z-1000001">
+            <DialogHeader>
+              <DialogTitle>
+                {activeChat?.isGroupChat
+                  ? activeChat?.chatName || 'Group participants'
+                  : 'Participant'}
+              </DialogTitle>
+              <DialogDescription>
+                {activeChat?.isGroupChat
+                  ? `${groupMembers.length} participant${groupMembers.length === 1 ? '' : 's'}`
+                  : 'This is the person you are chatting with.'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {groupMembersLoading ? (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Loading members...
+                </div>
+              ) : groupMembers.length > 0 ? (
+                groupMembers.map((member) => {
+                  const adminId =
+                    typeof activeChat?.groupAdmin === 'object'
+                      ? activeChat?.groupAdmin?._id
+                      : activeChat?.groupAdmin;
+                  const isAdmin = String(adminId) === String(member?._id);
+                  const isYou = String(member?._id) === String(userId);
+                  return (
+                    <div
+                      key={member?._id}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-amber-100 px-4 py-3 bg-white/80"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-10 w-10 rounded-full bg-linear-to-br from-amber-200 to-rose-200 text-amber-700 flex items-center justify-center text-sm font-semibold shadow-sm">
+                          {(member?.name || member?.email || member?.phone || '?')
+                            .slice(0, 2)
+                            .toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-gray-800 truncate">
+                              {member?.name || member?.email || member?.phone || 'Unnamed user'}
+                            </span>
+                            {isYou && (
+                              <span className="text-[11px] uppercase tracking-wide text-emerald-600 font-semibold">
+                                You
+                              </span>
+                            )}
+                          </div>
+                          {member?.email && (
+                            <div className="text-xs text-gray-500 truncate">{member.email}</div>
+                          )}
+                          {member?.phone && (
+                            <div className="text-xs text-gray-500 truncate">{member.phone}</div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1 text-[11px] font-semibold uppercase tracking-wide text-amber-600">
+                        {isAdmin ? <span>Admin</span> : null}
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-sm text-gray-500">No members found for this chat.</div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog
+          open={confirmDeleteOpen}
+          onOpenChange={(open) => {
+            if (deleteLoading) return;
+            setConfirmDeleteOpen(open);
+          }}
+        >
+          <AlertDialogContent className="max-w-md rounded-2xl border border-amber-200 bg-white/95 shadow-xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete this chat?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently remove{' '}
+                {activeChat?.isGroupChat
+                  ? activeChat?.chatName || 'this group chat'
+                  : 'this conversation'}{' '}
+                for all participants.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="gap-2">
+              <AlertDialogCancel
+                className="border border-amber-200/80 text-amber-700 hover:bg-amber-50 rounded-xl"
+                disabled={deleteLoading}
+              >
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmDeleteChat}
+                className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-lg"
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? 'Deleting...' : 'Delete chat'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   );

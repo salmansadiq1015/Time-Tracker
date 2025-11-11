@@ -334,6 +334,7 @@ export const fetchUser = async (req, res) => {
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
+        .populate('createdby', 'name email role phone')
         .lean(),
       userModel.countDocuments(query),
     ]);

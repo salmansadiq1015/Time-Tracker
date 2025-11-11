@@ -24,8 +24,6 @@ const projectSchema = new mongoose.Schema(
     description: String,
     startDate: Date,
     endDate: Date,
-    tags: [String],
-
     isActive: { type: Boolean, default: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   },

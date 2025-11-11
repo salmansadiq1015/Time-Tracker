@@ -34,14 +34,13 @@ import { useRouter } from 'next/navigation';
 interface Project {
   _id: string;
   name: string;
-  client: string | { _id: string; name: string; email: string };
   address: string;
   location?: string;
+  city?: string;
   description: string;
   startDate: string;
   endDate: string;
   employees: any[];
-  tags?: string[];
   isActive: boolean;
 }
 
@@ -121,25 +120,9 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
           .filter((id: string) => id !== auth.user._id);
       }
 
-      // If no employees, add project client (current user will be added by server)
       if (employeeIds.length === 0) {
-        if (project.client) {
-          const clientId =
-            typeof project.client === 'object' && project.client !== null
-              ? project.client._id
-              : project.client;
-          // Only add client if it's different from current user
-          if (clientId && clientId !== auth.user._id) {
-            employeeIds.push(clientId);
-          }
-        }
-
-        // Server requires at least 2 users total (current user + at least 1 other)
-        // If we only have current user, we can't create a group chat
-        if (employeeIds.length === 0) {
-          toast.error('Cannot create group chat. Need at least 2 users (add employees or client).');
-          return;
-        }
+        toast.error('Cannot create group chat. Add at least one more team member.');
+        return;
       }
 
       // Generate avatar URL
@@ -182,7 +165,6 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
               <CardTitle className="line-clamp-2 text-lg text-foreground">{project.name}</CardTitle>
-              {/* <p className="mt-1 text-sm text-muted-foreground">#{project.client}</p> */}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -234,14 +216,23 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
           <p className="line-clamp-2 text-sm text-muted-foreground">{project.description}</p>
 
           {/* Location */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 flex-shrink-0 text-amber-600" />
-            <span className="line-clamp-1">{project.location || project.address}</span>
+          <div className="flex items-start gap-2 text-sm text-muted-foreground">
+            <MapPin className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+            <div className="flex flex-col">
+              <span className="line-clamp-1 font-medium text-foreground">
+                {project.city || project.location || 'City not set'}
+              </span>
+              {project.address && (
+                <span className="text-xs text-muted-foreground line-clamp-1">
+                  {project.address}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Dates */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 flex-shrink-0 text-amber-600" />
+            <Calendar className="h-4 w-4 shrink-0 text-amber-600" />
             <span>
               {startDate} → {endDate}
             </span>
@@ -249,27 +240,11 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
 
           {/* Team */}
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-amber-600" />
+            <Users className="h-4 w-4 text-amber-600 shrink-0" />
             <span className="text-sm font-medium text-foreground">
               {project.employees?.length || 0} Team Members
             </span>
           </div>
-
-          {/* Tags */}
-          {project.tags && project.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {project.tags.slice(0, 3).map((tag) => (
-                <Badge key={tag} variant="secondary" className="bg-amber-100 text-amber-700">
-                  {tag}
-                </Badge>
-              ))}
-              {project.tags.length > 3 && (
-                <Badge variant="secondary" className="bg-amber-100 text-amber-700">
-                  +{project.tags.length - 3}
-                </Badge>
-              )}
-            </div>
-          )}
 
           {/* Status */}
           <div className="flex gap-2 pt-2">
@@ -284,13 +259,7 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
       )}
       {showEdit && (
         <EditProjectModal
-          project={{
-            ...project,
-            client:
-              typeof project.client === 'object' && project.client !== null
-                ? project.client._id
-                : project.client,
-          }}
+          project={project}
           onClose={() => setShowEdit(false)}
           onSuccess={() => {
             setShowEdit(false);

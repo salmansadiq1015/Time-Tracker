@@ -23,7 +23,6 @@ export default function ProjectDashboard() {
   const { auth } = useAuthContent();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [clients, setClients] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -32,7 +31,6 @@ export default function ProjectDashboard() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [error, setError] = useState('');
   const [limit, setLimit] = useState(10);
-  const [client, setClient] = useState('');
   const [employeeId, setEmployeeId] = useState('');
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -45,24 +43,22 @@ export default function ProjectDashboard() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   useEffect(() => {
-    const fetchClients = async () => {
+    const fetchEmployees = async () => {
       try {
         const { data } = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/all`);
         const filterEmployees = data.results?.users.filter((user: any) => user.role === 'user');
-        const clientEmployees = data.results?.users.filter((user: any) => user.role === 'client');
         setEmployees(filterEmployees || []);
-        setClients(clientEmployees || []);
       } catch (error) {
-        console.error('Failed to fetch clients:', error);
+        console.error('Failed to fetch employees:', error);
       }
     };
-    fetchClients();
+    fetchEmployees();
   }, []);
 
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchTerm, limit, client, employeeId, startDate, endDate, refreshTrigger]);
+  }, [debouncedSearchTerm, limit, employeeId, startDate, endDate, refreshTrigger]);
 
   // Fetch projects when page or filters change
   useEffect(() => {
@@ -71,7 +67,6 @@ export default function ProjectDashboard() {
     currentPage,
     debouncedSearchTerm,
     limit,
-    client,
     employeeId,
     startDate,
     endDate,
@@ -86,7 +81,6 @@ export default function ProjectDashboard() {
       const params: {
         page: number;
         limit: number;
-        client?: string;
         employeeId?: string;
         search?: string;
         startDate?: string;
@@ -95,11 +89,9 @@ export default function ProjectDashboard() {
         page: currentPage,
         limit: limit,
       };
-      const clientId = auth?.user?.role === 'client' ? auth?.user?._id : client;
       const employee = auth?.user?.role === 'user' ? auth?.user?._id : employeeId;
 
       // Only add params if they have values
-      if (clientId) params.client = clientId || '';
       if (employee) params.employeeId = employee;
       if (debouncedSearchTerm.trim()) params.search = debouncedSearchTerm.trim();
       if (startDate) params.startDate = startDate;
@@ -124,7 +116,6 @@ export default function ProjectDashboard() {
 
   const resetFilters = () => {
     setSearchTerm('');
-    setClient('');
     setEmployeeId('');
     setStartDate('');
     setEndDate('');
@@ -132,7 +123,7 @@ export default function ProjectDashboard() {
     setCurrentPage(1);
   };
 
-  const activeFilterCount = [client, employeeId, startDate, endDate].filter(Boolean).length;
+  const activeFilterCount = [employeeId, startDate, endDate].filter(Boolean).length;
   const totalPages = Math.ceil(totalProjects / limit);
 
   const getPaginationButtons = () => {
@@ -206,7 +197,7 @@ export default function ProjectDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
+    <div className="min-h-screen bg-linear-to-br from-amber-50 to-orange-50">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-amber-200 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -318,23 +309,6 @@ export default function ProjectDashboard() {
             {showAdvancedFilters && (
               <div className="rounded-xl border border-amber-200 bg-white p-6 shadow-sm space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Client Filter */}
-                  {/* <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Client</label>
-                    <select
-                      value={client}
-                      onChange={(e) => setClient(e.target.value)}
-                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
-                    >
-                      <option value="">All Clients</option>
-                      {clients.map((c: any) => (
-                        <option key={c._id} value={c._id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div> */}
-
                   {/* Employee Filter */}
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">

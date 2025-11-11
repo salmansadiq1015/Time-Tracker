@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { X, Plus, Search, Building2, Calendar, MapPin, FileText } from 'lucide-react';
+import { Calendar, MapPin, FileText } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -16,64 +16,17 @@ interface CreateProjectModalProps {
   onSuccess: () => void;
 }
 
-interface Client {
-  _id: string;
-  email: string;
-  name?: string;
-  phone?: string;
-  avatar?: string;
-}
-
 export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalProps) {
   const [loading, setLoading] = useState(false);
-  const [clients, setClients] = useState<Client[]>([]);
-  const [clientsLoading, setClientsLoading] = useState(true);
-  const [searchClients, setSearchClients] = useState('');
-  const [showClientDropdown, setShowClientDropdown] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: '',
-    client: '',
-    clientId: '',
     address: '',
-    location: '',
+    city: '',
     description: '',
     startDate: '',
     endDate: '',
   });
-
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        setClientsLoading(true);
-        const { data } = await axios.get(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/all?role=client`
-        );
-        setClients(data.results?.users || []);
-      } catch (error) {
-        console.error('Failed to fetch clients:', error);
-      } finally {
-        setClientsLoading(false);
-      }
-    };
-    fetchClients();
-  }, []);
-
-  const filteredClients = clients.filter((client) =>
-    (client.name || client.email || '').toLowerCase().includes(searchClients.toLowerCase())
-  );
-
-  const handleSelectClient = (client: Client) => {
-    setFormData((prev) => ({
-      ...prev,
-      client: `${client.name} ` || client.email,
-      clientId: client._id,
-    }));
-    setShowClientDropdown(false);
-    setSearchClients('');
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -83,22 +36,10 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
     }
   };
 
-  const addTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()]);
-      setTagInput('');
-    }
-  };
-
-  const removeTag = (tag: string) => {
-    setTags(tags.filter((t) => t !== tag));
-  };
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) newErrors.name = 'Project name is required';
-    // if (!formData.clientId) newErrors.client = 'Please select a client';
     if (!formData.address.trim()) newErrors.address = 'Address is required';
     if (!formData.startDate) newErrors.startDate = 'Start date is required';
     if (!formData.endDate) newErrors.endDate = 'End date is required';
@@ -122,13 +63,11 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
     try {
       const payload = {
         name: formData.name,
-        client: formData.clientId,
         address: formData.address,
-        city: formData.location,
+        city: formData.city,
         description: formData.description,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        tags,
         employees: [],
       };
       const { data } = await axios.post(
@@ -151,12 +90,14 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl border-amber-200 bg-gradient-to-br from-amber-50 to-white">
+      <DialogContent className="max-w-4xl border-amber-200 bg-linear-to-br from-amber-50 to-white">
         <DialogHeader className="border-b border-amber-100 pb-4">
           <DialogTitle className="text-3xl font-bold text-amber-900">
             Create New Project
           </DialogTitle>
-          <p className="mt-1 text-sm text-amber-700">Set up a new project and assign clients</p>
+          <p className="mt-1 text-sm text-amber-700">
+            Set up a new project and define its timeline
+          </p>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 max-h-[70vh] overflow-y-auto pr-4">
@@ -281,10 +222,10 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
               </div>
               <div>
                 <Input
-                  name="location"
-                  value={formData.location}
+                  name="city"
+                  value={formData.city}
                   onChange={handleInputChange}
-                  placeholder="City / Region"
+                  placeholder="City"
                   className="border-2 border-amber-200 focus:border-amber-500"
                 />
               </div>
@@ -301,9 +242,8 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Describe the project details and objectives..."
-              rows={5}
-              className="mt-2 h-[7rem] border-2 border-amber-200 focus:border-amber-500 resize-none"
+              placeholder="Describe the project's goals, outcomes and any other useful context"
+              className="mt-2 h-28 border-2 border-amber-200 focus:border-amber-500 resize-none"
             />
           </div>
 
@@ -351,46 +291,6 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
             </div>
           </div>
 
-          {/* Tags Section */}
-          <div className="rounded-lg border border-amber-100 bg-white p-4">
-            <Label className="text-sm font-semibold text-amber-900">Project Tags</Label>
-            <div className="mt-3 flex gap-2">
-              <Input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                placeholder="Add a tag and press Enter..."
-                className="border-2 border-amber-200 focus:border-amber-500"
-              />
-              <Button
-                type="button"
-                onClick={addTag}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-4"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-            {tags.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <div
-                    key={tag}
-                    className="flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 px-3 py-1 text-sm font-medium text-amber-700 border border-amber-200"
-                  >
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => removeTag(tag)}
-                      className="ml-1 hover:text-amber-900 transition-colors"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
           {/* Action Buttons */}
           <div className="flex justify-end gap-3 pt-2 border-t border-amber-100">
             <Button
@@ -404,7 +304,7 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
             <Button
               type="submit"
               disabled={loading}
-              className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+              className="bg-linear-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-semibold shadow-md hover:shadow-lg transition-all"
             >
               {loading ? 'Creating...' : 'Create Project'}
             </Button>

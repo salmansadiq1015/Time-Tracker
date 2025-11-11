@@ -3,17 +3,7 @@ import projectModel from '../models/projectModel.js';
 // Create Project
 export const createProject = async (req, res) => {
   try {
-    const {
-      name,
-      client,
-      employees = [],
-      address,
-      city,
-      description = '',
-      startDate,
-      endDate,
-      tags = [],
-    } = req.body;
+    const { name, employees = [], address, city, description = '', startDate, endDate } = req.body;
 
     // --- 1️⃣ Input validation ---
     const requiredFields = { name, address, startDate, endDate };
@@ -39,14 +29,12 @@ export const createProject = async (req, res) => {
     // --- 3️⃣ Create project ---
     const project = await projectModel.create({
       name: name.trim(),
-      client: client?.trim() || 'N/A',
       employees,
       address: address.trim(),
       city,
       description: description.trim(),
       startDate,
       endDate,
-      tags: Array.isArray(tags) ? tags.map((t) => t.trim()) : [],
       createdBy: req.user._id,
     });
 
@@ -94,7 +82,7 @@ export const updateProject = async (req, res) => {
     // }
 
     // --- 4️⃣ Sanitize input (remove immutable or restricted fields) ---
-    const disallowedFields = ['_id', 'createdBy', 'createdAt', 'updatedAt'];
+    const disallowedFields = ['_id', 'createdBy', 'createdAt', 'updatedAt', 'client', 'tags'];
     disallowedFields.forEach((field) => delete updates[field]);
 
     // Trim all string fields (for data consistency)
@@ -208,7 +196,6 @@ export const getProjectById = async (req, res) => {
       .findById(id)
       .populate('createdBy', 'name email')
       .populate('employees', 'name email')
-      .populate('client', 'name email')
       .lean();
 
     if (!project) {

@@ -250,8 +250,8 @@ export default function UsersPage() {
       {/* Stats Cards */}
       <div className="px-4 md:px-8 pb-6 space-y-4 mt-2">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border border-blue-100 bg-gradient-to-br from-blue-50 via-blue-50/50 to-indigo-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-            <CardContent className="pt-6">
+          <Card className="border cursor-pointer  border-blue-100 bg-gradient-to-br from-blue-50 via-blue-50/50 to-indigo-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+            <CardContent onClick={() => setFilters({ ...filters, role: 'all' })} className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm text-blue-600/70 font-medium">Total Users</p>
@@ -263,8 +263,8 @@ export default function UsersPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border border-rose-100 bg-gradient-to-br from-rose-50 via-pink-50/50 to-red-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-            <CardContent className="pt-6">
+          <Card className="border cursor-pointer  border-rose-100 bg-gradient-to-br from-rose-50 via-pink-50/50 to-red-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+            <CardContent onClick={() => setFilters({ ...filters, role: 'admin' })} className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm text-rose-600/70 font-medium">Admins</p>
@@ -276,8 +276,11 @@ export default function UsersPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border border-purple-100 bg-gradient-to-br from-purple-50 via-violet-50/50 to-fuchsia-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-            <CardContent className="pt-6">
+          <Card className="border cursor-pointer  border-purple-100 bg-gradient-to-br from-purple-50 via-violet-50/50 to-fuchsia-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+            <CardContent
+              onClick={() => setFilters({ ...filters, role: 'dispatcher' })}
+              className="pt-6"
+            >
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm text-purple-600/70 font-medium">Dispatchers</p>
@@ -289,8 +292,8 @@ export default function UsersPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border border-emerald-100 bg-gradient-to-br from-emerald-50 via-teal-50/50 to-green-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-            <CardContent className="pt-6">
+          <Card className=" cursor-pointer border border-emerald-100 bg-gradient-to-br from-emerald-50 via-teal-50/50 to-green-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+            <CardContent onClick={() => setFilters({ ...filters, role: 'user' })} className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm text-emerald-600/70 font-medium">Regular Users</p>

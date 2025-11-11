@@ -23,6 +23,14 @@ import { BiMap } from 'react-icons/bi';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAuthContent } from '@/app/context/authContext';
 
+interface CreatedByDetails {
+  _id?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+}
+
 interface TimeEntry {
   _id: string;
   start: {
@@ -54,6 +62,7 @@ interface TimeEntry {
     phone?: string;
     role?: string;
     status?: string;
+    createdby?: CreatedByDetails | string;
   };
 }
 
@@ -82,6 +91,7 @@ interface TimeTrackerTableProps {
       phone?: string;
       role?: string;
       status?: string;
+      createdBy?: CreatedByDetails;
     }
   ) => void;
 }
@@ -290,41 +300,49 @@ export function TimeTrackerTable({
   };
 
   const renderLocationContent = (
-    address?: string,
+    address: string | undefined,
     lat?: number | null,
     lng?: number | null,
-    fallbackLabel: string = 'Unknown'
+    fallbackLabel?: string,
+    variant: 'start' | 'end' = 'start'
   ) => {
-    const hasCoords = isValidLatLng(lat ?? null, lng ?? null);
+    const hasCoords = lat != null && lng != null && isValidLatLng(lat, lng);
     const cleanedAddress = address
       ?.replace(/\r?\n|\r/g, ' ')
       ?.replace(/\s+/g, ' ')
       ?.trim();
 
-    let label: string | null = null;
-
     if (hasCoords && lat != null && lng != null) {
-      label = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-    } else if (cleanedAddress) {
-      label = cleanedAddress;
-    } else {
-      label = fallbackLabel;
-    }
+      const titleParts = [] as string[];
+      titleParts.push(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+      if (cleanedAddress) titleParts.push(cleanedAddress);
+      if (fallbackLabel) titleParts.push(fallbackLabel);
+      const title = titleParts.filter(Boolean).join(' • ');
+      const Icon = variant === 'end' ? Map : MapPin;
 
-    if (hasCoords && lat != null && lng != null) {
       return (
         <button
           type="button"
           onClick={() => openLocationOnMap(lat, lng)}
-          className="text-left text-xs font-medium text-[#c16840] hover:text-[#9e4f2b] hover:underline underline-offset-2 transition"
-          title="Open in Google Maps"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-amber-700 transition hover:bg-amber-100 hover:text-amber-800"
+          title={title || 'Open in Google Maps'}
         >
-          {label}
+          <Icon className="h-4 w-4" />
         </button>
       );
     }
 
-    return <span className="text-xs text-gray-700">{label}</span>;
+    if (cleanedAddress) {
+      return (
+        <span className="text-xs text-gray-700 max-w-[200px] line-clamp-2">{cleanedAddress}</span>
+      );
+    }
+
+    return (
+      <span className="text-[11px] uppercase tracking-wide text-gray-400">
+        {fallbackLabel || 'No location provided'}
+      </span>
+    );
   };
 
   const validEntries = entries.filter((entry) => entry && entry._id);
@@ -340,27 +358,26 @@ export function TimeTrackerTable({
                 <th className="text-left py-4 px-4 min-w-40 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   User
                 </th>
-                <th className="text-left py-4 px-4 min-w-36 font-semibold text-gray-50 uppercase text-xs tracking-wider">
-                  Date
+                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider min-w-60">
+                  Description
                 </th>
-                <th className="text-left py-4 px-4 min-w-36 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+
+                <th className="text-left py-4 px-4 min-w-60 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Start Time
                 </th>
-                <th className="text-left py-4 px-4 font-semibold min-w-42 text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold min-w-25 text-gray-50 uppercase text-xs tracking-wider">
                   Start Location
                 </th>
                 <th className="text-left py-4 px-4 min-w-36 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   End Time
                 </th>
-                <th className="text-left py-4 px-4 font-semibold min-w-42 text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold  min-w-25 text-gray-50 uppercase text-xs tracking-wider">
                   End Location
                 </th>
                 <th className="text-right py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Duration
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider min-w-60">
-                  Description
-                </th>
+
                 <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Actions
                 </th>
@@ -443,6 +460,19 @@ export function TimeTrackerTable({
                                       phone: entry.user.phone,
                                       role: entry.user.role,
                                       status: entry.user.status,
+                                      createdBy:
+                                        entry.user.createdby &&
+                                        typeof entry.user.createdby === 'object'
+                                          ? {
+                                              _id: entry.user.createdby._id,
+                                              name: entry.user.createdby.name,
+                                              email: entry.user.createdby.email,
+                                              phone: entry.user.createdby.phone,
+                                              role: entry.user.createdby.role,
+                                            }
+                                          : typeof entry.user.createdby === 'string'
+                                          ? { _id: entry.user.createdby }
+                                          : undefined,
                                     })
                                   }
                                   className="text-left text-sm font-semibold text-[#c16840] hover:text-[#9e4f2b] hover:underline underline-offset-2 transition truncate"
@@ -465,6 +495,21 @@ export function TimeTrackerTable({
                           </div>
                         </td>
                         <td className="py-4 px-4">
+                          <div className="flex items-center gap-2 max-w-[250px]">
+                            <span
+                              className="text-gray-800 text-sm truncate line-clamp-2"
+                              title={entry.description}
+                            >
+                              {entry.description || 'Untitled'}
+                            </span>
+                            {entry.isActive && (
+                              <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full border border-orange-200">
+                                Active
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        {/* <td className="py-4 px-4">
                           <button
                             type="button"
                             className="text-gray-600 text-xs font-mono hover:text-[#c16840] transition-colors"
@@ -472,24 +517,24 @@ export function TimeTrackerTable({
                           >
                             {formatDate(startTime)}
                           </button>
-                        </td>
+                        </td> */}
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3 text-gray-400" />
                             <span className="text-gray-700 text-xs font-mono">
-                              {formatTime(startTime)}
+                              {formatDate(startTime)} - {formatTime(startTime)}
                             </span>
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div className="flex items-start gap-2 max-w-[220px]">
-                            <MapPin className="w-3 h-3 text-gray-400 shrink-0 mt-0.5" />
-                            <div className="space-y-1">
-                              {renderLocationContent(entry.start?.location, startLat, startLng)}
-                              {!isValidLatLng(startLat, startLng) && (
-                                <p className="text-[11px] text-gray-400">Lat/Lng unavailable</p>
-                              )}
-                            </div>
+                          <div className="flex items-center gap-2">
+                            {renderLocationContent(
+                              entry.start?.location,
+                              startLat,
+                              startLng,
+                              'Start location',
+                              'start'
+                            )}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -505,19 +550,19 @@ export function TimeTrackerTable({
                           )}
                         </td>
                         <td className="py-4 px-4">
-                          {entry.end?.location || isValidLatLng(endLat, endLng) ? (
-                            <div className="flex items-start gap-2 max-w-[220px]">
-                              <MapPin className="w-3 h-3 text-gray-400 shrink-0 mt-0.5" />
-                              <div className="space-y-1">
-                                {renderLocationContent(entry.end?.location, endLat, endLng)}
-                                {entry.end?.location && !isValidLatLng(endLat, endLng) && (
-                                  <p className="text-[11px] text-gray-400">Lat/Lng unavailable</p>
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            <span className="text-gray-400 text-xs">-</span>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {entry.end?.location || isValidLatLng(endLat, endLng) ? (
+                              renderLocationContent(
+                                entry.end?.location,
+                                endLat,
+                                endLng,
+                                'End location',
+                                'end'
+                              )
+                            ) : (
+                              <span className="text-gray-400 text-xs">-</span>
+                            )}
+                          </div>
                         </td>
                         <td className="py-4 px-4 text-right">
                           {duration ? (
@@ -526,21 +571,7 @@ export function TimeTrackerTable({
                             <span className="text-gray-400 text-xs">-</span>
                           )}
                         </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-2 max-w-[250px]">
-                            <span
-                              className="text-gray-800 text-sm truncate line-clamp-2"
-                              title={entry.description}
-                            >
-                              {entry.description || 'Untitled'}
-                            </span>
-                            {entry.isActive && (
-                              <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full border border-orange-200">
-                                Active
-                              </span>
-                            )}
-                          </div>
-                        </td>
+
                         <td className="py-4 px-4">
                           <div className="flex justify-center gap-1">
                             <Button
@@ -661,7 +692,9 @@ export function TimeTrackerTable({
                                       {renderLocationContent(
                                         entry.start?.location,
                                         startLat,
-                                        startLng
+                                        startLng,
+                                        'Start location',
+                                        'start'
                                       )}
                                       {!isValidLatLng(startLat, startLng) && (
                                         <span className="text-[11px] text-gray-400">
@@ -692,7 +725,13 @@ export function TimeTrackerTable({
                                     </p>
                                     <div className="flex flex-col gap-1">
                                       <span className="font-medium text-gray-900">Location:</span>
-                                      {renderLocationContent(entry.end?.location, endLat, endLng)}
+                                      {renderLocationContent(
+                                        entry.end?.location,
+                                        endLat,
+                                        endLng,
+                                        'End location',
+                                        'end'
+                                      )}
                                       {entry.end?.location && !isValidLatLng(endLat, endLng) && (
                                         <span className="text-[11px] text-gray-400">
                                           Lat/Lng unavailable
@@ -718,7 +757,7 @@ export function TimeTrackerTable({
                                 </div>
                               )}
 
-                              <div className="grid gap-4 md:grid-cols-3">
+                              {/* <div className="grid gap-4 md:grid-cols-3">
                                 <div>
                                   <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
                                     Status
@@ -748,7 +787,7 @@ export function TimeTrackerTable({
                                     </span>
                                   )}
                                 </div>
-                              </div>
+                              </div> */}
                             </div>
                           </td>
                         </tr>

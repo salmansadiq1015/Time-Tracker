@@ -8,9 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { MapPin, Calendar, Users, FileText, Loader2, User } from 'lucide-react';
 import axios from 'axios';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface ProjectDetailModalProps {
   projectId: string;
@@ -148,20 +148,6 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
               <p className="text-sm text-muted-foreground">No team members assigned</p>
             )}
           </div>
-
-          {/* Tags */}
-          {project.tags && project.tags.length > 0 && (
-            <div>
-              <h3 className="mb-2 font-semibold text-foreground">Tags</h3>
-              <div className="flex flex-wrap gap-2">
-                {project?.tags?.map((tag: string) => (
-                  <Badge key={tag} variant="secondary" className="bg-amber-100 text-amber-700">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>

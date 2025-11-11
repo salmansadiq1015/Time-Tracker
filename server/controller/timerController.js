@@ -152,7 +152,11 @@ export const updateTimer = async (req, res) => {
           new: true,
         }
       )
-      .populate('user', 'name email')
+      .populate({
+        path: 'user',
+        select: 'name email phone role status createdby',
+        populate: { path: 'createdby', select: 'name email role phone' },
+      })
       .populate('client', 'name email');
 
     res.status(200).json({
@@ -337,8 +341,11 @@ export const fetchTimers = async (req, res) => {
     const [timers, totalCount, allTimersForLeaveCalc] = await Promise.all([
       timerModel
         .find(query)
-        .populate('user', 'name email')
-        .populate('client', 'name email')
+        .populate({
+          path: 'user',
+          select: 'name email phone role status createdby',
+          populate: { path: 'createdby', select: 'name email role phone' },
+        })
         .sort({ 'start.startTime': -1 })
         .skip((page - 1) * limit)
         .limit(limit)

@@ -17,6 +17,14 @@ import { Badge } from '@/components/ui/badge';
 import { PiClipboardTextBold } from 'react-icons/pi';
 import { ExportButtons } from '@/components/export-button';
 
+interface CreatedByDetails {
+  _id?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+}
+
 interface TimeEntry {
   _id: string;
   start: {
@@ -48,6 +56,7 @@ interface TimeEntry {
     phone?: string;
     role?: string;
     status?: string;
+    createdby?: CreatedByDetails | string;
   };
 }
 
@@ -75,6 +84,7 @@ interface SelectedUserDetails {
   phone?: string;
   role?: string;
   status?: string;
+  createdBy?: CreatedByDetails;
 }
 
 export default function TimeTrackerPage() {
@@ -192,6 +202,7 @@ export default function TimeTrackerPage() {
         phone: userInfo.phone,
         role: userInfo.role,
         status: userInfo.status,
+        createdBy: userInfo.createdBy,
       });
     }
 
@@ -222,6 +233,34 @@ export default function TimeTrackerPage() {
         return prev || null;
       }
 
+      const mapCreatedBy = (): CreatedByDetails | undefined => {
+        const raw = source.createdby;
+        if (!raw) return undefined;
+        if (typeof raw === 'object') {
+          return {
+            _id: raw._id ?? raw.id,
+            name: raw.name,
+            email: raw.email,
+            phone: raw.phone,
+            role: raw.role,
+          };
+        }
+        const creator = users.find((u) => u._id === raw);
+        if (creator) {
+          return {
+            _id: creator._id,
+            name: creator.name,
+            email: creator.email,
+            phone: creator.phone,
+            role: creator.role,
+          };
+        }
+        if (typeof raw === 'string') {
+          return { _id: raw };
+        }
+        return undefined;
+      };
+
       const nextDetails: SelectedUserDetails = {
         _id: filters.selectedUser,
         name: source.name,
@@ -229,6 +268,7 @@ export default function TimeTrackerPage() {
         phone: source.phone,
         role: source.role,
         status: source.status,
+        createdBy: mapCreatedBy(),
       };
 
       if (
@@ -238,7 +278,8 @@ export default function TimeTrackerPage() {
         prev.email === nextDetails.email &&
         prev.phone === nextDetails.phone &&
         prev.role === nextDetails.role &&
-        prev.status === nextDetails.status
+        prev.status === nextDetails.status &&
+        JSON.stringify(prev.createdBy) === JSON.stringify(nextDetails.createdBy)
       ) {
         return prev;
       }
@@ -530,6 +571,29 @@ export default function TimeTrackerPage() {
                       </Badge>
                     )}
                   </div>
+                  {selectedUserDetails.createdBy && (
+                    <div className="pt-3 space-y-1">
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                        Created by
+                      </p>
+                      <div className="text-sm font-medium text-foreground">
+                        {selectedUserDetails.createdBy.name || 'Unknown'}
+                      </div>
+                      <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
+                        {selectedUserDetails.createdBy.email && (
+                          <span>Email: {selectedUserDetails.createdBy.email}</span>
+                        )}
+                        {selectedUserDetails.createdBy.phone && (
+                          <span>Phone: {selectedUserDetails.createdBy.phone}</span>
+                        )}
+                      </div>
+                      {selectedUserDetails.createdBy.role && (
+                        <Badge variant="outline" className="text-amber-700 border-amber-200">
+                          {selectedUserDetails.createdBy.role}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <Button
                   variant="outline"

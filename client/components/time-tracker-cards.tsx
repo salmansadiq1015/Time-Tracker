@@ -6,6 +6,14 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Trash2, Edit2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
+interface CreatedByDetails {
+  _id?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+}
+
 interface TimeEntry {
   _id: string;
   start: {
@@ -31,6 +39,7 @@ interface TimeEntry {
     phone?: string;
     role?: string;
     status?: string;
+    createdby?: CreatedByDetails | string;
   };
 }
 
@@ -59,6 +68,7 @@ interface TimeTrackerCardsProps {
       phone?: string;
       role?: string;
       status?: string;
+      createdBy?: CreatedByDetails;
     }
   ) => void;
 }
@@ -183,6 +193,18 @@ export function TimeTrackerCards({
                                 phone: entry.user.phone,
                                 role: entry.user.role,
                                 status: entry.user.status,
+                                createdBy:
+                                  entry.user.createdby && typeof entry.user.createdby === 'object'
+                                    ? {
+                                        _id: entry.user.createdby._id,
+                                        name: entry.user.createdby.name,
+                                        email: entry.user.createdby.email,
+                                        phone: entry.user.createdby.phone,
+                                        role: entry.user.createdby.role,
+                                      }
+                                    : typeof entry.user.createdby === 'string'
+                                    ? { _id: entry.user.createdby }
+                                    : undefined,
                               })
                             }
                             className="text-sm font-semibold text-primary hover:text-primary/80 hover:underline underline-offset-2 transition"

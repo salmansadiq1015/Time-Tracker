@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import userModel from "../models/userModel.js";
+import jwt from 'jsonwebtoken';
+import userModel from '../models/userModel.js';
 
 // Is Authenticated
 
@@ -8,8 +8,8 @@ export const isAuthenticated = async (req, res, next) => {
   if (!token) {
     return res.status(401).send({
       success: false,
-      message: "Unauthorized",
-      error: "No token provided",
+      message: 'Unauthorized',
+      error: 'No token provided',
     });
   }
 
@@ -18,18 +18,16 @@ export const isAuthenticated = async (req, res, next) => {
     if (!decoded) {
       return res.status(401).send({
         success: false,
-        message: "JWT Token is invalid or expired!",
+        message: 'JWT Token is invalid or expired!',
       });
     }
 
-    const user = await userModel
-      .findById(decoded.id)
-      .select("name email roles");
+    const user = await userModel.findById(decoded.id).select('name email role phone status');
 
     if (!user) {
       return res.status(401).send({
         success: false,
-        message: "JWT Token is invalid or expired!",
+        message: 'JWT Token is invalid or expired!',
       });
     }
 
@@ -39,7 +37,7 @@ export const isAuthenticated = async (req, res, next) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
       error: error.message,
     });
   }
@@ -50,7 +48,7 @@ export const isAdmin = async (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({
       success: false,
-      message: "Unauthorized Access! User not authenticated.",
+      message: 'Unauthorized Access! User not authenticated.',
     });
   }
   try {
@@ -58,14 +56,14 @@ export const isAdmin = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized Access! User not found.",
+        message: 'Unauthorized Access! User not found.',
       });
     }
 
-    if (user.role !== "admin") {
+    if (user.role !== 'admin') {
       return res.status(401).json({
         success: false,
-        message: "Forbidden! User does not have admin privileges.!",
+        message: 'Forbidden! User does not have admin privileges.!',
       });
     } else {
       next();
@@ -74,7 +72,7 @@ export const isAdmin = async (req, res, next) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
       error: error.message,
     });
   }

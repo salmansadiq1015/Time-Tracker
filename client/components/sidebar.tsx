@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Clock, Users, BarChart3, LogOut, Menu, X, MessageCircle } from 'lucide-react';
+import { Clock, Users, BarChart3, LogOut, Menu, X, MessageCircle, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { FaTools } from 'react-icons/fa';
@@ -35,6 +35,7 @@ export function Sidebar() {
       ? [{ label: 'Time Tracker', href: '/dashboard/time-tracker', icon: Clock }]
       : []),
     { label: 'Projects', href: '/dashboard/projects', icon: BarChart3 },
+    { label: 'Tasks', href: '/dashboard/tasks', icon: CheckSquare },
     { label: 'Chat', href: '/dashboard/chat', icon: MessageCircle },
     ...(user?.role === 'admin' || user?.role === 'dispatcher'
       ? [{ label: 'Equipments', href: '/dashboard/equipments', icon: FaTools }]

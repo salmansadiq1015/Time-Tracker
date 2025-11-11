@@ -45,14 +45,13 @@ import { useRouter } from 'next/navigation';
 interface Project {
   _id: string;
   name: string;
-  client: string | { _id: string; name: string; email: string };
   address: string;
   location?: string;
+  city?: string;
   description: string;
   startDate: string;
   endDate: string;
   employees: any[];
-  tags?: string[];
   isActive: boolean;
 }
 
@@ -130,25 +129,9 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
           .filter((id: string) => id !== auth.user._id);
       }
 
-      // If no employees, add project client (current user will be added by server)
       if (employeeIds.length === 0) {
-        if (project.client) {
-          const clientId =
-            typeof project.client === 'object' && project.client !== null
-              ? project.client._id
-              : project.client;
-          // Only add client if it's different from current user
-          if (clientId && clientId !== auth.user._id) {
-            employeeIds.push(clientId);
-          }
-        }
-
-        // Server requires at least 2 users total (current user + at least 1 other)
-        // If we only have current user, we can't create a group chat
-        if (employeeIds.length === 0) {
-          toast.error('Cannot create group chat. Need at least 2 users (add employees or client).');
-          return;
-        }
+        toast.error('Cannot create group chat. Add at least one more team member.');
+        return;
       }
 
       // Generate avatar URL
@@ -204,11 +187,11 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
         ))}
       </div>
     ) : (
-      <Card className="border-amber-200 shadow-xl backdrop-blur-md bg-gradient-to-br from-card/80 via-card/60 to-card/40 overflow-hidden">
+      <Card className="border-amber-200 shadow-xl backdrop-blur-md bg-linear-to-br from-card/80 via-card/60 to-card/40 overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gradient-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 hover:bg-amber-600/15 border-b-2 border-amber-200">
+              <TableRow className="bg-linear-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 hover:bg-amber-600/15 border-b-2 border-amber-200">
                 <TableHead className="h-16 px-6 font-bold text-base">Project Name</TableHead>
                 {/* <TableHead className="h-16 px-6 font-bold text-base">Client</TableHead> */}
                 <TableHead className="h-16 px-6 font-bold text-base">Location</TableHead>
@@ -255,10 +238,10 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
 
   if (projects.length === 0) {
     return (
-      <Card className="border-amber-200 shadow-xl backdrop-blur-sm bg-gradient-to-br from-card/80 to-card/40 overflow-hidden">
+      <Card className="border-amber-200 shadow-xl backdrop-blur-sm bg-linear-to-br from-card/80 to-card/40 overflow-hidden">
         <CardContent className="flex flex-col items-center justify-center py-24">
           <div className="relative mb-6">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-amber-600/20 to-amber-500/10 flex items-center justify-center shadow-2xl shadow-amber-600/10 animate-pulse">
+            <div className="w-24 h-24 rounded-2xl bg-linear-to-br from-amber-600/20 to-amber-500/10 flex items-center justify-center shadow-2xl shadow-amber-600/10 animate-pulse">
               <Building2 className="w-12 h-12 text-amber-600" />
             </div>
             <div className="absolute -top-2 -right-2 w-6 h-6 bg-amber-600/20 rounded-full animate-ping"></div>
@@ -281,11 +264,11 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
           ))}
         </div>
       ) : (
-        <Card className="border-amber-200 py-0 shadow-xl backdrop-blur-md bg-gradient-to-br from-card/80 via-card/60 to-card/40 overflow-hidden">
+        <Card className="border-amber-200 py-0 shadow-xl backdrop-blur-md bg-linear-to-br from-card/80 via-card/60 to-card/40 overflow-hidden">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gradient-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 hover:bg-amber-600/15 border-b-2 border-amber-200">
+                <TableRow className="bg-linear-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 hover:bg-amber-600/15 border-b-2 border-amber-200">
                   <TableHead className="h-16 px-6 font-bold text-base">Project Name</TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base">Location</TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base">Dates</TableHead>
@@ -312,11 +295,11 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                   return (
                     <TableRow
                       key={project._id}
-                      className="group hover:bg-gradient-to-r hover:from-amber-50/50 hover:to-transparent transition-all duration-300 border-b border-amber-100"
+                      className="group hover:bg-linear-to-r hover:from-amber-50/50 hover:to-transparent transition-all duration-300 border-b border-amber-100"
                     >
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-600/20 to-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                          <div className="w-10 h-10 rounded-lg bg-linear-to-br from-amber-600/20 to-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                             <Building2 className="w-5 h-5 text-amber-600" />
                           </div>
                           <div className="min-w-0">
@@ -331,22 +314,19 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                           </div>
                         </div>
                       </TableCell>
-                      {/* <TableCell className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
-                          <span className="text-sm text-foreground font-medium truncate max-w-[150px]">
-                            {typeof project.client === 'object' && project.client !== null
-                              ? project.client.name || 'N/A'
-                              : project.client || 'N/A'}
-                          </span>
-                        </div>
-                      </TableCell> */}
                       <TableCell className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-amber-600 shrink-0" />
-                          <span className="text-sm text-foreground truncate max-w-[200px]">
-                            {project.location || project.address || 'N/A'}
-                          </span>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                          <div className="flex flex-col text-sm text-foreground max-w-[220px]">
+                            <span className="font-medium truncate">
+                              {project.city || project.location || 'City not set'}
+                            </span>
+                            {project.address && (
+                              <span className="text-xs text-muted-foreground truncate">
+                                {project.address}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-4">
@@ -439,13 +419,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
       )}
       {showEdit && (
         <EditProjectModal
-          project={{
-            ...showEdit,
-            client:
-              typeof showEdit.client === 'object' && showEdit.client !== null
-                ? showEdit.client._id
-                : showEdit.client,
-          }}
+          project={showEdit}
           onClose={() => setShowEdit(null)}
           onSuccess={() => {
             setShowEdit(null);
