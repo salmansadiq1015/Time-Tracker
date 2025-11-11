@@ -146,6 +146,16 @@ const AudioMessage = ({ src, mine }) => {
   );
 };
 
+const getAudioExtension = (mimeType) => {
+  if (!mimeType) return 'webm';
+  if (mimeType.includes('webm')) return 'webm';
+  if (mimeType.includes('mpeg')) return 'mp3';
+  if (mimeType.includes('mp4') || mimeType.includes('m4a')) return 'm4a';
+  if (mimeType.includes('ogg')) return 'ogg';
+  if (mimeType.includes('wav')) return 'wav';
+  return 'webm';
+};
+
 export default function ChatPage() {
   const { auth } = useAuthContent();
   const router = useRouter();
@@ -192,6 +202,7 @@ export default function ChatPage() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recordingStreamRef = useRef(null);
+  const recordingMimeTypeRef = useRef('audio/webm');
 
   const userId = auth?.user?._id;
   const canCreateGroup = useMemo(
@@ -786,19 +797,59 @@ export default function ChatPage() {
 
   const sendVoiceMessage = async (blob) => {
     if (!blob || !selectedChatId) return;
-    const voiceFile = new File([blob], `voice-${Date.now()}.webm`, { type: 'audio/webm' });
-    await uploadFileAndSend(voiceFile);
+    const mimeType = recordingMimeTypeRef.current || blob.type || 'audio/webm';
+    const extension = getAudioExtension(mimeType);
+    try {
+      const voiceFile = new File([blob], `voice-${Date.now()}.${extension}`, { type: mimeType });
+      await uploadFileAndSend(voiceFile);
+    } catch (error) {
+      console.error('Failed to upload voice message:', error);
+      toast.error('Failed to upload voice message.');
+    }
   };
 
   const startRecording = async () => {
+    if (typeof window === 'undefined') return;
+    if (!window.isSecureContext) {
+      toast.error('Voice recording requires a secure (HTTPS) connection.');
+      return;
+    }
     if (!navigator?.mediaDevices?.getUserMedia) {
       toast.error('Audio recording is not supported in this browser.');
+      return;
+    }
+    if (typeof window.MediaRecorder !== 'function') {
+      toast.error('Media recording is not available in this browser.');
       return;
     }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       recordingStreamRef.current = stream;
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      const supportedTypes = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/mp4;codecs=opus',
+        'audio/mp4',
+        'audio/mpeg',
+        'audio/ogg;codecs=opus',
+      ];
+      let chosenType;
+      if (window.MediaRecorder && typeof MediaRecorder.isTypeSupported === 'function') {
+        chosenType = supportedTypes.find((type) => MediaRecorder.isTypeSupported(type));
+      }
+      let mediaRecorder;
+      try {
+        mediaRecorder = new MediaRecorder(
+          stream,
+          chosenType ? { mimeType: chosenType } : undefined
+        );
+        recordingMimeTypeRef.current = chosenType || 'audio/webm';
+      } catch (recorderError) {
+        console.error('Failed to initialize media recorder:', recorderError);
+        toast.error('Unable to start voice recorder on this device.');
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
       audioChunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
