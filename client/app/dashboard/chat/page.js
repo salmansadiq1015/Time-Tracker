@@ -187,6 +187,7 @@ export default function ChatPage() {
   const [creatingGroup, setCreatingGroup] = useState(false);
   const [savingEditGroup, setSavingEditGroup] = useState(false);
   const fileInputRef = useRef(null);
+  const voiceFileInputRef = useRef(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [projects, setProjects] = useState([]);
@@ -203,6 +204,7 @@ export default function ChatPage() {
   const audioChunksRef = useRef([]);
   const recordingStreamRef = useRef(null);
   const recordingMimeTypeRef = useRef('audio/webm');
+  const [recordingError, setRecordingError] = useState('');
 
   const userId = auth?.user?._id;
   const canCreateGroup = useMemo(
@@ -781,6 +783,28 @@ export default function ChatPage() {
     }, 1000);
   };
 
+  const triggerVoiceFilePicker = () => {
+    try {
+      voiceFileInputRef.current?.click();
+    } catch (error) {
+      console.error('Failed to open voice file picker:', error);
+    }
+  };
+
+  const handleVoiceFileSelection = async (event) => {
+    const files = Array.from(event.target.files || []);
+    event.target.value = '';
+    if (!files.length || !selectedChatId) return;
+    for (const file of files) {
+      try {
+        await uploadFileAndSend(file);
+      } catch (error) {
+        console.error('Failed to upload selected voice file:', error);
+        toast.error('Unable to upload selected audio file.');
+      }
+    }
+  };
+
   const stopRecordingInternal = () => {
     if (mediaRecorderRef.current) {
       try {
@@ -809,18 +833,28 @@ export default function ChatPage() {
   };
 
   const startRecording = async () => {
-    if (typeof window === 'undefined') return;
+    setRecordingError('');
+    if (typeof window === 'undefined') return false;
     if (!window.isSecureContext) {
-      toast.error('Voice recording requires a secure (HTTPS) connection.');
-      return;
+      const message = 'Voice recording requires a secure (HTTPS) connection.';
+      toast.error(`${message} You can still upload an audio file manually.`);
+      setRecordingError(message);
+      triggerVoiceFilePicker();
+      return false;
     }
     if (!navigator?.mediaDevices?.getUserMedia) {
-      toast.error('Audio recording is not supported in this browser.');
-      return;
+      const message = 'Audio recording is not supported in this browser.';
+      toast.error(`${message} Please upload an audio file instead.`);
+      setRecordingError(message);
+      triggerVoiceFilePicker();
+      return false;
     }
     if (typeof window.MediaRecorder !== 'function') {
-      toast.error('Media recording is not available in this browser.');
-      return;
+      const message = 'Media recording is not available in this browser.';
+      toast.error(`${message} Please upload an audio file instead.`);
+      setRecordingError(message);
+      triggerVoiceFilePicker();
+      return false;
     }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -846,9 +880,12 @@ export default function ChatPage() {
         recordingMimeTypeRef.current = chosenType || 'audio/webm';
       } catch (recorderError) {
         console.error('Failed to initialize media recorder:', recorderError);
-        toast.error('Unable to start voice recorder on this device.');
+        const message = 'Unable to start voice recorder on this device.';
+        toast.error(`${message} You can upload an audio file instead.`);
+        setRecordingError(message);
         stream.getTracks().forEach((track) => track.stop());
-        return;
+        triggerVoiceFilePicker();
+        return false;
       }
       audioChunksRef.current = [];
 
@@ -859,7 +896,7 @@ export default function ChatPage() {
       };
 
       mediaRecorder.onstop = async () => {
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const blob = new Blob(audioChunksRef.current, { type: recordingMimeTypeRef.current });
         audioChunksRef.current = [];
         setIsRecording(false);
         await sendVoiceMessage(blob);
@@ -868,11 +905,16 @@ export default function ChatPage() {
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start();
       setIsRecording(true);
+      return true;
     } catch (error) {
       console.error('Failed to start recording:', error);
-      toast.error(error?.message || 'Unable to access microphone.');
+      const message = error?.message || 'Unable to access microphone.';
+      toast.error(`${message} You can upload an audio file instead.`);
+      setRecordingError(message);
       stopRecordingInternal();
       setIsRecording(false);
+      triggerVoiceFilePicker();
+      return false;
     }
   };
 
@@ -880,7 +922,7 @@ export default function ChatPage() {
     stopRecordingInternal();
   };
 
-  const handleVoiceToggle = () => {
+  const handleVoiceToggle = async () => {
     if (!selectedChatId) {
       toast.error('Select a chat before recording.');
       return;
@@ -888,7 +930,10 @@ export default function ChatPage() {
     if (isRecording) {
       stopRecording();
     } else {
-      startRecording();
+      const started = await startRecording();
+      if (!started) {
+        setIsRecording(false);
+      }
     }
   };
 
@@ -1316,6 +1361,14 @@ export default function ChatPage() {
                 className="hidden"
                 onChange={handleFileChange}
               />
+              <input
+                ref={voiceFileInputRef}
+                type="file"
+                accept="audio/*"
+                capture="microphone"
+                className="hidden"
+                onChange={handleVoiceFileSelection}
+              />
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -1397,6 +1450,9 @@ export default function ChatPage() {
                     <Loader2 className="w-3 h-3 animate-spin" />
                     Uploading...
                   </span>
+                )}
+                {!isRecording && !sending && recordingError && (
+                  <span className="text-rose-600">{recordingError}</span>
                 )}
               </div>
             </div>
