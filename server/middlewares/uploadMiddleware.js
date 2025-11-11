@@ -103,6 +103,7 @@ function checkFileType(file, cb) {
     'audio/x-ms-wma',
     'audio/aiff',
     'audio/opus',
+    'audio/webm',
     'video/mp4',
     'video/quicktime',
     'video/x-msvideo',

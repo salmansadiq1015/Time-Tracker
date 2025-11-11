@@ -21,6 +21,10 @@ import {
   ArrowLeft,
   Trash2,
   UserCircle2,
+  Mic,
+  Square,
+  Play,
+  Pause,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,6 +48,103 @@ import {
 } from '@/components/ui/dialog';
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
+const formatDuration = (seconds) => {
+  if (!seconds || Number.isNaN(seconds)) return '00:00';
+  const totalSeconds = Math.max(0, Math.floor(seconds));
+  const mins = Math.floor(totalSeconds / 60)
+    .toString()
+    .padStart(2, '0');
+  const secs = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${mins}:${secs}`;
+};
+
+const AudioMessage = ({ src, mine }) => {
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleLoaded = () => setDuration(audio.duration || 0);
+    const handleTime = () => setCurrentTime(audio.currentTime || 0);
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(audio.duration || 0);
+    };
+
+    audio.addEventListener('loadedmetadata', handleLoaded);
+    audio.addEventListener('timeupdate', handleTime);
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', handleLoaded);
+      audio.removeEventListener('timeupdate', handleTime);
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, [src]);
+
+  const togglePlay = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    try {
+      if (isPlaying) {
+        await audio.pause();
+      } else {
+        await audio.play();
+      }
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+    }
+  };
+
+  const progressPercent = duration ? Math.min(100, (currentTime / duration) * 100) : 0;
+
+  const containerClasses = mine
+    ? 'bg-white/15 text-white border border-white/20'
+    : 'bg-amber-50 text-gray-900 border border-amber-200/80';
+
+  const knobClasses = mine ? 'bg-white text-[#c16840]' : 'bg-amber-200 text-amber-700';
+  const progressBaseClasses = mine ? 'bg-white/25' : 'bg-amber-900/10';
+  const progressFillClasses = mine ? 'bg-white' : 'bg-amber-500';
+
+  return (
+    <div className={`w-60 sm:w-72 rounded-2xl px-3 py-3 ${containerClasses} shadow-inner`}>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={togglePlay}
+          className={`flex h-10 w-10 items-center justify-center rounded-full ${knobClasses} shadow`}
+        >
+          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+        </button>
+        <div className="flex-1">
+          <div className={`h-1.5 rounded-full overflow-hidden ${progressBaseClasses}`}>
+            <div
+              className={`h-full ${progressFillClasses}`}
+              style={{ width: `${progressPercent}%`, transition: 'width 150ms linear' }}
+            />
+          </div>
+          <div className="mt-1 flex items-center justify-between text-[11px] opacity-70">
+            <span>{formatDuration(currentTime)}</span>
+            <span>{formatDuration(duration)}</span>
+          </div>
+        </div>
+      </div>
+      <audio ref={audioRef} src={src} preload="metadata" className="hidden" />
+    </div>
+  );
+};
 
 export default function ChatPage() {
   const { auth } = useAuthContent();
@@ -87,6 +188,10 @@ export default function ChatPage() {
   const [membersDialogOpen, setMembersDialogOpen] = useState(false);
   const [groupMembers, setGroupMembers] = useState([]);
   const [groupMembersLoading, setGroupMembersLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const recordingStreamRef = useRef(null);
 
   const userId = auth?.user?._id;
   const canCreateGroup = useMemo(
@@ -665,6 +770,83 @@ export default function ChatPage() {
     }, 1000);
   };
 
+  const stopRecordingInternal = () => {
+    if (mediaRecorderRef.current) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (err) {
+        console.error('Failed to stop recorder:', err);
+      }
+    }
+    if (recordingStreamRef.current) {
+      recordingStreamRef.current.getTracks().forEach((track) => track.stop());
+      recordingStreamRef.current = null;
+    }
+  };
+
+  const sendVoiceMessage = async (blob) => {
+    if (!blob || !selectedChatId) return;
+    const voiceFile = new File([blob], `voice-${Date.now()}.webm`, { type: 'audio/webm' });
+    await uploadFileAndSend(voiceFile);
+  };
+
+  const startRecording = async () => {
+    if (!navigator?.mediaDevices?.getUserMedia) {
+      toast.error('Audio recording is not supported in this browser.');
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recordingStreamRef.current = stream;
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        audioChunksRef.current = [];
+        setIsRecording(false);
+        await sendVoiceMessage(blob);
+      };
+
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+      toast.error(error?.message || 'Unable to access microphone.');
+      stopRecordingInternal();
+      setIsRecording(false);
+    }
+  };
+
+  const stopRecording = () => {
+    stopRecordingInternal();
+  };
+
+  const handleVoiceToggle = () => {
+    if (!selectedChatId) {
+      toast.error('Select a chat before recording.');
+      return;
+    }
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      stopRecordingInternal();
+    };
+  }, []);
+
   return (
     <>
       <style
@@ -967,7 +1149,7 @@ export default function ChatPage() {
                         ) : m.contentType === 'video' ? (
                           <video src={m.content} controls className="rounded-md max-w-full" />
                         ) : m.contentType === 'audio' ? (
-                          <audio src={m.content} controls className="w-full" />
+                          <AudioMessage src={m.content} mine={mine} />
                         ) : m.contentType === 'file' ? (
                           <a
                             href={m.content}
@@ -1075,7 +1257,7 @@ export default function ChatPage() {
             </div>
 
             {/* Composer */}
-            <div className="p-3 border-t flex items-center gap-2">
+            <div className="p-3 border-t flex flex-col gap-2">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -1083,57 +1265,89 @@ export default function ChatPage() {
                 className="hidden"
                 onChange={handleFileChange}
               />
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-10 w-10"
-                onClick={handlePickFile}
-                disabled={!selectedChatId}
-              >
-                <Paperclip className="w-4 h-4" />
-              </Button>
-              {/* Emoji quick picker */}
-              <div className="relative">
+              <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="icon"
                   className="h-10 w-10"
-                  onClick={() => setEmojiOpen((v) => !v)}
+                  onClick={handlePickFile}
                   disabled={!selectedChatId}
+                  title="Send attachment"
                 >
-                  😊
+                  <Paperclip className="w-4 h-4" />
                 </Button>
-                {emojiOpen && (
-                  <div className="absolute bottom-12 left-0 bg-white border rounded-md shadow-md p-2 grid grid-cols-4 gap-1 w-40">
-                    {['😀', '😂', '😍', '👍', '🙌', '🎉', '🙏', '🔥'].map((e) => (
-                      <button
-                        key={e}
-                        onClick={() => insertEmoji(e)}
-                        className="hover:scale-110 transition-transform"
-                      >
-                        {e}
-                      </button>
-                    ))}
-                  </div>
+                <Button
+                  variant={isRecording ? 'destructive' : 'outline'}
+                  size="icon"
+                  className={`h-10 w-10 transition-all ${
+                    isRecording
+                      ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-400/40 animate-pulse'
+                      : ''
+                  }`}
+                  onClick={handleVoiceToggle}
+                  disabled={!selectedChatId || sending}
+                  title={isRecording ? 'Stop recording' : 'Record voice message'}
+                >
+                  {isRecording ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                </Button>
+                {/* Emoji quick picker */}
+                <div className="relative">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10"
+                    onClick={() => setEmojiOpen((v) => !v)}
+                    disabled={!selectedChatId}
+                    title="Insert emoji"
+                  >
+                    😊
+                  </Button>
+                  {emojiOpen && (
+                    <div className="absolute bottom-12 left-0 bg-white border rounded-md shadow-md p-2 grid grid-cols-4 gap-1 w-40">
+                      {['😀', '😂', '😍', '👍', '🙌', '🎉', '🙏', '🔥'].map((e) => (
+                        <button
+                          key={e}
+                          onClick={() => insertEmoji(e)}
+                          className="hover:scale-110 transition-transform"
+                        >
+                          {e}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <Input
+                  value={messageInput}
+                  onChange={(e) => handleTyping(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSend();
+                  }}
+                  placeholder="Type a message"
+                  className="h-10 flex-1"
+                  disabled={!selectedChatId}
+                />
+                <Button onClick={handleSend} disabled={sending || !selectedChatId} className="h-10">
+                  {sending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+              <div className="min-h-[18px] flex items-center gap-3 px-1 text-xs">
+                {isRecording && (
+                  <span className="flex items-center gap-1 text-rose-600 font-semibold">
+                    <span className="inline-flex h-2 w-2 rounded-full bg-rose-600 animate-pulse" />
+                    Recording...
+                  </span>
+                )}
+                {!isRecording && sending && (
+                  <span className="flex items-center gap-2 text-amber-600">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    Uploading...
+                  </span>
                 )}
               </div>
-              <Input
-                value={messageInput}
-                onChange={(e) => handleTyping(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSend();
-                }}
-                placeholder="Type a message"
-                className="h-10"
-                disabled={!selectedChatId}
-              />
-              <Button onClick={handleSend} disabled={sending || !selectedChatId} className="h-10">
-                {sending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
-              </Button>
             </div>
           </div>
         </div>
