@@ -32,6 +32,8 @@ interface TimeEntry {
   duration?: number;
   isActive: boolean;
   createdAt: string;
+  project?: string | { _id: string; name: string };
+  task?: string | { _id: string; title: string };
   user?: {
     _id: string;
     name: string;
@@ -136,6 +138,18 @@ export function TimeTrackerCards({
     }
   };
 
+  const getProjectName = (project?: string | { _id: string; name: string }) => {
+    if (!project) return null;
+    if (typeof project === 'string') return project;
+    return project.name || null;
+  };
+
+  const getTaskName = (task?: string | { _id: string; title: string }) => {
+    if (!task) return null;
+    if (typeof task === 'string') return task;
+    return task.title || null;
+  };
+
   const validEntries = entries.filter((entry) => entry && entry._id);
 
   return (
@@ -180,6 +194,20 @@ export function TimeTrackerCards({
                           </span>
                         )}
                       </div>
+                      {(getProjectName(entry.project) || getTaskName(entry.task)) && (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {getProjectName(entry.project) && (
+                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded border border-blue-200">
+                              Project: {getProjectName(entry.project)}
+                            </span>
+                          )}
+                          {getTaskName(entry.task) && (
+                            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded border border-purple-200">
+                              Task: {getTaskName(entry.task)}
+                            </span>
+                          )}
+                        </div>
+                      )}
                       {entry.user?._id ? (
                         <div className="space-y-1">
                           <button

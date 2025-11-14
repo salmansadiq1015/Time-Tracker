@@ -156,13 +156,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"user\": \"{{userId}}\",\n  \"start\": {\n    \"startTime\": \"{{nowIso}}\",\n    \"location\": \"NYC\",\n    \"lat\": 40.7128,\n    \"lng\": -74.006\n  },\n  \"description\": \"Demo start\",\n  \"photos\": []\n}"
+              "raw": "{\n  \"user\": \"{{userId}}\",\n  \"start\": {\n    \"startTime\": \"{{nowIso}}\",\n    \"location\": \"NYC\",\n    \"lat\": 40.7128,\n    \"lng\": -74.006\n  },\n  \"description\": \"Demo start\",\n  \"photos\": [],\n  \"project\": \"{{projectId}}\",\n  \"task\": \"{{taskId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/time-tracker/start",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "time-tracker", "start"]
-            }
+            },
+            "description": "Start a timer. Project and task are optional fields. If provided, they should be valid project and task IDs."
           }
         },
         {
@@ -185,7 +186,7 @@
           }
         },
         {
-          "name": "Update Timer (status/client/photos)",
+          "name": "Update Timer (status/client/photos/project/task)",
           "request": {
             "method": "PATCH",
             "header": [
@@ -194,13 +195,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"description\": \"Edited\",\n  \"photos\": [],\n  \"status\": \"approved\",\n  \"verifiedByClient\": true,\n  \"client\": \"{{clientId}}\"\n}"
+              "raw": "{\n  \"description\": \"Edited\",\n  \"photos\": [],\n  \"status\": \"approved\",\n  \"verifiedByClient\": true,\n  \"client\": \"{{clientId}}\",\n  \"project\": \"{{projectId}}\",\n  \"task\": \"{{taskId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/time-tracker/update/{{timerId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "time-tracker", "update", "{{timerId}}"]
-            }
+            },
+            "description": "Update a timer. All fields are optional. Project and task can be updated independently."
           }
         },
         {
@@ -630,6 +632,105 @@
           }
         }
       ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tasks?page=1&limit=10&status=all&priority=all&project=all&assignedTo=&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "tasks"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "status", "value": "all"},
+                {"key": "priority", "value": "all"},
+                {"key": "project", "value": "all"},
+                {"key": "assignedTo", "value": ""},
+                {"key": "search", "value": ""}
+              ]
+            },
+            "description": "List all tasks. Users with 'user' role only see tasks assigned to them or created by them. Admins and dispatchers see all tasks. Supports filtering by status, priority, project, assignedTo, and search query."
+          }
+        },
+        {
+          "name": "Create Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Complete project documentation\",\n  \"description\": \"Write comprehensive documentation for the project\",\n  \"project\": \"{{projectId}}\",\n  \"assignedTo\": \"{{userId}}\",\n  \"status\": \"pending\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2025-02-15T00:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tasks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "tasks"]
+            },
+            "description": "Create a new task. Title, description, project, and dueDate are required. assignedTo is optional. Status defaults to 'pending', priority defaults to 'medium'."
+          }
+        },
+        {
+          "name": "Get Task Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "tasks", "{{taskId}}"]
+            },
+            "description": "Get details of a specific task. Users with 'user' role can only access tasks assigned to them or created by them."
+          }
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated task title\",\n  \"description\": \"Updated description\",\n  \"status\": \"in_progress\",\n  \"priority\": \"medium\",\n  \"dueDate\": \"2025-02-20T00:00:00.000Z\",\n  \"assignedTo\": \"{{userId}}\",\n  \"project\": \"{{projectId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "tasks", "{{taskId}}"]
+            },
+            "description": "Update a task. Users with 'user' role can only update status, priority, and description. Admins and dispatchers can update all fields."
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tasks/{{taskId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "tasks", "{{taskId}}"]
+            },
+            "description": "Delete a task. Only admins and dispatchers can delete tasks. Users with 'user' role cannot delete tasks."
+          }
+        }
+      ]
     }
   ],
   "variable": [
@@ -641,6 +742,7 @@
     { "key": "clientId", "value": "" },
     { "key": "projectId", "value": "" },
     { "key": "equipmentId", "value": "" },
+    { "key": "taskId", "value": "" },
     { "key": "nowIso", "value": "{{$isoTimestamp}}" }
   ]
 }

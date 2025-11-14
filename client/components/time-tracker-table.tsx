@@ -55,6 +55,8 @@ interface TimeEntry {
   status?: string;
   verifiedByClient?: boolean;
   client?: string | { _id: string; name: string; email: string };
+  project?: string | { _id: string; name: string };
+  task?: string | { _id: string; title: string };
   user?: {
     _id: string;
     name: string;
@@ -195,6 +197,18 @@ export function TimeTrackerTable({
     if (!client) return '-';
     if (typeof client === 'string') return client;
     return client.name || client.email || '-';
+  };
+
+  const getProjectName = (project?: string | { _id: string; name: string }) => {
+    if (!project) return '-';
+    if (typeof project === 'string') return project;
+    return project.name || '-';
+  };
+
+  const getTaskName = (task?: string | { _id: string; title: string }) => {
+    if (!task) return '-';
+    if (typeof task === 'string') return task;
+    return task.title || '-';
   };
 
   const normalizeCoordinate = (value: unknown): number | null => {
@@ -361,6 +375,12 @@ export function TimeTrackerTable({
                 <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider min-w-60">
                   Description
                 </th>
+                <th className="text-left py-4 px-4 min-w-32 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                  Project
+                </th>
+                <th className="text-left py-4 px-4 min-w-32 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                  Task
+                </th>
 
                 <th className="text-left py-4 px-4 min-w-60 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Start Time
@@ -388,7 +408,7 @@ export function TimeTrackerTable({
                 <>
                   {[...Array(3)].map((_, i) => (
                     <tr key={i} className="border-b border-gray-100">
-                      <td colSpan={10} className="py-4 px-4">
+                      <td colSpan={12} className="py-4 px-4">
                         <Skeleton className="h-8 w-full" />
                       </td>
                     </tr>
@@ -396,7 +416,7 @@ export function TimeTrackerTable({
                 </>
               ) : validEntries.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-12 px-4 text-center">
+                  <td colSpan={12} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <AlertCircle className="w-12 h-12 text-gray-400" />
                       <p className="text-gray-500 font-medium">No time entries found</p>
@@ -509,6 +529,14 @@ export function TimeTrackerTable({
                             )}
                           </div>
                         </td>
+                        <td className="py-4 px-4">
+                          <span className="text-gray-700 text-sm">
+                            {getProjectName(entry.project)}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4">
+                          <span className="text-gray-700 text-sm">{getTaskName(entry.task)}</span>
+                        </td>
                         {/* <td className="py-4 px-4">
                           <button
                             type="button"
@@ -617,7 +645,7 @@ export function TimeTrackerTable({
                       </tr>
                       {expandedRows[entry._id] && (
                         <tr className="bg-gray-50/70">
-                          <td colSpan={10} className="px-6 py-5">
+                          <td colSpan={12} className="px-6 py-5">
                             <div className="flex flex-col gap-6">
                               <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="space-y-1">

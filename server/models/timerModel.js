@@ -11,6 +11,10 @@ const timerModelSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Project',
     },
+    task: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task',
+    },
     start: {
       startTime: {
         type: Date,

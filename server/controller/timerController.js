@@ -3,7 +3,7 @@ import timerModel from '../models/timerModel.js';
 // Start Timer
 export const startTimer = async (req, res) => {
   try {
-    const { user, start, description, photos } = req.body;
+    const { user, start, description, photos, project, task } = req.body;
 
     if (!start) {
       return res.status(400).json({
@@ -17,6 +17,8 @@ export const startTimer = async (req, res) => {
 
     const timer = await timerModel.create({
       user: user ? user : req.user._id,
+      project: project || undefined,
+      task: task || undefined,
       start: {
         ...start,
         photos: startPhotos,
@@ -139,6 +141,8 @@ export const updateTimer = async (req, res) => {
         timerId,
         {
           user: data.user ? data.user : timer.user,
+          project: data.project !== undefined ? data.project : timer.project,
+          task: data.task !== undefined ? data.task : timer.task,
           start: startPayload,
           end: endPayload,
           description: data.description ? data.description : timer.description,
@@ -157,6 +161,8 @@ export const updateTimer = async (req, res) => {
         select: 'name email phone role status createdby',
         populate: { path: 'createdby', select: 'name email role phone' },
       })
+      .populate('project', 'name')
+      .populate('task', 'title')
       .populate('client', 'name email');
 
     res.status(200).json({
@@ -346,6 +352,8 @@ export const fetchTimers = async (req, res) => {
           select: 'name email phone role status createdby',
           populate: { path: 'createdby', select: 'name email role phone' },
         })
+        .populate('project', 'name')
+        .populate('task', 'title')
         .sort({ 'start.startTime': -1 })
         .skip((page - 1) * limit)
         .limit(limit)

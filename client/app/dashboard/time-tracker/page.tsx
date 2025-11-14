@@ -49,6 +49,8 @@ interface TimeEntry {
   status?: string;
   verifiedByClient?: boolean;
   client?: string | { _id: string; name: string; email: string };
+  project?: string | { _id: string; name: string };
+  task?: string | { _id: string; title: string };
   user?: {
     _id: string;
     name: string;
@@ -133,8 +135,10 @@ export default function TimeTrackerPage() {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        user: auth.user.role === 'user' ? auth?.user?._id : filters.selectedUser,
       });
+
+      const userId = auth.user.role === 'user' ? auth?.user?._id : filters.selectedUser;
+      if (userId) params.append('user', userId);
 
       if (filters.startDate) params.append('start', filters.startDate);
       if (filters.endDate) params.append('end', filters.endDate);
@@ -147,7 +151,8 @@ export default function TimeTrackerPage() {
       if (response.data?.success && response.data?.data) {
         setEntries(response.data.data.timers || []);
         setSummary(response.data.data.summary);
-        setPagination(response.data.data.pagination);
+        const paginationData = response.data.data.pagination;
+        setPagination(paginationData);
 
         const active = response.data.data.timers?.find((t: TimeEntry) => t.isActive);
         setActiveTimer(active || null);
@@ -167,6 +172,13 @@ export default function TimeTrackerPage() {
   useEffect(() => {
     fetchEntries();
   }, [fetchEntries]);
+
+  // Reset to page 1 if current page exceeds total pages after pagination data is received
+  useEffect(() => {
+    if (pagination && page > pagination.totalPages && pagination.totalPages > 0) {
+      setPage(1);
+    }
+  }, [pagination, page]);
 
   // Fetch Users
   const fetchUsers = useCallback(async () => {
@@ -303,6 +315,8 @@ export default function TimeTrackerPage() {
           },
           description: data.description,
           photos: data.photos || [],
+          project: data.project,
+          task: data.task,
         }
       );
 
