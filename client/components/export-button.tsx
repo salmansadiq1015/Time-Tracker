@@ -387,7 +387,7 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
       <Button
         onClick={exportToCSV}
         variant="outline"
-        className="flex items-center gap-2 border-green-500/30 hover:bg-green-500/10 hover:border-green-500"
+        className="flex items-center gap-2 bg-[#0f1419] border-green-500/50 text-green-300 hover:bg-green-500/20 hover:border-green-500 hover:text-green-200"
       >
         <FileSpreadsheet className="w-4 h-4" />
         Export CSV
@@ -395,7 +395,7 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
       <Button
         onClick={exportToPDF}
         variant="outline"
-        className="flex items-center gap-2 border-red-500/30 hover:bg-red-500/10 hover:border-red-500"
+        className="flex items-center gap-2 bg-[#0f1419] border-red-500/50 text-red-300 hover:bg-red-500/20 hover:border-red-500 hover:text-red-200"
       >
         <FileText className="w-4 h-4" />
         Export PDF

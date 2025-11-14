@@ -187,50 +187,50 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
   };
 
   return (
-    <Card className="border-amber-200 bg-white shadow-lg text-black">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-amber-100">
-        <CardTitle className="text-xl font-bold text-gray-800">
+    <Card className="border-gray-700/50 bg-[#1e2339] shadow-xl text-white">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-gray-700/50">
+        <CardTitle className="text-xl font-bold text-white">
           {isStarting ? 'Start Timer' : 'Stop Timer'}
         </CardTitle>
-        <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-amber-50">
+        <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-gray-700/50 text-gray-300 hover:text-white">
           <X className="w-4 h-4" />
         </Button>
       </CardHeader>
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Description</label>
+            <label className="text-sm font-semibold text-gray-200">Description</label>
             <Textarea
               placeholder="What are you working on?"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
               disabled={submitting}
-              className="bg-white border-gray-300 hover:border-amber-400 focus:border-amber-500 resize-none h-20 transition-colors"
+              className="bg-[#0f1419] border-gray-600 hover:border-blue-500 focus:border-blue-500 resize-none h-20 transition-colors text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Project & Task Selection - Side by side on large screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+              <label className="text-sm font-semibold text-gray-200 flex items-center gap-1.5">
                 <span>Project</span>
-                <span className="text-xs font-normal text-gray-500">(Optional)</span>
+                <span className="text-xs font-normal text-gray-400">(Optional)</span>
               </label>
               <Select
                 value={selectedProject || undefined}
                 onValueChange={(value) => setSelectedProject(value === 'none' ? '' : value)}
                 disabled={submitting || loadingProjects}
               >
-                <SelectTrigger className="w-full bg-white border-gray-300 hover:border-amber-400 focus:border-amber-500 transition-colors h-10">
+                <SelectTrigger className="w-full bg-[#0f1419] border-gray-600 hover:border-blue-500 focus:border-blue-500 transition-colors h-10 text-white">
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  <SelectItem value="none" className="text-gray-500">
+                <SelectContent className="max-h-[300px] bg-[#1e2339] border-gray-700">
+                  <SelectItem value="none" className="text-gray-400">
                     None
                   </SelectItem>
                   {projects.map((project) => (
-                    <SelectItem key={project._id} value={project._id}>
+                    <SelectItem key={project._id} value={project._id} className="text-white hover:bg-gray-700">
                       {project.name}
                     </SelectItem>
                   ))}
@@ -239,29 +239,29 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+              <label className="text-sm font-semibold text-gray-200 flex items-center gap-1.5">
                 <span>Task</span>
-                <span className="text-xs font-normal text-gray-500">(Optional)</span>
+                <span className="text-xs font-normal text-gray-400">(Optional)</span>
               </label>
               <Select
                 value={selectedTask || undefined}
                 onValueChange={(value) => setSelectedTask(value === 'none' ? '' : value)}
                 disabled={submitting || loadingTasks}
               >
-                <SelectTrigger className="w-full bg-white border-gray-300 hover:border-amber-400 focus:border-amber-500 transition-colors h-10">
+                <SelectTrigger className="w-full bg-[#0f1419] border-gray-600 hover:border-blue-500 focus:border-blue-500 transition-colors h-10 text-white">
                   <SelectValue placeholder={selectedProject ? 'Select a task' : 'Select a task'} />
                 </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  <SelectItem value="none" className="text-gray-500">
+                <SelectContent className="max-h-[300px] bg-[#1e2339] border-gray-700">
+                  <SelectItem value="none" className="text-gray-400">
                     None
                   </SelectItem>
                   {filteredTasks.map((task) => (
-                    <SelectItem key={task._id} value={task._id}>
+                    <SelectItem key={task._id} value={task._id} className="text-white hover:bg-gray-700">
                       {task.title}
                     </SelectItem>
                   ))}
                   {filteredTasks.length === 0 && (
-                    <SelectItem value="no-tasks" disabled className="text-gray-400 italic">
+                    <SelectItem value="no-tasks" disabled className="text-gray-500 italic">
                       No tasks found
                     </SelectItem>
                   )}
@@ -271,19 +271,19 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-amber-600" />
+            <label className="text-sm font-semibold text-gray-200 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-blue-400" />
               Current Location
             </label>
             {loading ? (
-              <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 flex items-center gap-3">
-                <Loader2 className="w-4 h-4 animate-spin text-amber-600" />
-                <span className="text-sm text-gray-600">Getting location...</span>
+              <div className="p-4 bg-[#0f1419] rounded-lg border border-gray-700 flex items-center gap-3">
+                <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                <span className="text-sm text-gray-300">Getting location...</span>
               </div>
             ) : (
-              <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                <p className="text-sm font-mono text-gray-800 font-medium">{location.address}</p>
-                <p className="text-xs text-gray-500 mt-1.5">
+              <div className="p-4 bg-[#0f1419] rounded-lg border border-gray-700">
+                <p className="text-sm font-mono text-white font-medium">{location.address}</p>
+                <p className="text-xs text-gray-400 mt-1.5">
                   Lat: {location.lat.toFixed(4)}, Lng: {location.lng.toFixed(4)}
                 </p>
               </div>
@@ -296,7 +296,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
             <Button
               type="submit"
               disabled={loading || submitting}
-              className="flex-1 bg-amber-700 hover:bg-amber-800 text-white font-semibold h-11 shadow-md hover:shadow-lg transition-all"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold h-11 shadow-lg hover:shadow-xl transition-all"
             >
               {submitting ? (
                 <>
@@ -314,7 +314,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
               variant="outline"
               onClick={onCancel}
               disabled={submitting}
-              className="flex-1 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-gray-700 font-semibold h-11 transition-all"
+              className="flex-1 bg-[#0f1419] border-gray-600 hover:bg-gray-800 hover:border-gray-500 text-gray-300 font-semibold h-11 transition-all"
             >
               Cancel
             </Button>

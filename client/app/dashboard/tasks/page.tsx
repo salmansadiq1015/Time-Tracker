@@ -77,28 +77,28 @@ const statusMeta: Record<
 > = {
   pending: {
     label: 'Pending',
-    className: 'bg-amber-100 text-amber-700 border border-amber-200',
-    dotClass: 'bg-amber-500',
+    className: 'bg-amber-500/20 text-amber-300 border border-amber-500/50',
+    dotClass: 'bg-amber-400',
     description: 'Awaiting kickoff or more context.',
   },
   in_progress: {
     label: 'In Progress',
-    className: 'bg-blue-100 text-blue-700 border border-blue-200',
-    dotClass: 'bg-blue-500',
+    className: 'bg-blue-500/20 text-blue-300 border border-blue-500/50',
+    dotClass: 'bg-blue-400',
     description: 'Currently being worked on.',
   },
   completed: {
     label: 'Completed',
-    className: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
-    dotClass: 'bg-emerald-500',
+    className: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50',
+    dotClass: 'bg-emerald-400',
     description: 'Task has been delivered and approved.',
   },
 };
 
 const priorityMeta: Record<Task['priority'], { label: string; color: string }> = {
-  low: { label: 'Low', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-300' },
-  medium: { label: 'Medium', color: 'bg-amber-500/10 text-amber-600 border-amber-300' },
-  high: { label: 'High', color: 'bg-rose-500/10 text-rose-600 border-rose-300' },
+  low: { label: 'Low', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50' },
+  medium: { label: 'Medium', color: 'bg-amber-500/20 text-amber-300 border-amber-500/50' },
+  high: { label: 'High', color: 'bg-rose-500/20 text-rose-300 border-rose-500/50' },
 };
 
 export default function TaskDashboardPage() {
@@ -326,14 +326,14 @@ export default function TaskDashboardPage() {
   }, [editingTask]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-amber-50 via-white to-orange-50/90 px-4 lg:px-8 py-6 space-y-6">
+    <div className="min-h-screen bg-[#0f1419] px-4 lg:px-8 py-6 space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold text-gray-900 flex items-center gap-3">
-            <ClipboardList className="h-7 w-7 text-[#c16840]" />
+          <h1 className="text-3xl font-semibold text-white flex items-center gap-3">
+            <ClipboardList className="h-7 w-7 text-blue-400" />
             Task Management
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-400 mt-1">
             Coordinate deliverables, delegate ownership and keep work flowing smoothly.
           </p>
         </div>
@@ -341,21 +341,21 @@ export default function TaskDashboardPage() {
           <Button
             variant={showFilters ? 'default' : 'outline'}
             onClick={() => setShowFilters((prev) => !prev)}
-            className="gap-2 border-amber-200 hover:bg-amber-50 text-amber-700"
+            className="gap-2 border-gray-600 hover:bg-gray-700 text-gray-300 bg-[#1e2339]"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filters
             {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="bg-amber-600 text-white hover:bg-amber-700">
+              <Badge variant="secondary" className="bg-blue-600 text-white hover:bg-blue-700">
                 {activeFiltersCount}
               </Badge>
             )}
           </Button>
-          <div className="hidden sm:flex bg-white border border-amber-200 rounded-md overflow-hidden">
+          <div className="hidden sm:flex bg-[#1e2339] border border-gray-600 rounded-md overflow-hidden">
             <Button
               variant={viewMode === 'table' ? 'default' : 'ghost'}
               className={`gap-2 rounded-none ${
-                viewMode === 'table' ? 'bg-[#c16840] text-white' : ''
+                viewMode === 'table' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
               }`}
               onClick={() => setViewMode('table')}
             >
@@ -364,7 +364,7 @@ export default function TaskDashboardPage() {
             <Button
               variant={viewMode === 'card' ? 'default' : 'ghost'}
               className={`gap-2 rounded-none ${
-                viewMode === 'card' ? 'bg-[#c16840] text-white' : ''
+                viewMode === 'card' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
               }`}
               onClick={() => setViewMode('card')}
             >
@@ -377,7 +377,7 @@ export default function TaskDashboardPage() {
                 setEditingTask(null);
                 setShowForm(true);
               }}
-              className="bg-[#c16840] hover:bg-[#aa5735] gap-2 text-white shadow-md"
+              className="bg-blue-600 hover:bg-blue-700 gap-2 text-white shadow-md"
             >
               <Plus className="h-4 w-4" />
               New Task
@@ -387,70 +387,70 @@ export default function TaskDashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="border-amber-200 bg-white shadow-sm">
+        <Card className="border-gray-700/50 bg-[#1e2339] shadow-sm">
           <CardContent className="flex items-center gap-3 py-4">
-            <div className="h-10 w-10 rounded-full bg-[#c16840]/10 flex items-center justify-center text-[#c16840]">
+            <div className="h-10 w-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
               <ClipboardList className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-gray-500">Total Tasks</p>
-              <p className="text-xl font-semibold text-gray-900">{stats.total}</p>
+              <p className="text-xs text-gray-400">Total Tasks</p>
+              <p className="text-xl font-semibold text-white">{stats.total}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-amber-200 bg-white shadow-sm">
+        <Card className="border-gray-700/50 bg-[#1e2339] shadow-sm">
           <CardContent className="flex items-center gap-3 py-4">
-            <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-600">
+            <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
               <AlertCircle className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-gray-500">Pending</p>
-              <p className="text-xl font-semibold text-gray-900">{stats.pending}</p>
+              <p className="text-xs text-gray-400">Pending</p>
+              <p className="text-xl font-semibold text-white">{stats.pending}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-amber-200 bg-white shadow-sm">
+        <Card className="border-gray-700/50 bg-[#1e2339] shadow-sm">
           <CardContent className="flex items-center gap-3 py-4">
-            <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600">
+            <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
               <Loader2 className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-gray-500">In Progress</p>
-              <p className="text-xl font-semibold text-gray-900">{stats.inProgress}</p>
+              <p className="text-xs text-gray-400">In Progress</p>
+              <p className="text-xl font-semibold text-white">{stats.inProgress}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-amber-200 bg-white shadow-sm">
+        <Card className="border-gray-700/50 bg-[#1e2339] shadow-sm">
           <CardContent className="flex items-center gap-3 py-4">
-            <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+            <div className="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
               <CheckCircle2 className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs text-gray-500">Completed</p>
-              <p className="text-xl font-semibold text-gray-900">{stats.completed}</p>
+              <p className="text-xs text-gray-400">Completed</p>
+              <p className="text-xl font-semibold text-white">{stats.completed}</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="border-amber-200 shadow-lg shadow-amber-100/40">
+      <Card className="border-gray-700/50 shadow-lg bg-[#1e2339]">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg text-gray-900 flex items-center gap-3">
+          <CardTitle className="text-lg text-white flex items-center gap-3">
             <div className="flex-1 flex items-center gap-2">
               <div className="relative flex-1">
                 <Input
                   value={filters.search}
                   onChange={(e) => updateFilterValue('search', e.target.value)}
                   placeholder="Search by task title or description..."
-                  className="pl-10 border-amber-200 focus-visible:ring-[#c16840]"
+                  className="pl-10 border-gray-600 bg-[#0f1419] text-white placeholder:text-gray-500 focus-visible:ring-blue-500"
                 />
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-amber-500" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-400" />
               </div>
             </div>
           </CardTitle>
         </CardHeader>
         {showFilters && (
-          <CardContent className="border-t border-amber-100/60 pt-4 bg-amber-50/40 rounded-b-lg">
+          <CardContent className="border-t border-gray-700/50 pt-4 bg-[#0f1419] rounded-b-lg">
             <TaskFilters
               filters={filters}
               onFiltersChange={handleFiltersChange}
@@ -464,23 +464,23 @@ export default function TaskDashboardPage() {
       </Card>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 flex items-center gap-2">
+        <div className="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-400 flex items-center gap-2">
           <AlertCircle className="h-4 w-4" />
           {error}
         </div>
       )}
 
-      <div className="bg-white border border-amber-200 rounded-xl shadow-lg shadow-amber-100/40 overflow-hidden">
+      <div className="bg-[#1e2339] border border-gray-700/50 rounded-xl shadow-lg overflow-hidden">
         {loading ? (
-          <div className="py-16 flex flex-col items-center justify-center gap-3 text-amber-600">
+          <div className="py-16 flex flex-col items-center justify-center gap-3 text-blue-400">
             <Loader2 className="h-6 w-6 animate-spin" />
             <p className="text-sm font-medium">Loading tasks...</p>
           </div>
         ) : tasks.length === 0 ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3 text-gray-500">
-            <ClipboardList className="h-10 w-10 text-amber-500" />
-            <p className="text-base font-semibold text-gray-700">No tasks found</p>
-            <p className="text-sm text-gray-500">
+          <div className="py-20 flex flex-col items-center justify-center gap-3 text-gray-400">
+            <ClipboardList className="h-10 w-10 text-blue-400" />
+            <p className="text-base font-semibold text-white">No tasks found</p>
+            <p className="text-sm text-gray-400">
               {isUserRole
                 ? 'Once a task is assigned to you, it will appear here.'
                 : 'Create a task to get started.'}
@@ -491,7 +491,7 @@ export default function TaskDashboardPage() {
                   setEditingTask(null);
                   setShowForm(true);
                 }}
-                className="mt-2 bg-[#c16840] hover:bg-[#aa5735]"
+                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" /> New Task
               </Button>
@@ -530,10 +530,10 @@ export default function TaskDashboardPage() {
 
       {tasks.length > 0 && (
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-gray-400">
             Show
             <select
-              className="border border-amber-200 rounded-md px-2 py-1 bg-white text-gray-700 focus-visible:outline-none focus-visible:ring focus-visible:ring-amber-200"
+              className="border border-gray-600 rounded-md px-2 py-1 bg-[#0f1419] text-white focus-visible:outline-none focus-visible:ring focus-visible:ring-blue-500"
               value={pagination.limit}
               onChange={(e) => handleLimitChange(Number(e.target.value))}
             >
@@ -548,19 +548,19 @@ export default function TaskDashboardPage() {
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              className="border-amber-200 text-amber-600 hover:bg-amber-50"
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white bg-[#1e2339]"
               disabled={pagination.page === 1}
               onClick={() => handlePageChange(pagination.page - 1)}
             >
               Previous
             </Button>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-400">
               Page {pagination.page} of{' '}
               {Math.max(1, Math.ceil(pagination.total / pagination.limit))}
             </span>
             <Button
               variant="outline"
-              className="border-amber-200 text-amber-600 hover:bg-amber-50"
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white bg-[#1e2339]"
               disabled={!pagination.hasNextPage}
               onClick={() => handlePageChange(pagination.page + 1)}
             >
@@ -593,12 +593,12 @@ export default function TaskDashboardPage() {
           if (!open) closeDeleteDialog();
         }}
       >
-        <AlertDialogContent className="max-w-md border border-amber-200 bg-white/95 rounded-2xl shadow-xl">
+        <AlertDialogContent className="max-w-md border border-gray-700 bg-[#1e2339] rounded-2xl shadow-xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-lg text-gray-900">
+            <AlertDialogTitle className="text-lg text-white">
               Delete task {pendingDeleteTask ? `"${pendingDeleteTask.title}"` : ''}?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-sm text-gray-600 leading-relaxed">
+            <AlertDialogDescription className="text-sm text-gray-400 leading-relaxed">
               This action cannot be undone. The task and its history will be permanently removed for
               all team members.
             </AlertDialogDescription>
@@ -606,7 +606,7 @@ export default function TaskDashboardPage() {
           <AlertDialogFooter className="gap-2">
             <AlertDialogCancel
               onClick={closeDeleteDialog}
-              className="border border-amber-200/80 text-amber-700 hover:bg-amber-50 rounded-xl"
+              className="border border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white bg-[#0f1419] rounded-xl"
               disabled={deleteLoading}
             >
               Cancel

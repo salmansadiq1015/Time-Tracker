@@ -160,38 +160,38 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
 
   return (
     <>
-      <Card className="group overflow-hidden border-amber-200 bg-white transition-all hover:shadow-lg">
+      <Card className="group overflow-hidden border-gray-700/50 bg-[#1e2339] transition-all hover:shadow-lg hover:border-blue-500/50">
         <CardHeader className="relative pb-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
-              <CardTitle className="line-clamp-2 text-lg text-foreground">{project.name}</CardTitle>
+              <CardTitle className="line-clamp-2 text-lg text-white">{project.name}</CardTitle>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="opacity-[0] transition-opacity group-hover:opacity-[1] cursor-pointer text-black"
+                  className="opacity-[0] transition-opacity group-hover:opacity-[1] cursor-pointer text-gray-300 hover:text-white hover:bg-gray-700"
                 >
-                  <MoreVertical className="h-4 w-4 text-black" />
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 text-black">
-                <DropdownMenuItem onClick={() => setShowDetail(true)}>
+              <DropdownMenuContent align="end" className="w-48 bg-[#1e2339] border-gray-700 text-white">
+                <DropdownMenuItem onClick={() => setShowDetail(true)} className="text-gray-300 hover:text-white hover:bg-gray-700 focus:bg-gray-700">
                   <Eye className="mr-2 h-4 w-4" />
                   View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleCreateGroupChat} disabled={creatingChat}>
+                <DropdownMenuItem onClick={handleCreateGroupChat} disabled={creatingChat} className="text-gray-300 hover:text-white hover:bg-gray-700 focus:bg-gray-700">
                   <MessageCircle className="mr-2 h-4 w-4" />
                   {creatingChat ? 'Creating...' : 'Create Group Chat'}
                 </DropdownMenuItem>
                 {(auth.user.role === 'admin' || auth.user.role === 'dispatcher') && (
                   <>
-                    <DropdownMenuItem onClick={() => setShowEdit(true)}>
+                    <DropdownMenuItem onClick={() => setShowEdit(true)} className="text-gray-300 hover:text-white hover:bg-gray-700 focus:bg-gray-700">
                       <Edit2 className="mr-2 h-4 w-4" />
                       Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setShowManageEmployees(true)}>
+                    <DropdownMenuItem onClick={() => setShowManageEmployees(true)} className="text-gray-300 hover:text-white hover:bg-gray-700 focus:bg-gray-700">
                       <UserPlus className="mr-2 h-4 w-4" />
                       Manage Team
                     </DropdownMenuItem>
@@ -199,7 +199,7 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
                     <DropdownMenuItem
                       onClick={handleDelete}
                       disabled={deleting}
-                      className="text-destructive"
+                      className="text-red-400 hover:text-red-300 hover:bg-red-600/20 focus:bg-red-600/20"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete
@@ -213,17 +213,17 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
 
         <CardContent className="space-y-4">
           {/* Description */}
-          <p className="line-clamp-2 text-sm text-muted-foreground">{project.description}</p>
+          <p className="line-clamp-2 text-sm text-gray-400">{project.description}</p>
 
           {/* Location */}
-          <div className="flex items-start gap-2 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+          <div className="flex items-start gap-2 text-sm text-gray-400">
+            <MapPin className="h-4 w-4 shrink-0 text-blue-400 mt-0.5" />
             <div className="flex flex-col">
-              <span className="line-clamp-1 font-medium text-foreground">
+              <span className="line-clamp-1 font-medium text-white">
                 {project.city || project.location || 'City not set'}
               </span>
               {project.address && (
-                <span className="text-xs text-muted-foreground line-clamp-1">
+                <span className="text-xs text-gray-400 line-clamp-1">
                   {project.address}
                 </span>
               )}
@@ -231,8 +231,8 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
           </div>
 
           {/* Dates */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 shrink-0 text-amber-600" />
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <Calendar className="h-4 w-4 shrink-0 text-blue-400" />
             <span>
               {startDate} → {endDate}
             </span>
@@ -240,15 +240,15 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
 
           {/* Team */}
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-amber-600 shrink-0" />
-            <span className="text-sm font-medium text-foreground">
+            <Users className="h-4 w-4 text-blue-400 shrink-0" />
+            <span className="text-sm font-medium text-white">
               {project.employees?.length || 0} Team Members
             </span>
           </div>
 
           {/* Status */}
           <div className="flex gap-2 pt-2">
-            {!project.isActive && <Badge variant="destructive">Archived</Badge>}
+            {!project.isActive && <Badge variant="destructive" className="bg-red-500/20 text-red-300 border-red-500/50">Archived</Badge>}
           </div>
         </CardContent>
       </Card>

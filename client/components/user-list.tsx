@@ -64,11 +64,11 @@ export function UserList({
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'admin':
-        return 'bg-red-100 text-red-700 border-red-200';
+        return 'bg-red-500/20 text-red-300 border-red-500/50';
       case 'dispatcher':
-        return 'bg-purple-100 text-purple-700 border-purple-200';
+        return 'bg-purple-500/20 text-purple-300 border-purple-500/50';
       default:
-        return 'bg-blue-100 text-blue-700 border-blue-200';
+        return 'bg-blue-500/20 text-blue-300 border-blue-500/50';
     }
   };
 
@@ -86,15 +86,15 @@ export function UserList({
   const getStatusBadge = (status?: string) => {
     if (status === 'active') {
       return (
-        <span className="px-2 py-1 rounded-full text-xs font-semibold border bg-green-100 text-green-700 border-green-200 flex items-center gap-1.5 w-fit">
-          <Circle className="w-2 h-2 fill-green-700" />
+        <span className="px-2 py-1 rounded-full text-xs font-semibold border bg-green-500/20 text-green-300 border-green-500/50 flex items-center gap-1.5 w-fit">
+          <Circle className="w-2 h-2 fill-green-300" />
           Active
         </span>
       );
     }
     return (
-      <span className="px-2 py-1 rounded-full text-xs font-semibold border bg-gray-100 text-gray-700 border-gray-200 flex items-center gap-1.5 w-fit">
-        <Circle className="w-2 h-2 fill-gray-700" />
+      <span className="px-2 py-1 rounded-full text-xs font-semibold border bg-gray-500/20 text-gray-300 border-gray-500/50 flex items-center gap-1.5 w-fit">
+        <Circle className="w-2 h-2 fill-gray-300" />
         Inactive
       </span>
     );
@@ -137,32 +137,32 @@ export function UserList({
   };
 
   return (
-    <Card className="border-gray-200 bg-white shadow-lg overflow-hidden py-0">
+    <Card className="border-gray-700/50 bg-[#1e2339] shadow-lg overflow-hidden py-0">
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white border-b-2 border-gray-200">
+            <thead className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
               <tr>
-                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-white uppercase text-xs tracking-wider">
                   Name
                 </th>
-                <th className="text-left py-4 px-4 min-w-[12rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[12rem] font-semibold text-white uppercase text-xs tracking-wider">
                   Email
                 </th>
-                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-white uppercase text-xs tracking-wider">
                   Phone
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold text-white uppercase text-xs tracking-wider">
                   Role
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 font-semibold text-white uppercase text-xs tracking-wider">
                   Status
                 </th>
-                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-[9rem] font-semibold text-white uppercase text-xs tracking-wider">
                   Joined
                 </th>
                 {auth.user?.role === 'admin' && (
-                  <th className="text-center py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                  <th className="text-center py-4 px-4 font-semibold text-white uppercase text-xs tracking-wider">
                     Actions
                   </th>
                 )}
@@ -172,7 +172,7 @@ export function UserList({
               {isLoading ? (
                 <>
                   {[...Array(5)].map((_, i) => (
-                    <tr key={i} className="border-b border-gray-100">
+                    <tr key={i} className="border-b border-gray-700/30">
                       <td colSpan={auth.user?.role === 'admin' ? 7 : 6} className="py-4 px-4">
                         <Skeleton className="h-8 w-full" />
                       </td>
@@ -187,7 +187,7 @@ export function UserList({
                   >
                     <div className="flex flex-col items-center gap-2">
                       <AlertCircle className="w-12 h-12 text-gray-400" />
-                      <p className="text-gray-500 font-medium">No users found</p>
+                      <p className="text-gray-400 font-medium">No users found</p>
                     </div>
                   </td>
                 </tr>
@@ -195,13 +195,13 @@ export function UserList({
                 users?.map((user) => (
                   <tr
                     key={user._id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                    className="border-b border-gray-700/30 hover:bg-gray-800/30 transition-colors"
                   >
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-gray-400" />
+                        <User className="w-4 h-4 text-gray-500" />
                         <span
-                          className="font-medium text-gray-900 cursor-pointer hover:text-[#c16840] transition-colors"
+                          className="font-medium text-white cursor-pointer hover:text-blue-400 transition-colors"
                           onClick={() => router.push(`/dashboard/users/${user._id}`)}
                         >
                           {user.name}
@@ -210,14 +210,14 @@ export function UserList({
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
-                        <Mail className="w-3 h-3 text-gray-400" />
-                        <span className="text-gray-700 text-sm">{user.email}</span>
+                        <Mail className="w-3 h-3 text-gray-500" />
+                        <span className="text-gray-300 text-sm">{user.email}</span>
                       </div>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
-                        <Phone className="w-3 h-3 text-gray-400" />
-                        <span className="text-gray-700 text-sm">{user.phone || '-'}</span>
+                        <Phone className="w-3 h-3 text-gray-500" />
+                        <span className="text-gray-300 text-sm">{user.phone || '-'}</span>
                       </div>
                     </td>
                     <td className="py-4 px-4">
@@ -233,8 +233,8 @@ export function UserList({
                     <td className="py-4 px-4">{getStatusBadge(user.status)}</td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-3 h-3 text-gray-400" />
-                        <span className="text-gray-700 text-sm">{formatDate(user.createdAt)}</span>
+                        <Calendar className="w-3 h-3 text-gray-500" />
+                        <span className="text-gray-300 text-sm">{formatDate(user.createdAt)}</span>
                       </div>
                     </td>
                     {auth.user?.role === 'admin' && (
@@ -244,7 +244,7 @@ export function UserList({
                             variant="ghost"
                             size="icon"
                             onClick={() => router.push(`/dashboard/users/${user._id}`)}
-                            className="text-yellow-600 hover:bg-yellow-50 h-8 w-8 rounded-lg transition-colors"
+                            className="text-blue-400 hover:bg-blue-600/20 h-8 w-8 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Clock className="w-4 h-4" />
@@ -253,7 +253,7 @@ export function UserList({
                             variant="ghost"
                             size="icon"
                             onClick={() => createChat(user._id)}
-                            className="text-green-600 hover:bg-green-50 h-8 w-8 rounded-lg transition-colors"
+                            className="text-green-400 hover:bg-green-600/20 h-8 w-8 rounded-lg transition-colors"
                             title="Create Chat"
                             disabled={loading}
                           >
@@ -267,7 +267,7 @@ export function UserList({
                             variant="ghost"
                             size="icon"
                             onClick={() => onEdit(user)}
-                            className="text-blue-600 hover:bg-blue-50 h-8 w-8 rounded-lg transition-colors"
+                            className="text-blue-400 hover:bg-blue-600/20 h-8 w-8 rounded-lg transition-colors"
                             title="Edit User"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -276,7 +276,7 @@ export function UserList({
                             variant="ghost"
                             size="icon"
                             onClick={() => onDelete(user._id)}
-                            className="text-red-600 hover:bg-red-50 h-8 w-8 rounded-lg transition-colors"
+                            className="text-red-400 hover:bg-red-600/20 h-8 w-8 rounded-lg transition-colors"
                             title="Delete User"
                           >
                             <Trash2 className="w-4 h-4" />

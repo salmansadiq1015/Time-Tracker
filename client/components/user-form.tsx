@@ -58,19 +58,19 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-gray-700">Name</label>
+        <label className="text-sm font-semibold text-white">Name</label>
         <Input
           placeholder="Full name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
           disabled={isLoading}
-          className="bg-gray-50 border-gray-300 text-black focus:border-[#c16840] focus:ring-1 focus:ring-[#c16840]/20 transition-all"
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-gray-700">Email</label>
+        <label className="text-sm font-semibold text-white">Email</label>
         <Input
           type="email"
           placeholder="email@example.com"
@@ -78,12 +78,12 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
           onChange={(e) => setEmail(e.target.value)}
           required
           disabled={isLoading}
-          className="bg-gray-50 border-gray-300 text-black focus:border-[#c16840] focus:ring-1 focus:ring-[#c16840]/20 transition-all"
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-gray-700">Phone</label>
+        <label className="text-sm font-semibold text-white">Phone</label>
         <Input
           type="tel"
           placeholder="Phone number"
@@ -91,13 +91,13 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
           onChange={(e) => setPhone(e.target.value)}
           required
           disabled={isLoading}
-          className="bg-gray-50 border-gray-300 text-black focus:border-[#c16840] focus:ring-1 focus:ring-[#c16840]/20 transition-all"
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
         />
       </div>
 
       {!user && (
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700">Password</label>
+          <label className="text-sm font-semibold text-white">Password</label>
           <Input
             type="password"
             placeholder="••••••••"
@@ -105,18 +105,18 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
             onChange={(e) => setPassword(e.target.value)}
             required
             disabled={isLoading}
-            className="bg-gray-50 border-gray-300 text-black focus:border-[#c16840] focus:ring-1 focus:ring-[#c16840]/20 transition-all"
+            className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
           />
         </div>
       )}
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-gray-700">Role</label>
+        <label className="text-sm font-semibold text-white">Role</label>
         <select
           value={role}
           onChange={(e) => setRole(e.target.value as any)}
           disabled={isLoading}
-          className="w-full px-4 py-2 bg-gray-50 border-2 border-gray-300 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
+          className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
         >
           <option value="user">User</option>
           {/* <option value="client">Client</option> */}
@@ -127,12 +127,12 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
 
       {user && (
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700">Status</label>
+          <label className="text-sm font-semibold text-white">Status</label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as 'active' | 'inactive')}
             disabled={isLoading}
-            className="w-full px-4 py-2 bg-gray-50 border-2 border-gray-300 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
+            className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -140,20 +140,20 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
         </div>
       )}
 
-      <div className="flex gap-3 pt-4 border-t border-gray-200">
+      <div className="flex gap-3 pt-4 border-t border-gray-700">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
           disabled={isLoading}
-          className="flex-1 bg-transparent border-gray-300 text-black hover:bg-gray-100 transition-all"
+          className="flex-1 bg-[#0f1419] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           disabled={isLoading}
-          className="flex-1 bg-gradient-to-r from-[#c16840] to-[#d17a4f] hover:from-[#d17a4f] hover:to-[#c16840] text-white shadow-lg shadow-[#c16840]/20 hover:shadow-[#c16840]/30 transition-all font-medium"
+          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all font-medium"
         >
           {isLoading ? (
             <>

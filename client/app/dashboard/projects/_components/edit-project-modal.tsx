@@ -105,16 +105,16 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl border-amber-200 max-h-[98vh] overflow-y-auto shidden">
-        <DialogHeader>
-          <DialogTitle className="text-2xl text-foreground">Edit Project</DialogTitle>
-          <DialogDescription>Update project details</DialogDescription>
+      <DialogContent className="max-w-2xl border-gray-700 bg-[#1e2339] max-h-[98vh] overflow-y-auto">
+        <DialogHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white -m-6 mb-4 p-6 rounded-t-lg">
+          <DialogTitle className="text-2xl text-white">Edit Project</DialogTitle>
+          <DialogDescription className="text-gray-200">Update project details</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 ">
+        <form onSubmit={handleSubmit} className="space-y-4 bg-[#1e2339]">
           {/* Project Name */}
           <div>
-            <Label htmlFor="name" className="text-foreground pb-1">
+            <Label htmlFor="name" className="text-white pb-1">
               Project Name *
             </Label>
             <Input
@@ -122,15 +122,17 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className={errors.name ? 'border-destructive' : 'border-amber-200'}
+              className={`bg-[#0f1419] border-2 text-white placeholder:text-gray-500 ${
+                errors.name ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+              }`}
             />
-            {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name}</p>}
+            {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
           </div>
 
           {/* Address & Location */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label htmlFor="address" className="text-foreground pb-1">
+              <Label htmlFor="address" className="text-white pb-1">
                 Address *
               </Label>
               <Input
@@ -138,12 +140,14 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 name="address"
                 value={formData.address}
                 onChange={handleInputChange}
-                className={errors.address ? 'border-destructive' : 'border-amber-200'}
+                className={`bg-[#0f1419] border-2 text-white placeholder:text-gray-500 ${
+                  errors.address ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                }`}
               />
-              {errors.address && <p className="mt-1 text-xs text-destructive">{errors.address}</p>}
+              {errors.address && <p className="mt-1 text-xs text-red-400">{errors.address}</p>}
             </div>
             <div>
-              <Label htmlFor="city" className="text-foreground pb-1">
+              <Label htmlFor="city" className="text-white pb-1">
                 City
               </Label>
               <Input
@@ -151,14 +155,14 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 name="city"
                 value={formData.city}
                 onChange={handleInputChange}
-                className="border-amber-200"
+                className="bg-[#0f1419] border-2 border-gray-600 focus:border-blue-500 text-white placeholder:text-gray-500"
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <Label htmlFor="description" className="text-foreground pb-1">
+            <Label htmlFor="description" className="text-white pb-1">
               Description
             </Label>
             <Textarea
@@ -167,14 +171,14 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
               value={formData.description}
               onChange={handleInputChange}
               rows={3}
-              className="border-amber-200"
+              className="bg-[#0f1419] border-2 border-gray-600 focus:border-blue-500 text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Dates */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Label htmlFor="startDate" className="text-foreground pb-1">
+              <Label htmlFor="startDate" className="text-white pb-1">
                 Start Date
               </Label>
               <Input
@@ -183,11 +187,11 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 type="date"
                 value={formData.startDate}
                 onChange={handleInputChange}
-                className="border-amber-200"
+                className="bg-[#0f1419] border-2 border-gray-600 focus:border-blue-500 text-white"
               />
             </div>
             <div>
-              <Label htmlFor="endDate" className="text-foreground pb-1">
+              <Label htmlFor="endDate" className="text-white pb-1">
                 End Date
               </Label>
               <Input
@@ -196,26 +200,28 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 type="date"
                 value={formData.endDate}
                 onChange={handleInputChange}
-                className={errors.endDate ? 'border-destructive' : 'border-amber-200'}
+                className={`bg-[#0f1419] border-2 text-white ${
+                  errors.endDate ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                }`}
               />
-              {errors.endDate && <p className="mt-1 text-xs text-destructive">{errors.endDate}</p>}
+              {errors.endDate && <p className="mt-1 text-xs text-red-400">{errors.endDate}</p>}
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-amber-200 bg-transparent"
+              className="bg-[#0f1419] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="bg-amber-700 hover:bg-amber-800 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               {loading ? 'Updating...' : 'Update Project'}
             </Button>

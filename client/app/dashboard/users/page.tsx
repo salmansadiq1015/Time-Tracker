@@ -191,18 +191,18 @@ export default function UsersPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center min-h-screen bg-[#0f1419]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   if (!canManageUsers) {
     return (
-      <div className="p-4 md:p-8">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>You do not have permission to access this page.</AlertDescription>
+      <div className="p-4 md:p-8 bg-[#0f1419] min-h-screen">
+        <Alert variant="destructive" className="border-red-500/50 bg-red-500/10">
+          <AlertCircle className="h-4 w-4 text-red-400" />
+          <AlertDescription className="text-red-400">You do not have permission to access this page.</AlertDescription>
         </Alert>
       </div>
     );
@@ -217,17 +217,17 @@ export default function UsersPage() {
   const userCount = users.filter((u) => u.role === 'user').length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0f1419]">
       {/* Header Section */}
-      <header className="sticky top-0 z-50 border-b border-amber-200 bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-gray-700/50 bg-[#1e2339]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-700">
-              <span className="text-sm font-bold text-white">UM</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-lg">
+              <Users className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Users Management</h1>
-              <p className="text-xs text-muted-foreground">
+              <h1 className="text-2xl font-bold text-white">Users Management</h1>
+              <p className="text-xs text-gray-400">
                 Manage team members, roles, and permissions
               </p>
             </div>
@@ -238,7 +238,7 @@ export default function UsersPage() {
                 setEditingUser(null);
                 setShowForm(!showForm);
               }}
-              className="gap-2 bg-amber-700 hover:bg-amber-800 text-white"
+              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
             >
               <UserPlus className="w-4 h-4" />
               Add User
@@ -250,57 +250,57 @@ export default function UsersPage() {
       {/* Stats Cards */}
       <div className="px-4 md:px-8 pb-6 space-y-4 mt-2">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border cursor-pointer  border-blue-100 bg-gradient-to-br from-blue-50 via-blue-50/50 to-indigo-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+          <Card className="border cursor-pointer border-blue-500/30 bg-[#1e2339] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent onClick={() => setFilters({ ...filters, role: 'all' })} className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-sm text-blue-600/70 font-medium">Total Users</p>
-                  <p className="text-3xl font-bold text-blue-700">{totalCount}</p>
+                  <p className="text-sm text-gray-400 font-medium">Total Users</p>
+                  <p className="text-3xl font-bold text-white">{totalCount}</p>
                 </div>
-                <div className="p-3 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl shadow-sm">
-                  <Users className="w-6 h-6 text-white" />
+                <div className="p-3 bg-blue-600/20 rounded-xl shadow-sm">
+                  <Users className="w-6 h-6 text-blue-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="border cursor-pointer  border-rose-100 bg-gradient-to-br from-rose-50 via-pink-50/50 to-red-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+          <Card className="border cursor-pointer border-rose-500/30 bg-[#1e2339] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent onClick={() => setFilters({ ...filters, role: 'admin' })} className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-sm text-rose-600/70 font-medium">Admins</p>
-                  <p className="text-3xl font-bold text-rose-700">{adminCount}</p>
+                  <p className="text-sm text-gray-400 font-medium">Admins</p>
+                  <p className="text-3xl font-bold text-white">{adminCount}</p>
                 </div>
-                <div className="p-3 bg-gradient-to-br from-rose-400 to-pink-500 rounded-xl shadow-sm">
-                  <Shield className="w-6 h-6 text-white" />
+                <div className="p-3 bg-rose-600/20 rounded-xl shadow-sm">
+                  <Shield className="w-6 h-6 text-rose-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="border cursor-pointer  border-purple-100 bg-gradient-to-br from-purple-50 via-violet-50/50 to-fuchsia-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+          <Card className="border cursor-pointer border-purple-500/30 bg-[#1e2339] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent
               onClick={() => setFilters({ ...filters, role: 'dispatcher' })}
               className="pt-6"
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-sm text-purple-600/70 font-medium">Dispatchers</p>
-                  <p className="text-3xl font-bold text-purple-700">{dispatcherCount}</p>
+                  <p className="text-sm text-gray-400 font-medium">Dispatchers</p>
+                  <p className="text-3xl font-bold text-white">{dispatcherCount}</p>
                 </div>
-                <div className="p-3 bg-gradient-to-br from-purple-400 to-violet-500 rounded-xl shadow-sm">
-                  <UserCheck className="w-6 h-6 text-white" />
+                <div className="p-3 bg-purple-600/20 rounded-xl shadow-sm">
+                  <UserCheck className="w-6 h-6 text-purple-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className=" cursor-pointer border border-emerald-100 bg-gradient-to-br from-emerald-50 via-teal-50/50 to-green-50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+          <Card className="cursor-pointer border border-emerald-500/30 bg-[#1e2339] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent onClick={() => setFilters({ ...filters, role: 'user' })} className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-sm text-emerald-600/70 font-medium">Regular Users</p>
-                  <p className="text-3xl font-bold text-emerald-700">{userCount}</p>
+                  <p className="text-sm text-gray-400 font-medium">Regular Users</p>
+                  <p className="text-3xl font-bold text-white">{userCount}</p>
                 </div>
-                <div className="p-3 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl shadow-sm">
-                  <TrendingUp className="w-6 h-6 text-white" />
+                <div className="p-3 bg-emerald-600/20 rounded-xl shadow-sm">
+                  <TrendingUp className="w-6 h-6 text-emerald-400" />
                 </div>
               </div>
             </CardContent>
@@ -308,8 +308,8 @@ export default function UsersPage() {
         </div>
 
         {/* Search & Filters */}
-        <Card className="border-gray-200 bg-white shadow-lg py-0 pb-3 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white py-4">
+        <Card className="border-gray-700/50 bg-[#1e2339] shadow-lg py-0 pb-3 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4">
             <div className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-white flex items-center gap-2">
                 <Search className="w-5 h-5" />
@@ -330,24 +330,24 @@ export default function UsersPage() {
             </div>
           </CardHeader>
           <CardContent className="0 space-y-4">
-            <div className="flex gap-3 items-center border-2 border-gray-200 rounded-lg p-3 bg-gray-50 focus-within:border-[#c16840] transition-colors">
+            <div className="flex gap-3 items-center border-2 border-gray-600 rounded-lg p-3 bg-[#0f1419] focus-within:border-blue-500 transition-colors">
               <Search className="w-5 h-5 text-gray-400 shrink-0" />
               <input
                 placeholder="Search by name or email..."
                 value={filters.search}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="bg-transparent outline-none border-none flex-1 text-gray-900 placeholder:text-gray-500"
+                className="bg-transparent outline-none border-none flex-1 text-white placeholder:text-gray-500"
               />
             </div>
 
             {showFilters && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-700/50">
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Role Filter</label>
+                  <label className="text-sm font-semibold text-white">Role Filter</label>
                   <select
                     value={filters.role}
                     onChange={(e) => handleRoleFilter(e.target.value)}
-                    className="w-full px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
+                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
                   >
                     <option value="all">All Roles</option>
                     <option value="user">User</option>
@@ -357,11 +357,11 @@ export default function UsersPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Status Filter</label>
+                  <label className="text-sm font-semibold text-white">Status Filter</label>
                   <select
                     value={filters.status}
                     onChange={(e) => handleStatusFilter(e.target.value)}
-                    className="w-full px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
+                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -370,14 +370,14 @@ export default function UsersPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Items Per Page</label>
+                  <label className="text-sm font-semibold text-white">Items Per Page</label>
                   <select
                     value={limit}
                     onChange={(e) => {
                       setLimit(Number.parseInt(e.target.value));
                       setPage(1);
                     }}
-                    className="w-full px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-900 focus:border-[#c16840] focus:outline-none transition-colors"
+                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
                   >
                     <option value="5">5 items</option>
                     <option value="10">10 items</option>
@@ -400,8 +400,8 @@ export default function UsersPage() {
             }
           }}
         >
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white shidden">
-            <DialogHeader className="bg-gradient-to-r from-[#c16840] to-[#d17a4f] text-white -m-6 mb-4 p-6 rounded-t-lg">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#1e2339] border-gray-700 shidden">
+            <DialogHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white -m-6 mb-4 p-6 rounded-t-lg">
               <DialogTitle className="text-white text-xl font-semibold flex items-center gap-2">
                 <UserPlus className="w-5 h-5" />
                 {editingUser ? 'Edit User' : 'Add New User'}
@@ -438,14 +438,14 @@ export default function UsersPage() {
 
         {/* Advanced Pagination */}
         {totalCount > 0 && (
-          <Card className="border-gray-200 bg-white shadow-lg py-0">
+          <Card className="border-gray-700/50 bg-[#1e2339] shadow-lg py-0">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 {/* Info */}
-                <div className="text-sm text-gray-600">
-                  Showing <span className="font-semibold text-gray-900">{startIndex}</span> to{' '}
-                  <span className="font-semibold text-gray-900">{endIndex}</span> of{' '}
-                  <span className="font-semibold text-gray-900">{totalCount}</span> users
+                <div className="text-sm text-gray-400">
+                  Showing <span className="font-semibold text-white">{startIndex}</span> to{' '}
+                  <span className="font-semibold text-white">{endIndex}</span> of{' '}
+                  <span className="font-semibold text-white">{totalCount}</span> users
                 </div>
 
                 {/* Pagination Controls */}
@@ -455,7 +455,7 @@ export default function UsersPage() {
                     size="sm"
                     onClick={() => setPage(1)}
                     disabled={page === 1}
-                    className="transition-all text-gray-700 hover:bg-[#c16840] hover:text-white disabled:opacity-50 border-gray-300"
+                    className="transition-all bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                   >
                     First
                   </Button>
@@ -465,7 +465,7 @@ export default function UsersPage() {
                     size="icon"
                     onClick={() => setPage(Math.max(1, page - 1))}
                     disabled={page === 1}
-                    className="transition-all text-gray-700 hover:bg-[#c16840] hover:text-white disabled:opacity-50 border-gray-300"
+                    className="transition-all bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
@@ -494,8 +494,8 @@ export default function UsersPage() {
                           onClick={() => setPage(pageNum)}
                           className={`w-10 transition-all ${
                             pageNum === page
-                              ? 'bg-[#c16840] text-white border-[#c16840]'
-                              : 'text-gray-700 hover:bg-[#c16840] hover:text-white border-gray-300'
+                              ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
+                              : 'bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
                           }`}
                         >
                           {pageNum}
@@ -509,7 +509,7 @@ export default function UsersPage() {
                     size="icon"
                     onClick={() => setPage(Math.min(totalPages, page + 1))}
                     disabled={page === totalPages}
-                    className="transition-all text-gray-700 hover:bg-[#c16840] hover:text-white disabled:opacity-50 border-gray-300"
+                    className="transition-all bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -519,7 +519,7 @@ export default function UsersPage() {
                     size="sm"
                     onClick={() => setPage(totalPages)}
                     disabled={page === totalPages}
-                    className="transition-all text-gray-700 hover:bg-[#c16840] hover:text-white disabled:opacity-50 border-gray-300"
+                    className="transition-all bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                   >
                     Last
                   </Button>

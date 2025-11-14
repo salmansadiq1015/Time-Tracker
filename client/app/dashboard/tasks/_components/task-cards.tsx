@@ -71,13 +71,13 @@ export const TaskCards = ({
         return (
           <div
             key={task._id}
-            className="rounded-xl border border-amber-200 bg-linear-to-br from-white via-amber-50/50 to-white shadow-md shadow-amber-100/60"
+            className="rounded-xl border border-gray-700/50 bg-[#1e2339] shadow-md"
           >
             <div className="p-4 flex items-start justify-between gap-4">
               <div className="space-y-3 flex-1">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{task.title}</h3>
+                    <h3 className="text-lg font-semibold text-white">{task.title}</h3>
                     <div className="flex flex-wrap items-center gap-2 mt-2">
                       <Badge
                         className={`px-2.5 py-1 text-xs font-semibold border ${
@@ -99,7 +99,7 @@ export const TaskCards = ({
                     variant="ghost"
                     size="icon"
                     onClick={() => setExpandedId(isExpanded ? null : task._id)}
-                    className="text-amber-600 hover:text-amber-700"
+                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-600/20"
                   >
                     {isExpanded ? (
                       <ChevronUp className="h-5 w-5" />
@@ -108,58 +108,58 @@ export const TaskCards = ({
                     )}
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                <div className="flex flex-wrap gap-4 text-sm text-gray-300">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-amber-500" />
+                    <Calendar className="h-4 w-4 text-blue-400" />
                     Due {formatDate(task.dueDate)}
                   </div>
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-amber-500" />
+                    <User className="h-4 w-4 text-blue-400" />
                     {task.assignedTo?.name || 'Unassigned'}
                   </div>
                   {task.assignedTo?.phone && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
                       <span className="text-xs uppercase tracking-wide text-gray-400">Phone</span>
                       {task.assignedTo.phone}
                     </div>
                   )}
                   <div className="flex items-center gap-2">
-                    <ClipboardList className="h-4 w-4 text-amber-500" />
+                    <ClipboardList className="h-4 w-4 text-blue-400" />
                     {task.project?.name || 'No project'}
                   </div>
                 </div>
                 {isExpanded && (
                   <div className="space-y-3">
                     <div>
-                      <h4 className="text-sm font-semibold text-amber-700">Description</h4>
-                      <p className="text-sm text-gray-600 leading-relaxed mt-1 bg-white/70 border border-amber-100 rounded-lg p-3 whitespace-pre-wrap wrap-break-word">
+                      <h4 className="text-sm font-semibold text-blue-400">Description</h4>
+                      <p className="text-sm text-gray-300 leading-relaxed mt-1 bg-[#0f1419] border border-gray-600 rounded-lg p-3 whitespace-pre-wrap wrap-break-word">
                         {task.description}
                       </p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="bg-white/70 border border-amber-100 rounded-lg p-3">
+                      <div className="bg-[#0f1419] border border-gray-600 rounded-lg p-3">
                         <h5 className="text-xs uppercase tracking-wide text-gray-400 mb-1">
                           Assigned to
                         </h5>
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-sm font-medium text-white">
                           {task.assignedTo?.name || 'Unassigned'}
                         </p>
                         {task.assignedTo?.phone && (
-                          <p className="text-xs text-gray-500">{task.assignedTo.phone}</p>
+                          <p className="text-xs text-gray-400">{task.assignedTo.phone}</p>
                         )}
                       </div>
-                      <div className="bg-white/70 border border-amber-100 rounded-lg p-3">
+                      <div className="bg-[#0f1419] border border-gray-600 rounded-lg p-3">
                         <h5 className="text-xs uppercase tracking-wide text-gray-400 mb-1">
                           Created By
                         </h5>
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-sm font-medium text-white">
                           {task.createdBy?.name || 'Unknown'}
                         </p>
                         {task.createdBy?.email && (
-                          <p className="text-xs text-gray-500">{task.createdBy.email}</p>
+                          <p className="text-xs text-gray-400">{task.createdBy.email}</p>
                         )}
                         {task.createdBy?.phone && (
-                          <p className="text-xs text-gray-500">{task.createdBy.phone}</p>
+                          <p className="text-xs text-gray-400">{task.createdBy.phone}</p>
                         )}
                       </div>
                     </div>
@@ -167,7 +167,7 @@ export const TaskCards = ({
                 )}
               </div>
             </div>
-            <div className="border-t border-amber-100/60 bg-white/80 px-4 py-3 flex items-center justify-between">
+            <div className="border-t border-gray-700/50 bg-[#0f1419] px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Select
                   value={task.status}
@@ -175,10 +175,10 @@ export const TaskCards = ({
                     onStatusChange(task._id, value as TaskCardData['status'])
                   }
                 >
-                  <SelectTrigger className="w-36 border-amber-200 focus:ring-[#c16840]">
+                  <SelectTrigger className="w-36 border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-[#1e2339] border-gray-700">
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="in_progress">In progress</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
@@ -191,10 +191,10 @@ export const TaskCards = ({
                   }
                   disabled={isUserRole}
                 >
-                  <SelectTrigger className="w-32 border-amber-200 focus:ring-[#c16840]">
+                  <SelectTrigger className="w-32 border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500">
                     <SelectValue placeholder="Priority" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-[#1e2339] border-gray-700">
                     <SelectItem value="low">Low</SelectItem>
                     <SelectItem value="medium">Medium</SelectItem>
                     <SelectItem value="high">High</SelectItem>
@@ -207,7 +207,7 @@ export const TaskCards = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onEdit(task)}
-                    className="border-amber-200 text-amber-600 hover:bg-amber-50"
+                    className="border-gray-600 text-blue-400 hover:bg-blue-600/20 hover:text-blue-300 bg-[#1e2339]"
                   >
                     <Edit3 className="h-4 w-4 mr-1.5" />
                     Edit
@@ -218,13 +218,13 @@ export const TaskCards = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onDelete(task)}
-                    className="border-rose-200 text-rose-600 hover:bg-rose-50"
+                    className="border-gray-600 text-red-400 hover:bg-red-600/20 hover:text-red-300 bg-[#1e2339]"
                   >
                     <Trash2 className="h-4 w-4 mr-1.5" />
                     Delete
                   </Button>
                 )}
-                <Button variant="ghost" size="icon" className="text-amber-500 hover:text-amber-600">
+                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-300 hover:bg-gray-700">
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
               </div>

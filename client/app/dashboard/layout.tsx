@@ -33,11 +33,11 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-[#0f1419]">
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden bg-[#0f1419]">
         <Header />
-        <main className="flex-1 overflow-auto bg-gray-900">{children}</main>
+        <main className="flex-1 overflow-auto bg-[#0f1419] text-gray-100">{children}</main>
       </div>
     </div>
   );

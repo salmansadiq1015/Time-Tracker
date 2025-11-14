@@ -43,12 +43,12 @@ export const TaskFilters = ({
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="space-y-2">
-          <Label className="text-xs uppercase tracking-wide text-amber-700/80">Status</Label>
+          <Label className="text-xs uppercase tracking-wide text-gray-400">Status</Label>
           <Select value={filters.status} onValueChange={(value) => setFilter('status', value)}>
-            <SelectTrigger className="border-amber-200 focus:ring-[#c16840]">
+            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
               <SelectValue placeholder="All status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-[#1e2339] border-gray-700">
               <SelectItem value="all">All status</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="in_progress">In progress</SelectItem>
@@ -58,12 +58,12 @@ export const TaskFilters = ({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-xs uppercase tracking-wide text-amber-700/80">Priority</Label>
+          <Label className="text-xs uppercase tracking-wide text-gray-400">Priority</Label>
           <Select value={filters.priority} onValueChange={(value) => setFilter('priority', value)}>
-            <SelectTrigger className="border-amber-200 focus:ring-[#c16840]">
+            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
               <SelectValue placeholder="All priority" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-[#1e2339] border-gray-700">
               <SelectItem value="all">All priority</SelectItem>
               <SelectItem value="low">Low</SelectItem>
               <SelectItem value="medium">Medium</SelectItem>
@@ -73,12 +73,12 @@ export const TaskFilters = ({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-xs uppercase tracking-wide text-amber-700/80">Project</Label>
+          <Label className="text-xs uppercase tracking-wide text-gray-400">Project</Label>
           <Select value={filters.project} onValueChange={(value) => setFilter('project', value)}>
-            <SelectTrigger className="border-amber-200 focus:ring-[#c16840]">
+            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
               <SelectValue placeholder="All projects" />
             </SelectTrigger>
-            <SelectContent className="max-h-60">
+            <SelectContent className="max-h-60 bg-[#1e2339] border-gray-700">
               <SelectItem value="all">All projects</SelectItem>
               {projects?.map((project) => (
                 <SelectItem key={project._id} value={project._id}>
@@ -91,15 +91,15 @@ export const TaskFilters = ({
 
         {!isUserRole && (
           <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-wide text-amber-700/80">Assigned To</Label>
+            <Label className="text-xs uppercase tracking-wide text-gray-400">Assigned To</Label>
             <Select
               value={filters.assignedTo}
               onValueChange={(value) => setFilter('assignedTo', value)}
             >
-              <SelectTrigger className="border-amber-200 focus:ring-[#c16840]">
+              <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
                 <SelectValue placeholder="All team members" />
               </SelectTrigger>
-              <SelectContent className="max-h-60">
+              <SelectContent className="max-h-60 bg-[#1e2339] border-gray-700">
                 <SelectItem value="all">All team members</SelectItem>
                 {users?.map((user) => (
                   <SelectItem key={user._id} value={user._id}>
@@ -113,13 +113,13 @@ export const TaskFilters = ({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-xs text-amber-700/80">
+        <div className="text-xs text-gray-400">
           Refine results by combining multiple filters for precise task tracking.
         </div>
         <Button
           variant="outline"
           onClick={onReset}
-          className="border-amber-200 hover:bg-amber-50 text-amber-700 bg-white"
+          className="border-gray-600 hover:bg-gray-700 text-gray-300 bg-[#1e2339] hover:text-white"
         >
           Reset filters
         </Button>

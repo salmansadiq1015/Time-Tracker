@@ -124,40 +124,40 @@ export const TaskFormDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl rounded-3xl border border-amber-200/80 bg-linear-to-br from-white via-amber-50 to-white shadow-xl shadow-amber-200/40 max-h-[95vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl rounded-3xl border border-gray-700 bg-[#1e2339] shadow-xl max-h-[95vh] overflow-y-auto">
         <DialogHeader className="space-y-2">
-          <DialogTitle className="text-2xl font-semibold text-gray-900">{dialogTitle}</DialogTitle>
-          <DialogDescription className="text-sm text-gray-500">
+          <DialogTitle className="text-2xl font-semibold text-white">{dialogTitle}</DialogTitle>
+          <DialogDescription className="text-sm text-gray-400">
             {dialogDescription}
           </DialogDescription>
         </DialogHeader>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 mt-2 rounded-2xl border border-amber-100 bg-white/70 p-6 shadow-inner shadow-amber-100/50"
+          className="space-y-6 mt-2 rounded-2xl border border-gray-700 bg-[#0f1419] p-6"
         >
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-wide text-amber-700/80">
-                Task title <span className="text-red-500">*</span>
+              <Label className="text-xs uppercase tracking-wide text-gray-400">
+                Task title <span className="text-red-400">*</span>
               </Label>
               <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Prepare project kickoff deck"
-                className="border-amber-200/80 bg-white/90 focus-visible:ring-[#c16840] focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3 shadow-sm"
+                className="border-gray-600 bg-[#1e2339] text-white placeholder:text-gray-500 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3"
                 required
               />
             </div>
             <div className="space-y-2 w-full">
-              <Label className="text-xs uppercase tracking-wide text-amber-700/80">
-                Project <span className="text-red-500">*</span>
+              <Label className="text-xs uppercase tracking-wide text-gray-400">
+                Project <span className="text-red-400">*</span>
               </Label>
               <Select value={project || ''} onValueChange={setProject} required>
-                <SelectTrigger className="w-full border-amber-200/80 bg-white/90 focus:ring-[#c16840] focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm shadow-sm">
+                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
                   <SelectValue placeholder="Select project" />
                 </SelectTrigger>
-                <SelectContent className="max-h-60 w-(--radix-select-trigger-width)">
+                <SelectContent className="max-h-60 bg-[#1e2339] border-gray-700">
                   {projects?.map((proj) => (
                     <SelectItem key={proj._id} value={proj._id}>
                       {proj.name}
@@ -169,26 +169,26 @@ export const TaskFormDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-wide text-amber-700/80">
-              Description <span className="text-red-500">*</span>
+            <Label className="text-xs uppercase tracking-wide text-gray-400">
+              Description <span className="text-red-400">*</span>
             </Label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add context, acceptance criteria or supporting details..."
-              className="min-h-[140px] border-amber-200/80 bg-white/90 focus-visible:ring-[#c16840] focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3 shadow-sm"
+              className="min-h-[140px] border-gray-600 bg-[#1e2339] text-white placeholder:text-gray-500 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3"
               required
             />
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-wide text-amber-700/80">Assign to</Label>
+              <Label className="text-xs uppercase tracking-wide text-gray-400">Assign to</Label>
               <Select value={assignedTo} onValueChange={setAssignedTo} disabled={isUserRole}>
-                <SelectTrigger className="w-full border-amber-200/80 bg-white/90 focus:ring-[#c16840] focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm shadow-sm disabled:opacity-60">
+                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm disabled:opacity-60">
                   <SelectValue placeholder="Select team member" />
                 </SelectTrigger>
-                <SelectContent className="max-h-60 w-(--radix-select-trigger-width)">
+                <SelectContent className="max-h-60 bg-[#1e2339] border-gray-700">
                   <SelectItem value={UNASSIGNED_VALUE}>Unassigned</SelectItem>
                   {assigneeOptions?.map((user) => (
                     <SelectItem key={user.value} value={user.value}>
@@ -199,8 +199,8 @@ export const TaskFormDialog = ({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-wide text-amber-700/80">
-                Due date <span className="text-red-500">*</span>
+              <Label className="text-xs uppercase tracking-wide text-gray-400">
+                Due date <span className="text-red-400">*</span>
               </Label>
               <div className="relative">
                 <Input
@@ -208,28 +208,28 @@ export const TaskFormDialog = ({
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
                   min={formatDateInput(new Date())}
-                  className="border-amber-200/80 bg-white/90 focus-visible:ring-[#c16840] focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3 pr-12 shadow-sm"
+                  className="border-gray-600 bg-[#1e2339] text-white focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3 pr-12"
                   required
                 />
-                <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-amber-500" />
+                <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-400" />
               </div>
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-wide text-amber-700/80">Status</Label>
+              <Label className="text-xs uppercase tracking-wide text-gray-400">Status</Label>
               <Select value={status} onValueChange={(value) => setStatus(value as any)}>
-                <SelectTrigger className="w-full border-amber-200/80 bg-white/90 focus:ring-[#c16840] focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm shadow-sm">
+                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="w-(--radix-select-trigger-width)">
+                <SelectContent className="bg-[#1e2339] border-gray-700">
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="in_progress">In progress</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="text-xs text-gray-500 flex items-center gap-2">
+              <div className="text-xs text-gray-400 flex items-center gap-2">
                 <span
                   className={`inline-block h-2 w-2 rounded-full ${statusMeta[status].dotClass}`}
                 />
@@ -237,12 +237,12 @@ export const TaskFormDialog = ({
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-wide text-amber-700/80">Priority</Label>
+              <Label className="text-xs uppercase tracking-wide text-gray-400">Priority</Label>
               <Select value={priority} onValueChange={(value) => setPriority(value as any)}>
-                <SelectTrigger className="w-full border-amber-200/80 bg-white/90 focus:ring-[#c16840] focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm shadow-sm">
+                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="w-(--radix-select-trigger-width)">
+                <SelectContent className="bg-[#1e2339] border-gray-700">
                   <SelectItem value="low">Low</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
                   <SelectItem value="high">High</SelectItem>
@@ -256,19 +256,19 @@ export const TaskFormDialog = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-amber-200/70">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-700">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border-amber-200/80 text-amber-700 hover:bg-amber-50 rounded-xl"
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white bg-[#1e2339] rounded-xl"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="bg-[#c16840] hover:bg-[#aa5735] text-white min-w-[140px] rounded-xl shadow-lg shadow-amber-200/40"
+              className="bg-blue-600 hover:bg-blue-700 text-white min-w-[140px] rounded-xl shadow-lg"
             >
               {loading ? <span className="animate-pulse">Saving...</span> : 'Save task'}
             </Button>

@@ -483,18 +483,18 @@ export default function TimeTrackerPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className=" space-y-6">
+    <div className="min-h-screen bg-[#0f1419]">
+      <div className="space-y-6">
         {/* Header */}
-        <header className="sticky top-0 z-50 border-b border-amber-200 bg-white/80 backdrop-blur-md">
+        <header className="sticky top-0 z-50 border-b border-gray-700/50 bg-[#1e2339]/80 backdrop-blur-md">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-700">
-                <span className="text-sm font-bold text-white">TT</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-lg">
+                <Clock className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Time Tracker</h1>
-                <p className="text-xs text-muted-foreground">
+                <h1 className="text-2xl font-bold text-white">Time Tracker</h1>
+                <p className="text-xs text-gray-400">
                   Track your work hours with precision and advanced analytics
                 </p>
               </div>
@@ -503,7 +503,7 @@ export default function TimeTrackerPage() {
               <Button
                 onClick={() => setShowForm(!showForm)}
                 disabled={!!activeTimer}
-                className="gap-2 bg-amber-700 hover:bg-amber-800 text-white"
+                className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
               >
                 <Play className="w-4 h-4 mr-2" />
                 Start Timer
@@ -512,9 +512,9 @@ export default function TimeTrackerPage() {
           </div>
         </header>
 
-        <div className="px-4 md:px-8 flex flex-col gap-4 pb-8 ">
+        <div className="px-4 md:px-8 flex flex-col gap-4 pb-8">
           {/* Stats Cards - compact, elegant */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             {cards.map((card, i) => (
               <Card
                 key={i}
@@ -556,22 +556,25 @@ export default function TimeTrackerPage() {
 
           {/* Selected User Summary */}
           {selectedUserDetails && (
-            <Card className="border-amber-200 bg-amber-50/50 shadow-sm">
+            <Card className="border-gray-700/50 bg-[#1e2339] shadow-lg">
               <CardContent className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4">
                 <div className="space-y-1">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                  <p className="text-xs uppercase tracking-wide text-gray-400">
                     Showing entries for
                   </p>
-                  <h3 className="text-xl font-semibold text-foreground">
+                  <h3 className="text-xl font-semibold text-white">
                     {selectedUserDetails.name || 'Unknown User'}
                   </h3>
-                  <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
+                  <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-400">
                     {selectedUserDetails.email && <span>Email: {selectedUserDetails.email}</span>}
                     {selectedUserDetails.phone && <span>Phone: {selectedUserDetails.phone}</span>}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {selectedUserDetails.role && (
-                      <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+                      <Badge
+                        variant="secondary"
+                        className="bg-blue-600/20 text-blue-300 border-blue-500/50"
+                      >
                         {selectedUserDetails.role}
                       </Badge>
                     )}
@@ -580,6 +583,11 @@ export default function TimeTrackerPage() {
                         variant={
                           selectedUserDetails.status === 'active' ? 'outline' : 'destructive'
                         }
+                        className={
+                          selectedUserDetails.status === 'active'
+                            ? 'border-green-500/50 text-green-300'
+                            : ''
+                        }
                       >
                         {selectedUserDetails.status}
                       </Badge>
@@ -587,10 +595,10 @@ export default function TimeTrackerPage() {
                   </div>
                   {selectedUserDetails.createdBy && (
                     <div className="pt-3 space-y-1">
-                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      <p className="text-[11px] uppercase tracking-wide text-gray-400">
                         Created by
                       </p>
-                      <div className="text-sm font-medium text-foreground">
+                      <div className="text-sm font-medium text-white">
                         {selectedUserDetails.createdBy.name || 'Unknown'}
                       </div>
                       <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">

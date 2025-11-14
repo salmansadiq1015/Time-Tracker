@@ -53,20 +53,20 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg">
+        <div className="flex items-center gap-2 p-3 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20">
           <AlertCircle className="w-4 h-4" />
           <span className="text-sm">{error}</span>
         </div>
       )}
       {success && (
-        <div className="flex items-center gap-2 p-3 bg-green-100 text-green-800 rounded-lg dark:bg-green-900 dark:text-green-200">
+        <div className="flex items-center gap-2 p-3 bg-green-500/10 text-green-400 rounded-lg border border-green-500/20">
           <CheckCircle2 className="w-4 h-4" />
           <span className="text-sm">{success}</span>
         </div>
       )}
 
       <div>
-        <Label htmlFor="name" className="pb-1">
+        <Label htmlFor="name" className="pb-1 text-white">
           Equipment Name *
         </Label>
         <Input
@@ -74,12 +74,13 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
           placeholder="e.g., MacBook Pro 14"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
           required
         />
       </div>
 
       <div>
-        <Label htmlFor="serial" className="pb-1">
+        <Label htmlFor="serial" className="pb-1 text-white">
           Serial Number *
         </Label>
         <Input
@@ -87,12 +88,13 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
           placeholder="e.g., ABC123XYZ"
           value={formData.serial}
           onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
           required
         />
       </div>
 
       <div>
-        <Label htmlFor="purchaseDate" className="pb-1">
+        <Label htmlFor="purchaseDate" className="pb-1 text-white">
           Purchase Date
         </Label>
         <Input
@@ -100,13 +102,14 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
           type="date"
           value={formData.purchaseDate}
           onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
+          className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500"
         />
       </div>
 
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
       >
         {loading ? (
           <>

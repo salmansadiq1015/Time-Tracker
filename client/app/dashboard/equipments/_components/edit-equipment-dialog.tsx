@@ -67,46 +67,46 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-[#1e2339] border-gray-700">
         <DialogHeader>
-          <DialogTitle>Edit Equipment</DialogTitle>
-          <DialogDescription>Update equipment details</DialogDescription>
+          <DialogTitle className="text-white">Edit Equipment</DialogTitle>
+          <DialogDescription className="text-gray-400">Update equipment details</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
+            <div className="flex items-center gap-2 p-3 bg-red-500/10 text-red-400 rounded-lg text-sm border border-red-500/20">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               {error}
             </div>
           )}
 
           <div>
-            <Label htmlFor="edit-name" className="pb-1">
+            <Label htmlFor="edit-name" className="pb-1 text-white">
               Equipment Name
             </Label>
             <Input
               id="edit-name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="border border-gray-300"
+              className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500"
             />
           </div>
 
           <div>
-            <Label htmlFor="edit-serial" className="pb-1">
+            <Label htmlFor="edit-serial" className="pb-1 text-white">
               Serial Number
             </Label>
             <Input
               id="edit-serial"
               value={formData.serial}
               onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
-              className="border border-gray-300"
+              className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500"
             />
           </div>
 
           <div>
-            <Label htmlFor="edit-purchaseDate" className="pb-1">
+            <Label htmlFor="edit-purchaseDate" className="pb-1 text-white">
               Purchase Date
             </Label>
             <Input
@@ -114,7 +114,7 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
               type="date"
               value={formData.purchaseDate}
               onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
-              className="border border-gray-300"
+              className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500"
             />
           </div>
 
@@ -122,7 +122,7 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
             >
               {loading ? (
                 <>
@@ -134,7 +134,7 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
               )}
             </Button>
             <DialogClose asChild>
-              <Button type="button" variant="outline" className="flex-1 bg-transparent">
+              <Button type="button" variant="outline" className="flex-1 bg-[#0f1419] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
                 Cancel
               </Button>
             </DialogClose>

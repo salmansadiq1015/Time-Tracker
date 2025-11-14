@@ -315,17 +315,17 @@ export default function TimeTrackerPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-[#0f1419] text-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-amber-200 bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-gray-700/50 bg-[#1e2339]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-700">
-              <span className="text-sm font-bold text-white">TT</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-lg">
+              <Clock className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Time Tracker</h1>
-              <p className="text-xs text-muted-foreground">
+              <h1 className="text-2xl font-bold text-white">Time Tracker</h1>
+              <p className="text-xs text-gray-400">
                 Track your work hours with precision and advanced analytics
               </p>
             </div>
@@ -334,7 +334,7 @@ export default function TimeTrackerPage() {
             <Button
               onClick={() => setShowForm(!showForm)}
               disabled={!!activeTimer}
-              className="gap-2 bg-amber-700 hover:bg-amber-800 text-white"
+              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
             >
               <Play className="w-4 h-4 mr-2" />
               Start Timer

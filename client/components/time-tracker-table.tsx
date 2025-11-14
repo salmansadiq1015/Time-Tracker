@@ -338,7 +338,7 @@ export function TimeTrackerTable({
         <button
           type="button"
           onClick={() => openLocationOnMap(lat, lng)}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-amber-700 transition hover:bg-amber-100 hover:text-amber-800"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-blue-500/50 bg-blue-600/20 text-blue-400 transition hover:bg-blue-600/30 hover:text-blue-300"
           title={title || 'Open in Google Maps'}
         >
           <Icon className="h-4 w-4" />
@@ -348,7 +348,7 @@ export function TimeTrackerTable({
 
     if (cleanedAddress) {
       return (
-        <span className="text-xs text-gray-700 max-w-[200px] line-clamp-2">{cleanedAddress}</span>
+        <span className="text-xs text-gray-300 max-w-[200px] line-clamp-2">{cleanedAddress}</span>
       );
     }
 
@@ -362,23 +362,23 @@ export function TimeTrackerTable({
   const validEntries = entries.filter((entry) => entry && entry._id);
 
   return (
-    <Card className="border-gray-200 bg-white shadow-lg overflow-hidden py-0">
-      <CardContent className="p-0 ">
+    <Card className="border-gray-700/50 bg-[#1e2339] shadow-xl overflow-hidden py-0 pb-4">
+      <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-linear-to-r from-[#c16840] to-[#d17a4f] text-white border-b-2 border-gray-200">
+            <thead className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
               <tr>
                 <th className="w-12 px-4" />
-                <th className="text-left py-4 px-4 min-w-40 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-40 font-semibold text-white uppercase text-xs tracking-wider">
                   User
                 </th>
-                <th className="text-left py-4 px-4 font-semibold text-gray-50 uppercase text-xs tracking-wider min-w-60">
+                <th className="text-left py-4 px-4 font-semibold text-white uppercase text-xs tracking-wider min-w-60">
                   Description
                 </th>
-                <th className="text-left py-4 px-4 min-w-32 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-32 font-semibold text-white uppercase text-xs tracking-wider">
                   Project
                 </th>
-                <th className="text-left py-4 px-4 min-w-32 font-semibold text-gray-50 uppercase text-xs tracking-wider">
+                <th className="text-left py-4 px-4 min-w-32 font-semibold text-white uppercase text-xs tracking-wider">
                   Task
                 </th>
 
@@ -444,15 +444,15 @@ export function TimeTrackerTable({
                   return (
                     <Fragment key={entry._id}>
                       <tr
-                        className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                          entry.isActive ? 'bg-orange-50/50' : ''
+                        className={`border-b border-gray-700/30 hover:bg-gray-800/30 transition-colors ${
+                          entry.isActive ? 'bg-blue-900/20' : ''
                         }`}
                       >
                         <td className="py-4 px-4 align-top">
                           <button
                             type="button"
                             onClick={() => toggleRow(entry._id)}
-                            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:border-[#c16840] hover:text-[#c16840] transition"
+                            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-600 text-gray-400 hover:border-blue-500 hover:text-blue-400 transition"
                             aria-label={
                               expandedRows[entry._id] ? 'Collapse details' : 'Expand details'
                             }
@@ -495,19 +495,19 @@ export function TimeTrackerTable({
                                           : undefined,
                                     })
                                   }
-                                  className="text-left text-sm font-semibold text-[#c16840] hover:text-[#9e4f2b] hover:underline underline-offset-2 transition truncate"
+                                  className="text-left text-sm font-semibold text-blue-400 hover:text-blue-300 hover:underline underline-offset-2 transition truncate"
                                   title="Filter timers by this user"
                                 >
                                   {entry.user?.name || 'Unknown'}
                                 </button>
                               ) : (
-                                <span className="text-sm font-medium text-gray-700">N/A</span>
+                                <span className="text-sm font-medium text-gray-300">N/A</span>
                               )}
                               {entry.user?.email && (
-                                <p className="text-xs text-gray-500 truncate">{entry.user.email}</p>
+                                <p className="text-xs text-gray-400 truncate">{entry.user.email}</p>
                               )}
                               {entry.user?.role && (
-                                <p className="text-[11px] uppercase tracking-wide text-gray-400">
+                                <p className="text-[11px] uppercase tracking-wide text-gray-500">
                                   {entry.user.role}
                                 </p>
                               )}
@@ -517,30 +517,30 @@ export function TimeTrackerTable({
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2 max-w-[250px]">
                             <span
-                              className="text-gray-800 text-sm truncate line-clamp-2"
+                              className="text-gray-200 text-sm truncate line-clamp-2"
                               title={entry.description}
                             >
                               {entry.description || 'Untitled'}
                             </span>
                             {entry.isActive && (
-                              <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full border border-orange-200">
+                              <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 text-xs font-semibold rounded-full border border-blue-500/50">
                                 Active
                               </span>
                             )}
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <span className="text-gray-700 text-sm">
+                          <span className="text-gray-300 text-sm">
                             {getProjectName(entry.project)}
                           </span>
                         </td>
                         <td className="py-4 px-4">
-                          <span className="text-gray-700 text-sm">{getTaskName(entry.task)}</span>
+                          <span className="text-gray-300 text-sm">{getTaskName(entry.task)}</span>
                         </td>
                         {/* <td className="py-4 px-4">
                           <button
                             type="button"
-                            className="text-gray-600 text-xs font-mono hover:text-[#c16840] transition-colors"
+                            className="text-gray-400 text-xs font-mono hover:text-blue-400 transition-colors"
                             onClick={() => openRouteInMaps(entry.start, entry.end)}
                           >
                             {formatDate(startTime)}
@@ -548,8 +548,8 @@ export function TimeTrackerTable({
                         </td> */}
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-gray-400" />
-                            <span className="text-gray-700 text-xs font-mono">
+                            <Clock className="w-3 h-3 text-gray-500" />
+                            <span className="text-gray-300 text-xs font-mono">
                               {formatDate(startTime)} - {formatTime(startTime)}
                             </span>
                           </div>
@@ -568,13 +568,13 @@ export function TimeTrackerTable({
                         <td className="py-4 px-4">
                           {endTime ? (
                             <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3 text-gray-400" />
-                              <span className="text-gray-700 text-xs font-mono">
+                              <Clock className="w-3 h-3 text-gray-500" />
+                              <span className="text-gray-300 text-xs font-mono">
                                 {formatTime(endTime)}
                               </span>
                             </div>
                           ) : (
-                            <span className="text-gray-400 text-xs">-</span>
+                            <span className="text-gray-500 text-xs">-</span>
                           )}
                         </td>
                         <td className="py-4 px-4">
@@ -594,9 +594,9 @@ export function TimeTrackerTable({
                         </td>
                         <td className="py-4 px-4 text-right">
                           {duration ? (
-                            <span className="font-bold text-[#c16840] text-sm">{duration}h</span>
+                            <span className="font-bold text-blue-400 text-sm">{duration}h</span>
                           ) : (
-                            <span className="text-gray-400 text-xs">-</span>
+                            <span className="text-gray-500 text-xs">-</span>
                           )}
                         </td>
 
@@ -606,7 +606,7 @@ export function TimeTrackerTable({
                               variant="ghost"
                               size="icon"
                               onClick={() => openRouteInMaps(entry.start, entry.end)}
-                              className="text-yellow-600 hover:bg-yellow-50 h-8 w-8 rounded-lg transition-colors"
+                              className="text-blue-400 hover:bg-blue-600/20 h-8 w-8 rounded-lg transition-colors"
                               title="View on Map"
                             >
                               <BiMap className="w-4 h-4" />
@@ -619,7 +619,7 @@ export function TimeTrackerTable({
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => onEdit(entry)}
-                                className="text-blue-600 hover:bg-blue-50 h-8 w-8 rounded-lg transition-colors"
+                                className="text-blue-400 hover:bg-blue-600/20 h-8 w-8 rounded-lg transition-colors"
                                 title="Edit Entry"
                               >
                                 <Edit2 className="w-4 h-4" />
@@ -634,7 +634,7 @@ export function TimeTrackerTable({
                                   onDelete(entry._id);
                                 }}
                                 disabled={deletingId === entry._id}
-                                className="text-red-600 hover:bg-red-50 h-8 w-8 rounded-lg transition-colors disabled:opacity-50"
+                                className="text-red-400 hover:bg-red-600/20 h-8 w-8 rounded-lg transition-colors disabled:opacity-50"
                                 title="Delete Entry"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -644,7 +644,7 @@ export function TimeTrackerTable({
                         </td>
                       </tr>
                       {expandedRows[entry._id] && (
-                        <tr className="bg-gray-50/70">
+                        <tr className="bg-gray-800/30">
                           <td colSpan={12} className="px-6 py-5">
                             <div className="flex flex-col gap-6">
                               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -652,7 +652,7 @@ export function TimeTrackerTable({
                                   <p className="text-xs uppercase tracking-wide text-gray-500">
                                     Selected Timer
                                   </p>
-                                  <h4 className="text-lg font-semibold text-gray-900">
+                                  <h4 className="text-lg font-semibold text-white">
                                     {entry.description || 'Untitled'}
                                   </h4>
                                 </div>
@@ -660,7 +660,7 @@ export function TimeTrackerTable({
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="gap-2"
+                                    className="gap-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
                                     onClick={() => openRouteInMaps(entry.start, entry.end)}
                                   >
                                     <Map className="h-4 w-4" />
@@ -670,7 +670,7 @@ export function TimeTrackerTable({
                                     <Button
                                       variant="outline"
                                       size="sm"
-                                      className="gap-2"
+                                      className="gap-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
                                       onClick={() => openPhotoModal(startPhotos, 'Start Photos')}
                                     >
                                       <ImageIcon className="h-4 w-4" />
@@ -681,7 +681,7 @@ export function TimeTrackerTable({
                                     <Button
                                       variant="outline"
                                       size="sm"
-                                      className="gap-2"
+                                      className="gap-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
                                       onClick={() => openPhotoModal(endPhotos, 'End Photos')}
                                     >
                                       <ImageIcon className="h-4 w-4" />
@@ -692,7 +692,7 @@ export function TimeTrackerTable({
                                     <Button
                                       variant="outline"
                                       size="sm"
-                                      className="gap-2"
+                                      className="gap-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
                                       onClick={() =>
                                         openPhotoModal(additionalPhotos, 'Additional Photos')
                                       }
@@ -706,17 +706,17 @@ export function TimeTrackerTable({
 
                               <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-3">
-                                  <h5 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                                    <Clock className="h-4 w-4 text-[#c16840]" />
+                                  <h5 className="flex items-center gap-2 text-sm font-semibold text-white">
+                                    <Clock className="h-4 w-4 text-blue-400" />
                                     Start Details
                                   </h5>
-                                  <div className="space-y-1 text-sm text-gray-700">
+                                  <div className="space-y-1 text-sm text-gray-300">
                                     <p>
-                                      <span className="font-medium text-gray-900">Time:</span>{' '}
+                                      <span className="font-medium text-white">Time:</span>{' '}
                                       {formatDate(startTime)} • {formatTime(startTime)}
                                     </p>
                                     <div className="flex flex-col gap-1">
-                                      <span className="font-medium text-gray-900">Location:</span>
+                                      <span className="font-medium text-white">Location:</span>
                                       {renderLocationContent(
                                         entry.start?.location,
                                         startLat,
@@ -740,19 +740,19 @@ export function TimeTrackerTable({
                                 </div>
 
                                 <div className="space-y-3">
-                                  <h5 className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                                    <Clock className="h-4 w-4 text-[#c16840]" />
+                                  <h5 className="flex items-center gap-2 text-sm font-semibold text-white">
+                                    <Clock className="h-4 w-4 text-blue-400" />
                                     End Details
                                   </h5>
-                                  <div className="space-y-1 text-sm text-gray-700">
+                                  <div className="space-y-1 text-sm text-gray-300">
                                     <p>
-                                      <span className="font-medium text-gray-900">Time:</span>{' '}
+                                      <span className="font-medium text-white">Time:</span>{' '}
                                       {endTime
                                         ? `${formatDate(endTime)} • ${formatTime(endTime)}`
                                         : 'N/A'}
                                     </p>
                                     <div className="flex flex-col gap-1">
-                                      <span className="font-medium text-gray-900">Location:</span>
+                                      <span className="font-medium text-white">Location:</span>
                                       {renderLocationContent(
                                         entry.end?.location,
                                         endLat,
@@ -830,8 +830,8 @@ export function TimeTrackerTable({
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6 pt-4 border-t border-border/30">
-            <div className="text-sm text-muted-foreground">
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-700/50 px-4">
+            <div className="text-sm text-gray-400">
               Page {pagination.currentPage} of {pagination.totalPages}
             </div>
             <div className="flex gap-2">
@@ -840,6 +840,7 @@ export function TimeTrackerTable({
                 size="sm"
                 onClick={() => onPageChange?.(1)}
                 disabled={!pagination.hasPrevPage}
+                className="bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
               >
                 First
               </Button>
@@ -848,32 +849,52 @@ export function TimeTrackerTable({
                 size="sm"
                 onClick={() => onPageChange?.(pagination.currentPage - 1)}
                 disabled={!pagination.hasPrevPage}
+                className="bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
 
-              {Array.from({ length: Math.min(5, pagination.totalPages) }).map((_, i) => {
-                let pageNum = pagination.currentPage - 2 + i;
-                if (pageNum < 1) pageNum = 1 + i;
-                if (pageNum > pagination.totalPages) pageNum = pagination.totalPages - 4 + i;
+              {(() => {
+                const pages: number[] = [];
+                const maxVisible = 5;
+                const halfWindow = Math.floor(maxVisible / 2);
 
-                return (
+                let startPage = Math.max(1, pagination.currentPage - halfWindow);
+                const endPage = Math.min(pagination.totalPages, startPage + maxVisible - 1);
+
+                // Adjust start if we're near the end
+                if (endPage - startPage + 1 < maxVisible) {
+                  startPage = Math.max(1, endPage - maxVisible + 1);
+                }
+
+                // Generate page numbers
+                for (let i = startPage; i <= endPage; i++) {
+                  pages.push(i);
+                }
+
+                return pages.map((pageNum) => (
                   <Button
                     key={pageNum}
                     variant={pageNum === pagination.currentPage ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => onPageChange?.(pageNum)}
+                    className={
+                      pageNum === pagination.currentPage
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
+                        : 'bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
+                    }
                   >
                     {pageNum}
                   </Button>
-                );
-              })}
+                ));
+              })()}
 
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onPageChange?.(pagination.currentPage + 1)}
                 disabled={!pagination.hasNextPage}
+                className="bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>
@@ -882,11 +903,12 @@ export function TimeTrackerTable({
                 size="sm"
                 onClick={() => onPageChange?.(pagination.totalPages)}
                 disabled={!pagination.hasNextPage}
+                className="bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
               >
                 Last
               </Button>
             </div>
-            <div className="text-sm text-muted-foreground">{pagination.limit} per page</div>
+            <div className="text-sm text-gray-400">{pagination.limit} per page</div>
           </div>
         )}
       </CardContent>
@@ -896,8 +918,8 @@ export function TimeTrackerTable({
         open={selectedPhotos !== null}
         onOpenChange={(open) => !open && setSelectedPhotos(null)}
       >
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-white">
-          <DialogHeader className="bg-linear-to-r from-[#c16840] to-[#d17a4f] text-white -m-6 mb-4 p-6 rounded-t-lg">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-[#1e2339] border-gray-700">
+          <DialogHeader className="bg-linear-to-r from-blue-600 to-blue-700 text-white -m-6 mb-4 p-6 rounded-t-lg">
             <DialogTitle className="text-white flex items-center gap-2">
               <ImageIcon className="w-5 h-5" />
               {photoModalTitle} ({selectedPhotos?.length || 0})
@@ -907,7 +929,7 @@ export function TimeTrackerTable({
             {selectedPhotos?.map((photoUrl, index) => (
               <div
                 key={index}
-                className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 group cursor-pointer shadow-md hover:shadow-xl transition-all hover:scale-105"
+                className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-600 group cursor-pointer shadow-md hover:shadow-xl transition-all hover:scale-105"
                 onClick={() => window.open(photoUrl, '_blank')}
               >
                 <img

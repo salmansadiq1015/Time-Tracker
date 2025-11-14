@@ -187,23 +187,23 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
         ))}
       </div>
     ) : (
-      <Card className="border-amber-200 shadow-xl backdrop-blur-md bg-linear-to-br from-card/80 via-card/60 to-card/40 overflow-hidden">
+      <Card className="border-gray-700/50 shadow-xl bg-[#1e2339] overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-linear-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 hover:bg-amber-600/15 border-b-2 border-amber-200">
-                <TableHead className="h-16 px-6 font-bold text-base">Project Name</TableHead>
-                {/* <TableHead className="h-16 px-6 font-bold text-base">Client</TableHead> */}
-                <TableHead className="h-16 px-6 font-bold text-base">Location</TableHead>
-                <TableHead className="h-16 px-6 font-bold text-base">Dates</TableHead>
-                <TableHead className="h-16 px-6 font-bold text-base">Team Size</TableHead>
-                <TableHead className="h-16 px-6 font-bold text-base">Status</TableHead>
-                <TableHead className="h-16 px-6 text-right font-bold text-base">Actions</TableHead>
+              <TableRow className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
+                <TableHead className="h-16 px-6 font-bold text-base text-white">Project Name</TableHead>
+                {/* <TableHead className="h-16 px-6 font-bold text-base text-white">Client</TableHead> */}
+                <TableHead className="h-16 px-6 font-bold text-base text-white">Location</TableHead>
+                <TableHead className="h-16 px-6 font-bold text-base text-white">Dates</TableHead>
+                <TableHead className="h-16 px-6 font-bold text-base text-white">Team Size</TableHead>
+                <TableHead className="h-16 px-6 font-bold text-base text-white">Status</TableHead>
+                <TableHead className="h-16 px-6 text-right font-bold text-base text-white">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {[...Array(5)].map((_, i) => (
-                <TableRow key={i} className="hover:bg-amber-50/30">
+                <TableRow key={i} className="hover:bg-gray-800/30 border-b border-gray-700/30">
                   <TableCell>
                     <Skeleton className="h-5 w-32" />
                   </TableCell>
@@ -264,17 +264,17 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
           ))}
         </div>
       ) : (
-        <Card className="border-amber-200 py-0 shadow-xl backdrop-blur-md bg-linear-to-br from-card/80 via-card/60 to-card/40 overflow-hidden">
+        <Card className="border-gray-700/50 py-0 shadow-xl bg-[#1e2339] overflow-hidden">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="bg-linear-to-r from-amber-600/10 via-amber-500/5 to-amber-600/10 hover:bg-amber-600/15 border-b-2 border-amber-200">
-                  <TableHead className="h-16 px-6 font-bold text-base">Project Name</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base">Location</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base">Dates</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base">Team Size</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base">Status</TableHead>
-                  <TableHead className="h-16 px-6 text-right font-bold text-base">
+                <TableRow className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">Project Name</TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">Location</TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">Dates</TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">Team Size</TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">Status</TableHead>
+                  <TableHead className="h-16 px-6 text-right font-bold text-base text-white">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -295,19 +295,19 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                   return (
                     <TableRow
                       key={project._id}
-                      className="group hover:bg-linear-to-r hover:from-amber-50/50 hover:to-transparent transition-all duration-300 border-b border-amber-100"
+                      className="group hover:bg-gray-800/30 transition-all duration-300 border-b border-gray-700/30"
                     >
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-linear-to-br from-amber-600/20 to-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                            <Building2 className="w-5 h-5 text-amber-600" />
+                          <div className="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                            <Building2 className="w-5 h-5 text-blue-400" />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-foreground group-hover:text-amber-600 transition-colors truncate">
+                            <p className="font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
                               {project.name}
                             </p>
                             {project.description && (
-                              <p className="text-xs text-muted-foreground truncate max-w-xs mt-1">
+                              <p className="text-xs text-gray-400 truncate max-w-xs mt-1">
                                 {project.description}
                               </p>
                             )}
@@ -316,13 +316,13 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <div className="flex items-start gap-2">
-                          <MapPin className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                          <div className="flex flex-col text-sm text-foreground max-w-[220px]">
+                          <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                          <div className="flex flex-col text-sm text-white max-w-[220px]">
                             <span className="font-medium truncate">
                               {project.city || project.location || 'City not set'}
                             </span>
                             {project.address && (
-                              <span className="text-xs text-muted-foreground truncate">
+                              <span className="text-xs text-gray-400 truncate">
                                 {project.address}
                               </span>
                             )}
@@ -331,17 +331,17 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-amber-600 shrink-0" />
+                          <Calendar className="w-4 h-4 text-blue-400 shrink-0" />
                           <div className="flex flex-col">
-                            <span className="text-xs text-foreground font-medium">{startDate}</span>
-                            <span className="text-xs text-muted-foreground">→ {endDate}</span>
+                            <span className="text-xs text-white font-medium">{startDate}</span>
+                            <span className="text-xs text-gray-400">→ {endDate}</span>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-amber-600 shrink-0" />
-                          <span className="text-sm font-medium text-foreground">
+                          <Users className="w-4 h-4 text-blue-400 shrink-0" />
+                          <span className="text-sm font-medium text-white">
                             {project.employees?.length || 0}
                           </span>
                         </div>
@@ -352,7 +352,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                             Archived
                           </Badge>
                         ) : (
-                          <Badge className="bg-amber-100 text-amber-700 border-amber-200 font-semibold">
+                          <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/50 font-semibold">
                             Active
                           </Badge>
                         )}
@@ -364,9 +364,9 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-9 w-9 p-0 border-amber-200 hover:bg-amber-50 group/btn transition-all duration-300 hover:scale-110"
+                                className="h-9 w-9 p-0 border-gray-600 hover:bg-gray-700 group/btn transition-all duration-300 hover:scale-110"
                               >
-                                <MoreVertical className="w-4 h-4 text-foreground group-hover/btn:text-amber-600 transition-colors" />
+                                <MoreVertical className="w-4 h-4 text-gray-300 group-hover/btn:text-blue-400 transition-colors" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">

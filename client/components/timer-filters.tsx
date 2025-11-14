@@ -151,13 +151,13 @@ export function AdvancedFilters({
   const hasActiveFilters = filters.selectedUser || filters.startDate || filters.endDate;
 
   return (
-    <Card className="border-gray-400 bg-gray-200/70 backdrop-blur-sm py-3 text-black">
+    <Card className="border-gray-700/50 bg-[#1e2339] backdrop-blur-sm py-3">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
         <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-primary" />
-          <CardTitle>Filters</CardTitle>
+          <Filter className="w-5 h-5 text-blue-400" />
+          <CardTitle className="text-white">Filters</CardTitle>
           {hasActiveFilters && (
-            <span className="ml-2 px-2 py-1 bg-primary/20 text-primary text-xs font-semibold rounded-full">
+            <span className="ml-2 px-2 py-1 bg-blue-600/20 text-blue-300 text-xs font-semibold rounded-full border border-blue-500/50">
               {[filters.selectedUser, filters.startDate, filters.endDate].filter(Boolean).length}{' '}
               active
             </span>
@@ -165,12 +165,12 @@ export function AdvancedFilters({
         </div>
         <div className="flex gap-2">
           {hasActiveFilters && (
-            <Button variant="outline" size="sm" onClick={onReset} className="gap-2 bg-transparent">
+            <Button variant="outline" size="sm" onClick={onReset} className="gap-2 bg-[#0f1419] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
               <RotateCcw className="w-4 h-4" />
               Reset
             </Button>
           )}
-          <Button variant="ghost" size="sm" onClick={onToggleFilters} className="gap-2">
+          <Button variant="ghost" size="sm" onClick={onToggleFilters} className="gap-2 text-gray-300 hover:text-white hover:bg-gray-700">
             {showFilters ? (
               <>
                 <X className="w-4 h-4" />
@@ -188,16 +188,16 @@ export function AdvancedFilters({
       </CardHeader>
 
       {showFilters && (
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* User Filter */}
             {users.length > 0 && isAdmin && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Filter by User</label>
+                <label className="text-sm font-medium text-white">Filter by User</label>
                 <select
                   value={filters.selectedUser}
                   onChange={(e) => handleUserChange(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full px-3 py-2 bg-[#0f1419] border border-gray-600 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
                 >
                   <option value="">All Users</option>
                   {users.map((user) => (
@@ -211,11 +211,11 @@ export function AdvancedFilters({
 
             {/* Date Range Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Date Range</label>
+              <label className="text-sm font-medium text-white">Date Range</label>
               <select
                 value={filters.dateRange || ''}
                 onChange={(e) => handleDateRangeChange(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-3 py-2 bg-[#0f1419] border border-gray-600 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
               >
                 <option value="">All Time</option>
                 <option value="today">Today</option>
@@ -240,12 +240,12 @@ export function AdvancedFilters({
             {/* Start Date - Only show when Custom is selected */}
             {filters.dateRange === 'custom' && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Start Date</label>
+                <label className="text-sm font-medium text-white">Start Date</label>
                 <Input
                   type="date"
                   value={filters.startDate}
                   onChange={(e) => handleStartDateChange(e.target.value)}
-                  className="bg-gray-800 border border-gray-400 rounded-md text-gray-600 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent cursor-pointer"
+                  className="bg-[#0f1419] border border-gray-600 rounded-md text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 cursor-pointer"
                   placeholder="Select start date"
                 />
               </div>
@@ -254,12 +254,12 @@ export function AdvancedFilters({
             {/* End Date - Only show when Custom is selected */}
             {filters.dateRange === 'custom' && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">End Date</label>
+                <label className="text-sm font-medium text-white">End Date</label>
                 <Input
                   type="date"
                   value={filters.endDate}
                   onChange={(e) => handleEndDateChange(e.target.value)}
-                  className="bg-gray-800 border border-gray-400 rounded-md text-gray-600rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent cursor-pointer"
+                  className="bg-[#0f1419] border border-gray-600 rounded-md text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 cursor-pointer"
                   placeholder="Select end date"
                   min={filters.startDate ? filters.startDate.slice(0, 16) : undefined}
                 />

@@ -161,9 +161,9 @@ export function TimeTrackerCards({
           ))}
         </>
       ) : validEntries.length === 0 ? (
-        <Card className="border-border/50 bg-card/50">
+        <Card className="border-gray-700/50 bg-[#1e2339]">
           <CardContent className="py-8">
-            <p className="text-center text-muted-foreground">No time entries found</p>
+            <p className="text-center text-gray-400">No time entries found</p>
           </CardContent>
         </Card>
       ) : (
@@ -175,8 +175,8 @@ export function TimeTrackerCards({
           return (
             <Card
               key={entry._id}
-              className={`border-gray-300 bg-gray-100 text-black backdrop-blur-sm hover:border-primary/50 transition-all ${
-                entry.isActive ? 'ring-2 ring-primary/50' : ''
+              className={`border-gray-700/50 bg-[#1e2339] text-white backdrop-blur-sm hover:border-blue-500/50 transition-all shadow-lg ${
+                entry.isActive ? 'ring-2 ring-blue-500/50' : ''
               }`}
             >
               <CardContent className="pt-6">
@@ -185,11 +185,11 @@ export function TimeTrackerCards({
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold text-foreground text-lg">
+                        <h3 className="font-semibold text-white text-lg">
                           {entry.description || 'Untitled'}
                         </h3>
                         {entry.isActive && (
-                          <span className="px-2 py-1 bg-primary/20 text-primary text-xs font-semibold rounded-full">
+                          <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs font-semibold rounded-full border border-blue-500/50">
                             Active
                           </span>
                         )}
@@ -197,12 +197,12 @@ export function TimeTrackerCards({
                       {(getProjectName(entry.project) || getTaskName(entry.task)) && (
                         <div className="flex flex-wrap gap-2 mb-2">
                           {getProjectName(entry.project) && (
-                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded border border-blue-200">
+                            <span className="px-2 py-0.5 bg-blue-600/20 text-blue-300 text-xs font-medium rounded border border-blue-500/50">
                               Project: {getProjectName(entry.project)}
                             </span>
                           )}
                           {getTaskName(entry.task) && (
-                            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded border border-purple-200">
+                            <span className="px-2 py-0.5 bg-purple-600/20 text-purple-300 text-xs font-medium rounded border border-purple-500/50">
                               Task: {getTaskName(entry.task)}
                             </span>
                           )}
@@ -235,42 +235,42 @@ export function TimeTrackerCards({
                                     : undefined,
                               })
                             }
-                            className="text-sm font-semibold text-primary hover:text-primary/80 hover:underline underline-offset-2 transition"
+                            className="text-sm font-semibold text-blue-400 hover:text-blue-300 hover:underline underline-offset-2 transition"
                           >
                             {entry.user?.name || 'Unknown User'}
                           </button>
                           {entry.user?.email && (
-                            <p className="text-xs text-muted-foreground">{entry.user.email}</p>
+                            <p className="text-xs text-gray-400">{entry.user.email}</p>
                           )}
                           {entry.user?.role && (
-                            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                            <p className="text-[11px] uppercase tracking-wide text-gray-500">
                               {entry.user.role}
                             </p>
                           )}
                         </div>
                       ) : (
-                        <p className="text-sm text-muted-foreground">N/A</p>
+                        <p className="text-sm text-gray-400">N/A</p>
                       )}
                     </div>
                     {duration && (
                       <div className="text-right">
-                        <p className="text-2xl font-bold text-primary">{duration}h</p>
-                        <p className="text-xs text-muted-foreground">Duration</p>
+                        <p className="text-2xl font-bold text-blue-400">{duration}h</p>
+                        <p className="text-xs text-gray-400">Duration</p>
                       </div>
                     )}
                   </div>
 
                   {/* Date & Time */}
-                  <div className="grid grid-cols-2 gap-3 py-3 border-y border-border/30">
+                  <div className="grid grid-cols-2 gap-3 py-3 border-y border-gray-700/50">
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Start Date</p>
-                      <p className="text-sm font-mono font-semibold text-foreground">
+                      <p className="text-xs text-gray-400 mb-1">Start Date</p>
+                      <p className="text-sm font-mono font-semibold text-white">
                         {formatDate(startTime)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Start Time</p>
-                      <p className="text-sm font-mono font-semibold text-foreground">
+                      <p className="text-xs text-gray-400 mb-1">Start Time</p>
+                      <p className="text-sm font-mono font-semibold text-white">
                         {formatTime(startTime)}
                       </p>
                     </div>
@@ -278,13 +278,13 @@ export function TimeTrackerCards({
 
                   {/* Location */}
                   <div className="flex items-start gap-2 text-sm">
-                    <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-primary" />
+                    <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Start Location</p>
-                      <p className="text-sm text-foreground">
+                      <p className="text-xs text-gray-400 mb-1">Start Location</p>
+                      <p className="text-sm text-white">
                         {entry.start?.location || 'Unknown'}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-gray-500">
                         {entry.start?.lat.toFixed(4)}, {entry.start?.lng.toFixed(4)}
                       </p>
                     </div>
@@ -293,30 +293,30 @@ export function TimeTrackerCards({
                   {/* End time and location */}
                   {endTime && entry.end && (
                     <>
-                      <div className="grid grid-cols-2 gap-3 py-3 border-y border-border/30">
+                      <div className="grid grid-cols-2 gap-3 py-3 border-y border-gray-700/50">
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">End Date</p>
-                          <p className="text-sm font-mono font-semibold text-foreground">
+                          <p className="text-xs text-gray-400 mb-1">End Date</p>
+                          <p className="text-sm font-mono font-semibold text-white">
                             {formatDate(endTime)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">End Time</p>
-                          <p className="text-sm font-mono font-semibold text-foreground">
+                          <p className="text-xs text-gray-400 mb-1">End Time</p>
+                          <p className="text-sm font-mono font-semibold text-white">
                             {formatTime(endTime)}
                           </p>
                         </div>
                       </div>
 
                       <div className="flex items-start gap-2 text-sm">
-                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-primary" />
-                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-primary" />
+                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
+                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">End Location</p>
-                          <p className="text-sm text-foreground">
+                          <p className="text-xs text-gray-400 mb-1">End Location</p>
+                          <p className="text-sm text-white">
                             {entry.end.location || 'Unknown'}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-gray-500">
                             {entry.end.lat.toFixed(4)}, {entry.end.lng.toFixed(4)}
                           </p>
                         </div>
@@ -325,12 +325,12 @@ export function TimeTrackerCards({
                   )}
 
                   {/* Actions */}
-                  <div className="flex gap-2 pt-2 border-t border-border/30">
+                  <div className="flex gap-2 pt-2 border-t border-gray-700/50">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => onEdit(entry)}
-                      className="flex-1 gap-2"
+                      className="flex-1 gap-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
                     >
                       <Edit2 className="w-4 h-4" />
                       Edit
@@ -343,7 +343,7 @@ export function TimeTrackerCards({
                         onDelete(entry._id);
                       }}
                       disabled={deletingId === entry._id}
-                      className="flex-1 gap-2 text-destructive hover:text-destructive"
+                      className="flex-1 gap-2 border-red-600/50 text-red-400 hover:bg-red-600/20 hover:text-red-300 disabled:opacity-50"
                     >
                       <Trash2 className="w-4 h-4" />
                       Delete
@@ -358,10 +358,10 @@ export function TimeTrackerCards({
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <Card className="border-border/50 bg-card/50">
+        <Card className="border-gray-700/50 bg-[#1e2339]">
           <CardContent className="py-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-gray-400">
                 Page {pagination.currentPage} of {pagination.totalPages}
               </div>
               <div className="flex gap-2 flex-wrap">
@@ -370,6 +370,7 @@ export function TimeTrackerCards({
                   size="sm"
                   onClick={() => onPageChange?.(1)}
                   disabled={!pagination.hasPrevPage}
+                  className="bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                 >
                   First
                 </Button>
@@ -378,32 +379,52 @@ export function TimeTrackerCards({
                   size="sm"
                   onClick={() => onPageChange?.(pagination.currentPage - 1)}
                   disabled={!pagination.hasPrevPage}
+                  className="bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
 
-                {Array.from({ length: Math.min(5, pagination.totalPages) }).map((_, i) => {
-                  let pageNum = pagination.currentPage - 2 + i;
-                  if (pageNum < 1) pageNum = 1 + i;
-                  if (pageNum > pagination.totalPages) pageNum = pagination.totalPages - 4 + i;
+                {(() => {
+                  const pages: number[] = [];
+                  const maxVisible = 5;
+                  const halfWindow = Math.floor(maxVisible / 2);
 
-                  return (
+                  let startPage = Math.max(1, pagination.currentPage - halfWindow);
+                  const endPage = Math.min(pagination.totalPages, startPage + maxVisible - 1);
+
+                  // Adjust start if we're near the end
+                  if (endPage - startPage + 1 < maxVisible) {
+                    startPage = Math.max(1, endPage - maxVisible + 1);
+                  }
+
+                  // Generate page numbers
+                  for (let i = startPage; i <= endPage; i++) {
+                    pages.push(i);
+                  }
+
+                  return pages.map((pageNum) => (
                     <Button
                       key={pageNum}
                       variant={pageNum === pagination.currentPage ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => onPageChange?.(pageNum)}
+                      className={
+                        pageNum === pagination.currentPage
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
+                          : 'bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
+                      }
                     >
                       {pageNum}
                     </Button>
-                  );
-                })}
+                  ));
+                })()}
 
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => onPageChange?.(pagination.currentPage + 1)}
                   disabled={!pagination.hasNextPage}
+                  className="bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>
@@ -412,11 +433,12 @@ export function TimeTrackerCards({
                   size="sm"
                   onClick={() => onPageChange?.(pagination.totalPages)}
                   disabled={!pagination.hasNextPage}
+                  className="bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                 >
                   Last
                 </Button>
               </div>
-              <div className="text-sm text-muted-foreground">{pagination.limit} per page</div>
+              <div className="text-sm text-gray-400">{pagination.limit} per page</div>
             </div>
           </CardContent>
         </Card>

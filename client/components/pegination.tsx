@@ -79,7 +79,7 @@ export function AdvancedPagination({
               variant="outline"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1}
-              className="text-xs sm:text-sm"
+              className="text-xs sm:text-sm bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
             >
               First
             </Button>
@@ -88,19 +88,23 @@ export function AdvancedPagination({
           <PaginationItem>
             <PaginationPrevious
               onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-              className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+              className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white`}
             />
           </PaginationItem>
 
           {getPageNumbers().map((page, index) => (
             <PaginationItem key={`${page}-${index}`}>
               {page === '...' ? (
-                <PaginationEllipsis />
+                <PaginationEllipsis className="text-gray-400" />
               ) : (
                 <PaginationLink
                   onClick={() => onPageChange(page as number)}
                   isActive={page === currentPage}
-                  className="cursor-pointer"
+                  className={`cursor-pointer ${
+                    page === currentPage
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
+                      : 'bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
                 >
                   {page}
                 </PaginationLink>
@@ -111,9 +115,9 @@ export function AdvancedPagination({
           <PaginationItem>
             <PaginationNext
               onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-              className={
+              className={`${
                 currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'
-              }
+              } bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white`}
             />
           </PaginationItem>
 
@@ -122,7 +126,7 @@ export function AdvancedPagination({
               variant="outline"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages}
-              className="text-xs sm:text-sm"
+              className="text-xs sm:text-sm bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
             >
               Last
             </Button>

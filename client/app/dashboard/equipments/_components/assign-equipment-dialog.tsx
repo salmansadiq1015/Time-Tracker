@@ -91,25 +91,25 @@ export function AssignEquipmentDialog({
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-[#1e2339] border-gray-700">
         <DialogHeader>
-          <DialogTitle>Assign Equipment</DialogTitle>
-          <DialogDescription>Update status and assignment for {equipment.name}</DialogDescription>
+          <DialogTitle className="text-white">Assign Equipment</DialogTitle>
+          <DialogDescription className="text-gray-400">Update status and assignment for {equipment.name}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
+            <div className="flex items-center gap-2 p-3 bg-red-500/10 text-red-400 rounded-lg text-sm border border-red-500/20">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               {error}
             </div>
           )}
 
           <div>
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status" className="text-white">Status</Label>
             <select
               id="status"
-              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground"
+              className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-blue-500 focus:outline-none"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
@@ -121,10 +121,10 @@ export function AssignEquipmentDialog({
 
           {status === 'assigned' && (
             <div>
-              <Label htmlFor="assignedTo">Assign To Employee</Label>
+              <Label htmlFor="assignedTo" className="text-white">Assign To Employee</Label>
               <select
                 id="assignedTo"
-                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground"
+                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-blue-500 focus:outline-none"
                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 disabled={fetchingEmployees}
@@ -145,7 +145,7 @@ export function AssignEquipmentDialog({
             <Button
               type="submit"
               disabled={loading || (status === 'assigned' && !assignedTo)}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
             >
               {loading ? (
                 <>
@@ -157,7 +157,7 @@ export function AssignEquipmentDialog({
               )}
             </Button>
             <DialogClose asChild>
-              <Button type="button" variant="outline" className="flex-1 bg-transparent">
+              <Button type="button" variant="outline" className="flex-1 bg-[#0f1419] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
                 Cancel
               </Button>
             </DialogClose>

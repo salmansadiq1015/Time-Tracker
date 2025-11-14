@@ -11,6 +11,7 @@ import {
   ChevronRight,
   LayoutGrid,
   List,
+  BarChart3,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ProjectList } from './_components/project-list';
@@ -142,14 +143,14 @@ export default function ProjectDashboard() {
           key="1"
           variant="outline"
           onClick={() => setCurrentPage(1)}
-          className="border-amber-200 hover:bg-amber-50"
+          className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
         >
           1
         </Button>
       );
       if (startPage > 2) {
         buttons.push(
-          <span key="ellipsis-start" className="px-2 text-muted-foreground">
+          <span key="ellipsis-start" className="px-2 text-gray-400">
             ...
           </span>
         );
@@ -164,8 +165,8 @@ export default function ProjectDashboard() {
           onClick={() => setCurrentPage(i)}
           className={
             currentPage === i
-              ? 'bg-amber-600 hover:bg-amber-700'
-              : 'border-amber-200 hover:bg-amber-50'
+              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
           }
         >
           {i}
@@ -176,7 +177,7 @@ export default function ProjectDashboard() {
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         buttons.push(
-          <span key="ellipsis-end" className="px-2 text-muted-foreground">
+          <span key="ellipsis-end" className="px-2 text-gray-400">
             ...
           </span>
         );
@@ -186,7 +187,7 @@ export default function ProjectDashboard() {
           key={totalPages}
           variant="outline"
           onClick={() => setCurrentPage(totalPages)}
-          className="border-amber-200 hover:bg-amber-50"
+          className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
         >
           {totalPages}
         </Button>
@@ -197,23 +198,23 @@ export default function ProjectDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-amber-50 to-orange-50">
+    <div className="min-h-screen bg-[#0f1419]">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-amber-200 bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-gray-700/50 bg-[#1e2339]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-700">
-              <span className="text-sm font-bold text-white">PM</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-lg">
+              <BarChart3 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Project Hub</h1>
-              <p className="text-xs text-muted-foreground">Manage your projects efficiently</p>
+              <h1 className="text-2xl font-bold text-white">Project Hub</h1>
+              <p className="text-xs text-gray-400">Manage your projects efficiently</p>
             </div>
           </div>
           {auth.user.role === 'admin' && (
             <Button
               onClick={() => setShowCreateModal(true)}
-              className="gap-2 bg-amber-700 hover:bg-amber-800 text-white"
+              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
             >
               <Plus className="h-4 w-4" />
               New Project
@@ -226,10 +227,10 @@ export default function ProjectDashboard() {
       <main className="mx-auto max-w-7xl px-6 py-8">
         {/* Search Bar with Loading Indicator & View Toggle */}
         <div className="mb-6 flex items-center gap-4">
-          <div className="flex-1 flex items-center gap-2 rounded-xl border border-amber-200 bg-white p-3 shadow-sm">
+          <div className="flex-1 flex items-center gap-2 rounded-xl border border-gray-600 bg-[#1e2339] p-3 shadow-sm">
             <Search
               className={`h-5 w-5 ${
-                loading && searchTerm ? 'text-amber-600 animate-pulse' : 'text-muted-foreground'
+                loading && searchTerm ? 'text-blue-400 animate-pulse' : 'text-gray-400'
               }`}
             />
             <Input
@@ -237,27 +238,27 @@ export default function ProjectDashboard() {
               placeholder="Search projects by name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="border-0 bg-transparent focus:ring-0"
+              className="border-0 bg-transparent focus:ring-0 text-white placeholder:text-gray-500"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-white transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
             )}
           </div>
           {/* View Toggle */}
-          <div className="flex items-center gap-2 bg-white rounded-lg p-1 border-2 border-amber-200 shadow-sm">
+          <div className="flex items-center gap-2 bg-[#1e2339] rounded-lg p-1 border-2 border-gray-600 shadow-sm">
             <Button
               variant={viewMode === 'card' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setViewMode('card')}
               className={`h-9 px-3 transition-all duration-300 ${
                 viewMode === 'card'
-                  ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-lg'
-                  : 'hover:bg-amber-50'
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg'
+                  : 'hover:bg-gray-700 text-gray-300'
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
@@ -268,8 +269,8 @@ export default function ProjectDashboard() {
               onClick={() => setViewMode('table')}
               className={`h-9 px-3 transition-all duration-300 ${
                 viewMode === 'table'
-                  ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-lg'
-                  : 'hover:bg-amber-50'
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg'
+                  : 'hover:bg-gray-700 text-gray-300'
               }`}
             >
               <List className="w-4 h-4" />
@@ -281,7 +282,7 @@ export default function ProjectDashboard() {
           <div className="mb-6 space-y-4">
             <button
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className="flex items-center gap-2 text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
+              className="flex items-center gap-2 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
             >
               <svg
                 className={`h-5 w-5 transition-transform ${
@@ -300,24 +301,22 @@ export default function ProjectDashboard() {
               </svg>
               Advanced Filters{' '}
               {activeFilterCount > 0 && (
-                <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-xs font-bold text-white">
+                <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
                   {activeFilterCount}
                 </span>
               )}
             </button>
 
             {showAdvancedFilters && (
-              <div className="rounded-xl border border-amber-200 bg-white p-6 shadow-sm space-y-4">
+              <div className="rounded-xl border border-gray-600 bg-[#1e2339] p-6 shadow-sm space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Employee Filter */}
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Employee
-                    </label>
+                    <label className="block text-sm font-medium text-white mb-2">Employee</label>
                     <select
                       value={employeeId}
                       onChange={(e) => setEmployeeId(e.target.value)}
-                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     >
                       <option value="">All Employees</option>
                       {employees.map((e: any) => (
@@ -330,27 +329,27 @@ export default function ProjectDashboard() {
 
                   {/* Start Date Filter */}
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
+                    <label className="block text-sm font-medium text-white mb-2">
                       Start Date (From)
                     </label>
                     <input
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
 
                   {/* End Date Filter */}
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
+                    <label className="block text-sm font-medium text-white mb-2">
                       End Date (To)
                     </label>
                     <input
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -358,7 +357,7 @@ export default function ProjectDashboard() {
                 {activeFilterCount > 0 && (
                   <button
                     onClick={resetFilters}
-                    className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-700 transition-colors"
+                    className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-colors"
                   >
                     <X className="h-4 w-4" />
                     Clear All Filters
@@ -373,24 +372,24 @@ export default function ProjectDashboard() {
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-foreground">Show:</label>
+              <label className="text-sm font-medium text-white">Show:</label>
               <select
                 value={limit}
                 onChange={(e) => {
                   setLimit(Number(e.target.value));
                 }}
-                className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="rounded-lg border border-gray-600 bg-[#1e2339] px-3 py-2 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
                 <option value={50}>50</option>
               </select>
-              <span className="text-xs text-muted-foreground">per page</span>
+              <span className="text-xs text-gray-400">per page</span>
             </div>
           </div>
-          <div className="text-sm text-muted-foreground">
-            Showing <span className="font-medium">{projects.length}</span> of{' '}
-            <span className="font-medium">{totalProjects}</span>
+          <div className="text-sm text-gray-400">
+            Showing <span className="font-medium text-white">{projects.length}</span> of{' '}
+            <span className="font-medium text-white">{totalProjects}</span>
           </div>
         </div>
 
@@ -404,12 +403,12 @@ export default function ProjectDashboard() {
 
         {totalPages > 1 && (
           <div className="mt-8 space-y-4">
-            <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm border border-amber-200">
+            <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl bg-[#1e2339] p-4 shadow-sm border border-gray-600">
               <Button
                 variant="outline"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="border-amber-200 hover:bg-amber-50 disabled:opacity-50"
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -420,16 +419,16 @@ export default function ProjectDashboard() {
                 variant="outline"
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="border-amber-200 hover:bg-amber-50 disabled:opacity-50"
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
 
             {/* Page Info */}
-            <div className="text-center text-sm text-muted-foreground">
-              Page <span className="font-medium">{currentPage}</span> of{' '}
-              <span className="font-medium">{totalPages}</span>
+            <div className="text-center text-sm text-gray-400">
+              Page <span className="font-medium text-white">{currentPage}</span> of{' '}
+              <span className="font-medium text-white">{totalPages}</span>
             </div>
           </div>
         )}
