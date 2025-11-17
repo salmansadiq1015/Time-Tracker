@@ -166,7 +166,7 @@ export function TimeTrackerTable({
     const statusConfig: Record<string, { label: string; className: string }> = {
       active: {
         label: 'Active',
-        className: 'bg-blue-100 text-blue-700 border-blue-200',
+        className: 'bg-gray-100 text-gray-700 border-gray-200',
       },
       approved: {
         label: 'Approved',
@@ -338,7 +338,7 @@ export function TimeTrackerTable({
         <button
           type="button"
           onClick={() => openLocationOnMap(lat, lng)}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-blue-500/50 bg-blue-600/20 text-blue-400 transition hover:bg-blue-600/30 hover:text-blue-300"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-500/50 bg-gray-600/20 text-gray-400 transition hover:bg-gray-600/30 hover:text-gray-300"
           title={title || 'Open in Google Maps'}
         >
           <Icon className="h-4 w-4" />
@@ -366,7 +366,7 @@ export function TimeTrackerTable({
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
+            <thead className="bg-gradient-to-r from-gray-500 to-gray-600 text-white border-b-2 border-gray-500/50">
               <tr>
                 <th className="w-12 px-4" />
                 <th className="text-left py-4 px-4 min-w-40 font-semibold text-white uppercase text-xs tracking-wider">
@@ -445,14 +445,14 @@ export function TimeTrackerTable({
                     <Fragment key={entry._id}>
                       <tr
                         className={`border-b border-gray-700/30 hover:bg-gray-800/30 transition-colors ${
-                          entry.isActive ? 'bg-blue-900/20' : ''
+                          entry.isActive ? 'bg-gray-900/20' : ''
                         }`}
                       >
                         <td className="py-4 px-4 align-top">
                           <button
                             type="button"
                             onClick={() => toggleRow(entry._id)}
-                            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-600 text-gray-400 hover:border-blue-500 hover:text-blue-400 transition"
+                            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-600 text-gray-400 hover:border-gray-500 hover:text-gray-400 transition"
                             aria-label={
                               expandedRows[entry._id] ? 'Collapse details' : 'Expand details'
                             }
@@ -495,7 +495,7 @@ export function TimeTrackerTable({
                                           : undefined,
                                     })
                                   }
-                                  className="text-left text-sm font-semibold text-blue-400 hover:text-blue-300 hover:underline underline-offset-2 transition truncate"
+                                  className="text-left text-sm font-semibold text-gray-400 hover:text-gray-300 hover:underline underline-offset-2 transition truncate"
                                   title="Filter timers by this user"
                                 >
                                   {entry.user?.name || 'Unknown'}
@@ -523,7 +523,7 @@ export function TimeTrackerTable({
                               {entry.description || 'Untitled'}
                             </span>
                             {entry.isActive && (
-                              <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 text-xs font-semibold rounded-full border border-blue-500/50">
+                              <span className="px-2 py-0.5 bg-gray-500/20 text-gray-300 text-xs font-semibold rounded-full border border-gray-500/50">
                                 Active
                               </span>
                             )}
@@ -540,7 +540,7 @@ export function TimeTrackerTable({
                         {/* <td className="py-4 px-4">
                           <button
                             type="button"
-                            className="text-gray-400 text-xs font-mono hover:text-blue-400 transition-colors"
+                            className="text-gray-400 text-xs font-mono hover:text-gray-400 transition-colors"
                             onClick={() => openRouteInMaps(entry.start, entry.end)}
                           >
                             {formatDate(startTime)}
@@ -594,7 +594,7 @@ export function TimeTrackerTable({
                         </td>
                         <td className="py-4 px-4 text-right">
                           {duration ? (
-                            <span className="font-bold text-blue-400 text-sm">{duration}h</span>
+                            <span className="font-bold text-gray-400 text-sm">{duration}h</span>
                           ) : (
                             <span className="text-gray-500 text-xs">-</span>
                           )}
@@ -606,7 +606,7 @@ export function TimeTrackerTable({
                               variant="ghost"
                               size="icon"
                               onClick={() => openRouteInMaps(entry.start, entry.end)}
-                              className="text-blue-400 hover:bg-blue-600/20 h-8 w-8 rounded-lg transition-colors"
+                              className="text-gray-400 hover:bg-gray-600/20 h-8 w-8 rounded-lg transition-colors"
                               title="View on Map"
                             >
                               <BiMap className="w-4 h-4" />
@@ -619,7 +619,7 @@ export function TimeTrackerTable({
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => onEdit(entry)}
-                                className="text-blue-400 hover:bg-blue-600/20 h-8 w-8 rounded-lg transition-colors"
+                                className="text-gray-400 hover:bg-gray-600/20 h-8 w-8 rounded-lg transition-colors"
                                 title="Edit Entry"
                               >
                                 <Edit2 className="w-4 h-4" />
@@ -707,7 +707,7 @@ export function TimeTrackerTable({
                               <div className="grid gap-6 md:grid-cols-2">
                                 <div className="space-y-3">
                                   <h5 className="flex items-center gap-2 text-sm font-semibold text-white">
-                                    <Clock className="h-4 w-4 text-blue-400" />
+                                    <Clock className="h-4 w-4 text-gray-400" />
                                     Start Details
                                   </h5>
                                   <div className="space-y-1 text-sm text-gray-300">
@@ -741,7 +741,7 @@ export function TimeTrackerTable({
 
                                 <div className="space-y-3">
                                   <h5 className="flex items-center gap-2 text-sm font-semibold text-white">
-                                    <Clock className="h-4 w-4 text-blue-400" />
+                                    <Clock className="h-4 w-4 text-gray-400" />
                                     End Details
                                   </h5>
                                   <div className="space-y-1 text-sm text-gray-300">
@@ -880,7 +880,7 @@ export function TimeTrackerTable({
                     onClick={() => onPageChange?.(pageNum)}
                     className={
                       pageNum === pagination.currentPage
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
+                        ? 'bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 border-gray-600'
                         : 'bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
                     }
                   >
@@ -919,7 +919,7 @@ export function TimeTrackerTable({
         onOpenChange={(open) => !open && setSelectedPhotos(null)}
       >
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-[#1e2339] border-gray-700">
-          <DialogHeader className="bg-linear-to-r from-blue-600 to-blue-700 text-white -m-6 mb-4 p-6 rounded-t-lg">
+          <DialogHeader className="bg-linear-to-r from-gray-500 to-gray-600 text-white -m-6 mb-4 p-6 rounded-t-lg">
             <DialogTitle className="text-white flex items-center gap-2">
               <ImageIcon className="w-5 h-5" />
               {photoModalTitle} ({selectedPhotos?.length || 0})

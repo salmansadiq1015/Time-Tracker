@@ -77,14 +77,14 @@ const statusMeta: Record<
 > = {
   pending: {
     label: 'Pending',
-    className: 'bg-amber-500/20 text-amber-300 border border-amber-500/50',
-    dotClass: 'bg-amber-400',
+    className: 'bg-gray-500/20 text-gray-300 border border-gray-500/50',
+    dotClass: 'bg-gray-400',
     description: 'Awaiting kickoff or more context.',
   },
   in_progress: {
     label: 'In Progress',
-    className: 'bg-blue-500/20 text-blue-300 border border-blue-500/50',
-    dotClass: 'bg-blue-400',
+    className: 'bg-gray-500/20 text-gray-300 border border-gray-500/50',
+    dotClass: 'bg-gray-400',
     description: 'Currently being worked on.',
   },
   completed: {
@@ -97,7 +97,7 @@ const statusMeta: Record<
 
 const priorityMeta: Record<Task['priority'], { label: string; color: string }> = {
   low: { label: 'Low', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50' },
-  medium: { label: 'Medium', color: 'bg-amber-500/20 text-amber-300 border-amber-500/50' },
+  medium: { label: 'Medium', color: 'bg-gray-500/20 text-gray-300 border-gray-500/50' },
   high: { label: 'High', color: 'bg-rose-500/20 text-rose-300 border-rose-500/50' },
 };
 
@@ -330,7 +330,7 @@ export default function TaskDashboardPage() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold text-white flex items-center gap-3">
-            <ClipboardList className="h-7 w-7 text-blue-400" />
+            <ClipboardList className="h-7 w-7 text-gray-400" />
             Task Management
           </h1>
           <p className="text-sm text-gray-400 mt-1">
@@ -346,7 +346,7 @@ export default function TaskDashboardPage() {
             <SlidersHorizontal className="h-4 w-4" />
             Filters
             {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="bg-blue-600 text-white hover:bg-blue-700">
+              <Badge variant="secondary" className="bg-gray-600 text-white hover:bg-gray-700">
                 {activeFiltersCount}
               </Badge>
             )}
@@ -355,7 +355,7 @@ export default function TaskDashboardPage() {
             <Button
               variant={viewMode === 'table' ? 'default' : 'ghost'}
               className={`gap-2 rounded-none ${
-                viewMode === 'table' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
+                viewMode === 'table' ? 'bg-gray-600 text-white' : 'text-gray-300 hover:bg-gray-700'
               }`}
               onClick={() => setViewMode('table')}
             >
@@ -364,7 +364,7 @@ export default function TaskDashboardPage() {
             <Button
               variant={viewMode === 'card' ? 'default' : 'ghost'}
               className={`gap-2 rounded-none ${
-                viewMode === 'card' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
+                viewMode === 'card' ? 'bg-gray-600 text-white' : 'text-gray-300 hover:bg-gray-700'
               }`}
               onClick={() => setViewMode('card')}
             >
@@ -377,7 +377,7 @@ export default function TaskDashboardPage() {
                 setEditingTask(null);
                 setShowForm(true);
               }}
-              className="bg-blue-600 hover:bg-blue-700 gap-2 text-white shadow-md"
+              className="bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 gap-2 text-white shadow-md"
             >
               <Plus className="h-4 w-4" />
               New Task
@@ -389,7 +389,7 @@ export default function TaskDashboardPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="border-gray-700/50 bg-[#1e2339] shadow-sm">
           <CardContent className="flex items-center gap-3 py-4">
-            <div className="h-10 w-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
+            <div className="h-10 w-10 rounded-full bg-gray-600/20 flex items-center justify-center text-gray-400">
               <ClipboardList className="h-5 w-5" />
             </div>
             <div>
@@ -400,7 +400,7 @@ export default function TaskDashboardPage() {
         </Card>
         <Card className="border-gray-700/50 bg-[#1e2339] shadow-sm">
           <CardContent className="flex items-center gap-3 py-4">
-            <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+            <div className="h-10 w-10 rounded-full bg-gray-500/20 flex items-center justify-center text-gray-400">
               <AlertCircle className="h-5 w-5" />
             </div>
             <div>
@@ -411,7 +411,7 @@ export default function TaskDashboardPage() {
         </Card>
         <Card className="border-gray-700/50 bg-[#1e2339] shadow-sm">
           <CardContent className="flex items-center gap-3 py-4">
-            <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+            <div className="h-10 w-10 rounded-full bg-gray-500/20 flex items-center justify-center text-gray-400">
               <Loader2 className="h-5 w-5" />
             </div>
             <div>
@@ -442,9 +442,9 @@ export default function TaskDashboardPage() {
                   value={filters.search}
                   onChange={(e) => updateFilterValue('search', e.target.value)}
                   placeholder="Search by task title or description..."
-                  className="pl-10 border-gray-600 bg-[#0f1419] text-white placeholder:text-gray-500 focus-visible:ring-blue-500"
+                  className="pl-10 border-gray-600 bg-[#0f1419] text-white placeholder:text-gray-500 focus-visible:ring-gray-500"
                 />
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
             </div>
           </CardTitle>
@@ -472,13 +472,13 @@ export default function TaskDashboardPage() {
 
       <div className="bg-[#1e2339] border border-gray-700/50 rounded-xl shadow-lg overflow-hidden">
         {loading ? (
-          <div className="py-16 flex flex-col items-center justify-center gap-3 text-blue-400">
+          <div className="py-16 flex flex-col items-center justify-center gap-3 text-gray-400">
             <Loader2 className="h-6 w-6 animate-spin" />
             <p className="text-sm font-medium">Loading tasks...</p>
           </div>
         ) : tasks.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center gap-3 text-gray-400">
-            <ClipboardList className="h-10 w-10 text-blue-400" />
+            <ClipboardList className="h-10 w-10 text-gray-400" />
             <p className="text-base font-semibold text-white">No tasks found</p>
             <p className="text-sm text-gray-400">
               {isUserRole
@@ -491,7 +491,7 @@ export default function TaskDashboardPage() {
                   setEditingTask(null);
                   setShowForm(true);
                 }}
-                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white"
+                className="mt-2 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900"
               >
                 <Plus className="h-4 w-4 mr-2" /> New Task
               </Button>
@@ -533,7 +533,7 @@ export default function TaskDashboardPage() {
           <div className="flex items-center gap-2 text-sm text-gray-400">
             Show
             <select
-              className="border border-gray-600 rounded-md px-2 py-1 bg-[#0f1419] text-white focus-visible:outline-none focus-visible:ring focus-visible:ring-blue-500"
+              className="border border-gray-600 rounded-md px-2 py-1 bg-[#0f1419] text-white focus-visible:outline-none focus-visible:ring focus-visible:ring-gray-500"
               value={pagination.limit}
               onChange={(e) => handleLimitChange(Number(e.target.value))}
             >

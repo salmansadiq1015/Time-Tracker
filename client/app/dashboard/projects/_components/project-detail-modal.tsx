@@ -42,9 +42,9 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
   if (loading) {
     return (
       <Dialog open={true} onOpenChange={onClose}>
-        <DialogContent className="border-amber-200">
+        <DialogContent className="border-gray-200">
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
           </div>
         </DialogContent>
       </Dialog>
@@ -60,7 +60,7 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl border-amber-200 max-h-[97vh] overflow-y-auto shidden">
+      <DialogContent className="max-w-2xl border-gray-200 max-h-[97vh] overflow-y-auto shidden">
         <DialogHeader>
           <DialogTitle className="text-2xl text-foreground">{project?.name}</DialogTitle>
         </DialogHeader>
@@ -68,7 +68,7 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
         <div className="space-y-6">
           {/*
           <div className="mb-2 flex items-center gap-2">
-            <User className="h-4 w-4 text-amber-600" />
+            <User className="h-4 w-4 text-gray-600" />
             <h3 className="font-semibold text-foreground">Client</h3>
           </div>
           <div className="flex items-center gap-3 rounded-lg border border-sky-200 bg-white p-3">
@@ -89,7 +89,7 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
           {project.description && (
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <FileText className="h-4 w-4 text-amber-600" />
+                <FileText className="h-4 w-4 text-gray-600" />
                 <h3 className="font-semibold text-foreground">Description</h3>
               </div>
               <p className="text-sm text-muted-foreground">{project?.description}</p>
@@ -99,7 +99,7 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
           {/* Location */}
           <div>
             <div className="mb-2 flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-amber-600" />
+              <MapPin className="h-4 w-4 text-gray-600" />
               <h3 className="font-semibold text-foreground">Location</h3>
             </div>
             <p className="text-sm text-muted-foreground">{project?.city || project?.address}</p>
@@ -109,7 +109,7 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
           {/* Timeline */}
           <div>
             <div className="mb-2 flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-amber-600" />
+              <Calendar className="h-4 w-4 text-gray-600" />
               <h3 className="font-semibold text-foreground">Timeline</h3>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -120,7 +120,7 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
           {/* Team Members */}
           <div>
             <div className="mb-3 flex items-center gap-2">
-              <Users className="h-4 w-4 text-amber-600" />
+              <Users className="h-4 w-4 text-gray-600" />
               <h3 className="font-semibold text-foreground">
                 Team Members ({project?.employees?.length || 0})
               </h3>
@@ -130,9 +130,9 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
                 {project.employees.map((emp: any) => (
                   <div
                     key={emp?._id}
-                    className="flex items-center gap-3 rounded-lg border border-amber-200 bg-white p-3"
+                    className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3"
                   >
-                    <Avatar className="h-8 w-8 bg-amber-600">
+                    <Avatar className="h-8 w-8 bg-gray-600">
                       <AvatarFallback className="text-white">
                         {emp?.name?.[0] || 'U'}
                       </AvatarFallback>

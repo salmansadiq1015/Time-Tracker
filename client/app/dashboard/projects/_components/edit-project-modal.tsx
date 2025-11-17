@@ -106,7 +106,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl border-gray-700 bg-[#1e2339] max-h-[98vh] overflow-y-auto">
-        <DialogHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white -m-6 mb-4 p-6 rounded-t-lg">
+        <DialogHeader className="bg-gradient-to-r from-gray-500 to-gray-600 text-white -m-6 mb-4 p-6 rounded-t-lg">
           <DialogTitle className="text-2xl text-white">Edit Project</DialogTitle>
           <DialogDescription className="text-gray-200">Update project details</DialogDescription>
         </DialogHeader>
@@ -123,7 +123,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
               value={formData.name}
               onChange={handleInputChange}
               className={`bg-[#0f1419] border-2 text-white placeholder:text-gray-500 ${
-                errors.name ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                errors.name ? 'border-red-500' : 'border-gray-600 focus:border-gray-500'
               }`}
             />
             {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
@@ -141,7 +141,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 value={formData.address}
                 onChange={handleInputChange}
                 className={`bg-[#0f1419] border-2 text-white placeholder:text-gray-500 ${
-                  errors.address ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                  errors.address ? 'border-red-500' : 'border-gray-600 focus:border-gray-500'
                 }`}
               />
               {errors.address && <p className="mt-1 text-xs text-red-400">{errors.address}</p>}
@@ -155,7 +155,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 name="city"
                 value={formData.city}
                 onChange={handleInputChange}
-                className="bg-[#0f1419] border-2 border-gray-600 focus:border-blue-500 text-white placeholder:text-gray-500"
+                className="bg-[#0f1419] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -171,7 +171,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
               value={formData.description}
               onChange={handleInputChange}
               rows={3}
-              className="bg-[#0f1419] border-2 border-gray-600 focus:border-blue-500 text-white placeholder:text-gray-500"
+              className="bg-[#0f1419] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
             />
           </div>
 
@@ -187,7 +187,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 type="date"
                 value={formData.startDate}
                 onChange={handleInputChange}
-                className="bg-[#0f1419] border-2 border-gray-600 focus:border-blue-500 text-white"
+                className="bg-[#0f1419] border-2 border-gray-600 focus:border-gray-500 text-white"
               />
             </div>
             <div>
@@ -201,7 +201,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 value={formData.endDate}
                 onChange={handleInputChange}
                 className={`bg-[#0f1419] border-2 text-white ${
-                  errors.endDate ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                  errors.endDate ? 'border-red-500' : 'border-gray-600 focus:border-gray-500'
                 }`}
               />
               {errors.endDate && <p className="mt-1 text-xs text-red-400">{errors.endDate}</p>}
@@ -221,7 +221,7 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
             <Button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900"
             >
               {loading ? 'Updating...' : 'Update Project'}
             </Button>

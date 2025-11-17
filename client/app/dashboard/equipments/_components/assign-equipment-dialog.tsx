@@ -109,7 +109,7 @@ export function AssignEquipmentDialog({
             <Label htmlFor="status" className="text-white">Status</Label>
             <select
               id="status"
-              className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-gray-500 focus:outline-none"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
@@ -124,7 +124,7 @@ export function AssignEquipmentDialog({
               <Label htmlFor="assignedTo" className="text-white">Assign To Employee</Label>
               <select
                 id="assignedTo"
-                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-gray-500 focus:outline-none"
                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 disabled={fetchingEmployees}
@@ -145,7 +145,7 @@ export function AssignEquipmentDialog({
             <Button
               type="submit"
               disabled={loading || (status === 'assigned' && !assignedTo)}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              className="flex-1 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900"
             >
               {loading ? (
                 <>

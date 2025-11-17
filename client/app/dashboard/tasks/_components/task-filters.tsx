@@ -45,7 +45,7 @@ export const TaskFilters = ({
         <div className="space-y-2">
           <Label className="text-xs uppercase tracking-wide text-gray-400">Status</Label>
           <Select value={filters.status} onValueChange={(value) => setFilter('status', value)}>
-            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
+            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-gray-500">
               <SelectValue placeholder="All status" />
             </SelectTrigger>
             <SelectContent className="bg-[#1e2339] border-gray-700">
@@ -60,7 +60,7 @@ export const TaskFilters = ({
         <div className="space-y-2">
           <Label className="text-xs uppercase tracking-wide text-gray-400">Priority</Label>
           <Select value={filters.priority} onValueChange={(value) => setFilter('priority', value)}>
-            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
+            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-gray-500">
               <SelectValue placeholder="All priority" />
             </SelectTrigger>
             <SelectContent className="bg-[#1e2339] border-gray-700">
@@ -75,7 +75,7 @@ export const TaskFilters = ({
         <div className="space-y-2">
           <Label className="text-xs uppercase tracking-wide text-gray-400">Project</Label>
           <Select value={filters.project} onValueChange={(value) => setFilter('project', value)}>
-            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
+            <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-gray-500">
               <SelectValue placeholder="All projects" />
             </SelectTrigger>
             <SelectContent className="max-h-60 bg-[#1e2339] border-gray-700">
@@ -96,7 +96,7 @@ export const TaskFilters = ({
               value={filters.assignedTo}
               onValueChange={(value) => setFilter('assignedTo', value)}
             >
-              <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
+              <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-gray-500">
                 <SelectValue placeholder="All team members" />
               </SelectTrigger>
               <SelectContent className="max-h-60 bg-[#1e2339] border-gray-700">

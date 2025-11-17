@@ -40,7 +40,7 @@ export default function EquipmentDashboard() {
             </div>
             <Button
               onClick={() => setShowCreateModal(true)}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+              className="gap-2 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white shadow-lg"
             >
               <Plus className="h-4 w-4" />
               New Equipment
@@ -48,10 +48,7 @@ export default function EquipmentDashboard() {
           </div>
         </header>
 
-
         <div className="space-y-6 px-4 py-4">
-
-
           <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
             <DialogContent className="max-w-md bg-[#1e2339] border-gray-700">
               <DialogHeader>

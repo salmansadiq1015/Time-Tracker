@@ -154,10 +154,10 @@ export function AdvancedFilters({
     <Card className="border-gray-700/50 bg-[#1e2339] backdrop-blur-sm py-3">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
         <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-blue-400" />
+          <Filter className="w-5 h-5 text-gray-400" />
           <CardTitle className="text-white">Filters</CardTitle>
           {hasActiveFilters && (
-            <span className="ml-2 px-2 py-1 bg-blue-600/20 text-blue-300 text-xs font-semibold rounded-full border border-blue-500/50">
+            <span className="ml-2 px-2 py-1 bg-gray-600/20 text-gray-300 text-xs font-semibold rounded-full border border-gray-500/50">
               {[filters.selectedUser, filters.startDate, filters.endDate].filter(Boolean).length}{' '}
               active
             </span>
@@ -197,7 +197,7 @@ export function AdvancedFilters({
                 <select
                   value={filters.selectedUser}
                   onChange={(e) => handleUserChange(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0f1419] border border-gray-600 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-[#0f1419] border border-gray-600 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500"
                 >
                   <option value="">All Users</option>
                   {users.map((user) => (
@@ -215,7 +215,7 @@ export function AdvancedFilters({
               <select
                 value={filters.dateRange || ''}
                 onChange={(e) => handleDateRangeChange(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0f1419] border border-gray-600 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-[#0f1419] border border-gray-600 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500"
               >
                 <option value="">All Time</option>
                 <option value="today">Today</option>
@@ -245,7 +245,7 @@ export function AdvancedFilters({
                   type="date"
                   value={filters.startDate}
                   onChange={(e) => handleStartDateChange(e.target.value)}
-                  className="bg-[#0f1419] border border-gray-600 rounded-md text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 cursor-pointer"
+                  className="bg-[#0f1419] border border-gray-600 rounded-md text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 cursor-pointer"
                   placeholder="Select start date"
                 />
               </div>
@@ -259,7 +259,7 @@ export function AdvancedFilters({
                   type="date"
                   value={filters.endDate}
                   onChange={(e) => handleEndDateChange(e.target.value)}
-                  className="bg-[#0f1419] border border-gray-600 rounded-md text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 cursor-pointer"
+                  className="bg-[#0f1419] border border-gray-600 rounded-md text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500 cursor-pointer"
                   placeholder="Select end date"
                   min={filters.startDate ? filters.startDate.slice(0, 16) : undefined}
                 />

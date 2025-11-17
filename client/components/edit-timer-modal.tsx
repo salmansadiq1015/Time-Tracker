@@ -107,7 +107,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
       <Card className="w-full max-w-3xl border border-gray-700 bg-[#1e2339] shadow-2xl shadow-black/50 overflow-hidden animate-in zoom-in-95 duration-300 max-h-[97vh] overflow-y-auto py-0 pb-4">
         {/* Header */}
-        <CardHeader className="relative bg-gradient-to-r from-blue-600 to-blue-700 py-4 px-6 border-b border-blue-500/20">
+        <CardHeader className="relative bg-gradient-to-r from-gray-500 to-gray-600 py-4 px-6 border-b border-gray-500/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
@@ -132,14 +132,14 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
             {/* Description Section */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-blue-400" />
+                <FileText className="w-4 h-4 text-gray-400" />
                 <label className="text-sm font-semibold text-white">Description</label>
               </div>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="What were you working on?"
-                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 resize-none h-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 resize-none h-24 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
                 disabled={saving}
               />
             </div>
@@ -150,7 +150,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
             {/* Start Time & Location */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-blue-400" />
+                <Calendar className="w-4 h-4 text-gray-400" />
                 <label className="text-sm font-semibold text-white">Start Details</label>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -163,7 +163,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
                     type="datetime-local"
                     value={startTime.slice(0, 16)}
                     onChange={(e) => setStartTime(e.target.value)}
-                    className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                    className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
                     disabled={saving}
                   />
                 </div>
@@ -176,7 +176,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
                     value={startLocation}
                     onChange={(e) => setStartLocation(e.target.value)}
                     placeholder="Enter location address"
-                    className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                    className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
                     disabled={saving}
                   />
                 </div>
@@ -189,7 +189,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
                 <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-blue-400" />
+                    <Clock className="w-4 h-4 text-gray-400" />
                     <label className="text-sm font-semibold text-white">End Details</label>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -202,7 +202,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
                         type="datetime-local"
                         value={endTime.slice(0, 16)}
                         onChange={(e) => setEndTime(e.target.value)}
-                        className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                        className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
                         disabled={saving}
                         min={startTime ? startTime.slice(0, 16) : undefined}
                       />
@@ -216,7 +216,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
                         value={endLocation}
                         onChange={(e) => setEndLocation(e.target.value)}
                         placeholder="Enter location address"
-                        className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                        className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
                         disabled={saving}
                       />
                     </div>
@@ -228,10 +228,10 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
             {/* Photos Section */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Camera className="w-4 h-4 text-blue-400" />
+                <Camera className="w-4 h-4 text-gray-400" />
                 <label className="text-sm font-semibold text-white">Photos</label>
                 {photos.length > 0 && (
-                  <span className="text-xs text-gray-300 bg-blue-600/20 border border-blue-500/50 px-2 py-0.5 rounded-full">
+                  <span className="text-xs text-gray-300 bg-gray-600/20 border border-gray-500/50 px-2 py-0.5 rounded-full">
                     {photos.length} {photos.length === 1 ? 'photo' : 'photos'}
                   </span>
                 )}
@@ -245,18 +245,18 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
             {/* Status */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-blue-400" />
+                <AlertCircle className="w-4 h-4 text-gray-400" />
                 <label className="text-sm font-semibold text-white">Status</label>
               </div>
               <div className="space-y-2">
                 <Select value={status} onValueChange={setStatus} disabled={saving}>
-                  <SelectTrigger className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all">
+                  <SelectTrigger className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1e2339] border-gray-700">
                     <SelectItem value="active" className="text-white focus:bg-gray-700">
                       <span className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                        <span className="w-2 h-2 rounded-full bg-gray-500"></span>
                         Active
                       </span>
                     </SelectItem>
@@ -299,7 +299,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
                 checked={verifiedByClient}
                 onCheckedChange={(checked) => setVerifiedByClient(checked === true)}
                 disabled={saving}
-                className="border-gray-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                className="border-gray-600 data-[state=checked]:bg-gray-600 data-[state=checked]:border-gray-600"
               />
               <div className="flex items-center gap-2 flex-1">
                 <CheckCircle2
@@ -327,7 +327,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all font-medium"
+                className="flex-1 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 shadow-lg transition-all font-medium"
               >
                 {saving ? (
                   <>

@@ -70,7 +70,7 @@ export const TaskTable = ({
   return (
     <div className="overflow-x-auto">
       <Table>
-        <TableHeader className="bg-linear-to-r from-blue-600 to-blue-700 text-white">
+        <TableHeader className="bg-linear-to-r from-gray-500 to-gray-600 text-white">
           <TableRow>
             <TableHead className="w-12 text-white"></TableHead>
             <TableHead className="min-w-[220px] text-white">Task</TableHead>
@@ -93,7 +93,7 @@ export const TaskTable = ({
                       variant="ghost"
                       size="icon"
                       onClick={() => toggleExpand(task._id)}
-                      className="h-8 w-8 text-blue-400 hover:text-blue-300"
+                      className="h-8 w-8 text-gray-400 hover:text-gray-300"
                     >
                       {isExpanded ? (
                         <ChevronDown className="h-4 w-4" />
@@ -121,7 +121,7 @@ export const TaskTable = ({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm text-white">
-                      <User className="h-4 w-4 text-blue-400" />
+                      <User className="h-4 w-4 text-gray-400" />
                       <div className="flex flex-col">
                         <span className="font-medium">{task.assignedTo?.name || 'Unassigned'}</span>
                         {task.assignedTo?.phone && (
@@ -132,7 +132,7 @@ export const TaskTable = ({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm text-white">
-                      <Calendar className="h-4 w-4 text-blue-400" />
+                      <Calendar className="h-4 w-4 text-gray-400" />
                       {formatDate(task.dueDate)}
                     </div>
                   </TableCell>
@@ -144,7 +144,7 @@ export const TaskTable = ({
                       }
                       disabled={isUserRole}
                     >
-                      <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
+                      <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-gray-500">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-[#1e2339] border-gray-700">
@@ -163,7 +163,7 @@ export const TaskTable = ({
                         onStatusChange(task._id, value as TaskRow['status'])
                       }
                     >
-                      <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-blue-500">
+                      <SelectTrigger className="border-gray-600 bg-[#0f1419] text-white focus:ring-gray-500">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-[#1e2339] border-gray-700">
@@ -181,7 +181,7 @@ export const TaskTable = ({
                         variant="ghost"
                         size="icon"
                         onClick={() => onEdit(task)}
-                        className="text-blue-400 hover:text-blue-300 hover:bg-blue-600/20"
+                        className="text-gray-400 hover:text-gray-300 hover:bg-gray-600/20"
                       >
                         <Edit3 className="h-4 w-4" />
                       </Button>
@@ -205,7 +205,7 @@ export const TaskTable = ({
                         <div className="md:col-span-3 space-y-3">
                           <div>
                             <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-                              <ListChecks className="h-4 w-4 text-blue-400" />
+                              <ListChecks className="h-4 w-4 text-gray-400" />
                               Description
                             </h4>
                             <p className="text-sm text-gray-300 leading-relaxed bg-[#0f1419] border border-gray-600 rounded-lg p-3 whitespace-pre-wrap wrap-break-word">
@@ -239,7 +239,7 @@ export const TaskTable = ({
                         </div>
                         <div className="md:col-span-2 space-y-4">
                           <div className="bg-[#0f1419] border border-gray-600 rounded-lg p-3 shadow-sm space-y-3">
-                            <h4 className="text-sm font-semibold text-blue-400">Assignment</h4>
+                            <h4 className="text-sm font-semibold text-gray-400">Assignment</h4>
                             <div className="text-sm text-gray-300 space-y-1">
                               <div>
                                 <span className="text-xs uppercase tracking-wide text-gray-500 block">
@@ -265,7 +265,7 @@ export const TaskTable = ({
                             </div>
                           </div>
                           <div className="bg-[#0f1419] border border-gray-600 rounded-lg p-3 shadow-sm">
-                            <h4 className="text-sm font-semibold text-blue-400">Status insight</h4>
+                            <h4 className="text-sm font-semibold text-gray-400">Status insight</h4>
                             <p className="text-xs text-gray-400 leading-relaxed">
                               {statusMeta[task.status].description}
                             </p>

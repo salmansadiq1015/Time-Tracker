@@ -190,7 +190,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                 <p className="text-4xl font-bold text-white mt-2 tracking-tight">{stats.total}</p>
                 <div className="flex items-center gap-2 mt-3">
                   <div className="flex-1 h-1.5 bg-blue-500/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full w-full"></div>
+                    <div className="h-full bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 rounded-full w-full"></div>
                   </div>
                 </div>
               </div>
@@ -291,11 +291,11 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
 
       {/* Enhanced Search and Filters */}
       <Card className="border-gray-700/50 py-0 shadow-xl bg-[#1e2339] overflow-hidden relative group">
-        <div className="bg-gradient-to-r from-blue-600/10 via-blue-500/5 to-transparent p-6 border-b border-gray-700/50 relative">
+        <div className="bg-gradient-to-r from-gray-600/10 via-gray-500/5 to-transparent p-6 border-b border-gray-700/50 relative">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Filter className="w-6 h-6 text-blue-400" />
+              <div className="w-10 h-10 rounded-xl bg-gray-600/20 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <Filter className="w-6 h-6 text-gray-400" />
               </div>
               <div className="flex-1">
                 <CardTitle className="text-xl font-bold text-white">
@@ -315,7 +315,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                 onClick={() => setViewMode('card')}
                 className={`h-9 px-3 transition-all duration-300 ${
                   viewMode === 'card'
-                    ? 'bg-blue-600 text-white shadow-lg'
+                    ? 'bg-gray-600 text-white shadow-lg'
                     : 'hover:bg-gray-700 text-gray-300'
                 }`}
               >
@@ -327,7 +327,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                 onClick={() => setViewMode('table')}
                 className={`h-9 px-3 transition-all duration-300 ${
                   viewMode === 'table'
-                    ? 'bg-blue-600 text-white shadow-lg'
+                    ? 'bg-gray-600 text-white shadow-lg'
                     : 'hover:bg-gray-700 text-gray-300'
                 }`}
               >
@@ -339,10 +339,10 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
         <CardContent className="p-6 relative">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-2 relative group/search">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within/search:text-blue-400 transition-all duration-300 group-focus-within/search:scale-110" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within/search:text-gray-400 transition-all duration-300 group-focus-within/search:scale-110" />
               <Input
                 placeholder="Search equipment by name or serial number..."
-                className="pl-12 h-12 border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 bg-[#0f1419] text-white placeholder:text-gray-500"
+                className="pl-12 h-12 border-gray-600 focus:border-gray-500 focus:ring-2 focus:ring-gray-500/20 transition-all duration-300 bg-[#0f1419] text-white placeholder:text-gray-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {
@@ -363,7 +363,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
             </div>
             <div className="relative">
               <select
-                className="w-full h-12 px-4 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none cursor-pointer font-medium hover:border-gray-500"
+                className="w-full h-12 px-4 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500/20 transition-all appearance-none cursor-pointer font-medium hover:border-gray-500"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -378,7 +378,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                 setPage(1);
                 fetchEquipment();
               }}
-              className="h-12 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+              className="h-12 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-black shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
             >
               <Search className="w-4 h-4 mr-2" />
               Search
@@ -418,7 +418,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
+                  <TableRow className="bg-linear-to-r from-gray-600 to-gray-700 text-white border-b-2 border-gray-500/50">
                     <TableHead className="h-14 font-bold text-white">Name</TableHead>
                     <TableHead className="h-14 font-bold text-white">Serial</TableHead>
                     <TableHead className="h-14 font-bold text-white">Status</TableHead>
@@ -463,10 +463,10 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
         <Card className="border-gray-700/50 shadow-xl bg-[#1e2339] overflow-hidden">
           <CardContent className="flex flex-col items-center justify-center py-24">
             <div className="relative mb-6">
-              <div className="w-24 h-24 rounded-2xl bg-blue-600/20 flex items-center justify-center shadow-2xl animate-pulse">
-                <Package className="w-12 h-12 text-blue-400" />
+              <div className="w-24 h-24 rounded-2xl bg-gray-600/20 flex items-center justify-center shadow-2xl animate-pulse">
+                <Package className="w-12 h-12 text-gray-400" />
               </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-600/20 rounded-full animate-ping"></div>
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-gray-600/20 rounded-full animate-ping"></div>
             </div>
             <h3 className="text-2xl font-bold text-white mb-2">No equipment found</h3>
             <p className="text-gray-400 text-center max-w-md">
@@ -479,7 +479,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
           {equipment.map((item, index) => (
             <Card
               key={item._id}
-              className="group relative border-gray-700/50 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden hover:-translate-y-2 bg-[#1e2339] py-0 pb-3 animate-in fade-in slide-in-from-bottom-4"
+              className="group relative border-gray-700/50 hover:border-gray-500/50 hover:shadow-2xl hover:shadow-gray-500/10 transition-all duration-500 overflow-hidden hover:-translate-y-2 bg-[#1e2339] py-0 pb-3 animate-in fade-in slide-in-from-bottom-4"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               {/* Animated status bar */}
@@ -492,15 +492,15 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
               </div>
 
               {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-500/5 to-transparent rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
               <CardHeader className="pb-4 relative z-10">
                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-5 transition-opacity duration-500">
-                  <Package className="w-32 h-32 text-blue-400" />
+                  <Package className="w-32 h-32 text-gray-400" />
                 </div>
                 <div className="flex items-start justify-between relative z-10">
                   <div className="flex-1 min-w-0 pr-4">
-                    <CardTitle className="text-xl font-bold mb-3 truncate group-hover:text-blue-400 transition-colors duration-300 text-white">
+                    <CardTitle className="text-xl font-bold mb-3 truncate group-hover:text-gray-400 transition-colors duration-300 text-white">
                       {item.name}
                     </CardTitle>
                     <div className="flex items-center gap-2 text-sm text-gray-400 bg-[#0f1419] px-3 py-1.5 rounded-lg w-fit border border-gray-600">
@@ -523,13 +523,13 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
 
               <CardContent className="space-y-4 relative z-10">
                 {item.assignedTo && (
-                  <div className="bg-[#0f1419] p-4 rounded-xl border-2 border-gray-600 hover:border-blue-500/50 transition-all duration-300 group/assign hover:shadow-lg">
+                  <div className="bg-[#0f1419] p-4 rounded-xl border-2 border-gray-600 hover:border-gray-500/50 transition-all duration-300 group/assign hover:shadow-lg">
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center shrink-0 shadow-lg group-hover/assign:scale-110 group-hover/assign:rotate-6 transition-all duration-300">
-                        <User className="w-6 h-6 text-blue-400" />
+                      <div className="w-12 h-12 rounded-xl bg-gray-600/20 flex items-center justify-center shrink-0 shadow-lg group-hover/assign:scale-110 group-hover/assign:rotate-6 transition-all duration-300">
+                        <User className="w-6 h-6 text-gray-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                           <Sparkles className="w-3 h-3" />
                           Assigned To
                         </p>
@@ -549,8 +549,8 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
 
                 {item.purchaseDate && (
                   <div className="flex items-center gap-4 p-4 rounded-xl bg-[#0f1419] border-2 border-gray-600 hover:border-gray-500 transition-all duration-300 hover:shadow-md">
-                    <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center shrink-0 shadow-md">
-                      <Calendar className="w-5 h-5 text-blue-400" />
+                    <div className="w-12 h-12 rounded-xl bg-gray-600/20 flex items-center justify-center shrink-0 shadow-md">
+                      <Calendar className="w-5 h-5 text-gray-400" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
@@ -580,7 +580,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-col h-auto py-4 border-2 border-blue-500/50 hover:bg-blue-500/20 hover:border-blue-500 bg-blue-500/10 group/btn transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-blue-400"
+                    className="flex-col h-auto py-4 border-2 border-gray-500/50 hover:bg-gray-500/20 hover:border-gray-500 bg-gray-500/10 group/btn transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-gray-400"
                     onClick={() => setEditingEquipment(item)}
                   >
                     <Edit2 className="w-5 h-5 mb-1.5 group-hover/btn:scale-125 group-hover/btn:rotate-12 transition-all duration-300" />
@@ -605,12 +605,20 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
-                  <TableHead className="h-16 px-6 font-bold text-base text-white">Equipment Name</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base text-white">Serial Number</TableHead>
+                <TableRow className="bg-linear-to-r from-gray-600 to-gray-700 text-white border-b-2 border-gray-500/50">
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">
+                    Equipment Name
+                  </TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">
+                    Serial Number
+                  </TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base text-white">Status</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base text-white">Assigned To</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base text-white">Purchase Date</TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">
+                    Assigned To
+                  </TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">
+                    Purchase Date
+                  </TableHead>
                   <TableHead className="h-16 px-6 text-right font-bold text-base text-white">
                     Actions
                   </TableHead>
@@ -624,11 +632,11 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                   >
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                          <Package className="w-5 h-5 text-blue-400" />
+                        <div className="w-10 h-10 rounded-lg bg-gray-600/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                          <Package className="w-5 h-5 text-gray-400" />
                         </div>
                         <div>
-                          <p className="font-semibold text-white group-hover:text-blue-400 transition-colors">
+                          <p className="font-semibold text-white group-hover:text-gray-400 transition-colors">
                             {item.name}
                           </p>
                         </div>
@@ -637,9 +645,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-2 bg-[#0f1419] px-3 py-1.5 rounded-lg w-fit border border-gray-600">
                         <Package className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                        <span className="font-mono text-sm text-gray-300">
-                          {item.serial}
-                        </span>
+                        <span className="font-mono text-sm text-gray-300">{item.serial}</span>
                       </div>
                     </TableCell>
                     <TableCell className="px-6 py-4">
@@ -655,8 +661,8 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                     <TableCell className="px-6 py-4">
                       {item.assignedTo ? (
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center shrink-0">
-                            <User className="w-4 h-4 text-blue-400" />
+                          <div className="w-8 h-8 rounded-full bg-gray-600/20 flex items-center justify-center shrink-0">
+                            <User className="w-4 h-4 text-gray-400" />
                           </div>
                           <div className="min-w-0">
                             <p className="font-medium text-white truncate">
@@ -701,7 +707,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-9 w-9 p-0 border-blue-500/50 hover:bg-blue-500/20 hover:border-blue-500 bg-blue-500/10 group/btn transition-all duration-300 hover:scale-110 text-blue-400"
+                          className="h-9 w-9 p-0 border-gray-500/50 hover:bg-gray-500/20 hover:border-gray-500 bg-gray-500/10 group/btn transition-all duration-300 hover:scale-110 text-gray-400"
                           onClick={() => setEditingEquipment(item)}
                           title="Edit"
                         >
@@ -734,7 +740,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
               <div className="sm:flex items-center gap-4 hidden">
                 <span className="text-sm text-gray-400 font-semibold">Items per page:</span>
                 <select
-                  className="h-10 px-4 border-2 border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none cursor-pointer text-sm font-medium hover:border-gray-500"
+                  className="h-10 px-4 border-2 border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500/20 transition-all appearance-none cursor-pointer text-sm font-medium hover:border-gray-500"
                   value={limit}
                   onChange={(e) => {
                     setLimit(Number(e.target.value));

@@ -89,7 +89,7 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
               id="edit-name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500"
+              className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500"
             />
           </div>
 
@@ -101,7 +101,7 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
               id="edit-serial"
               value={formData.serial}
               onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
-              className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500"
+              className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500"
             />
           </div>
 
@@ -114,7 +114,7 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
               type="date"
               value={formData.purchaseDate}
               onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
-              className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500"
+              className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500"
             />
           </div>
 
@@ -122,7 +122,7 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              className="flex-1 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900"
             >
               {loading ? (
                 <>

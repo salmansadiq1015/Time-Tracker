@@ -165,7 +165,7 @@ export default function ProjectDashboard() {
           onClick={() => setCurrentPage(i)}
           className={
             currentPage === i
-              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+              ? 'bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900'
               : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
           }
         >
@@ -203,7 +203,7 @@ export default function ProjectDashboard() {
       <header className="sticky top-0 z-50 border-b border-gray-700/50 bg-[#1e2339]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-600 shadow-lg">
               <BarChart3 className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -214,7 +214,7 @@ export default function ProjectDashboard() {
           {auth.user.role === 'admin' && (
             <Button
               onClick={() => setShowCreateModal(true)}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+              className="gap-2 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 shadow-lg"
             >
               <Plus className="h-4 w-4" />
               New Project
@@ -230,7 +230,7 @@ export default function ProjectDashboard() {
           <div className="flex-1 flex items-center gap-2 rounded-xl border border-gray-600 bg-[#1e2339] p-3 shadow-sm">
             <Search
               className={`h-5 w-5 ${
-                loading && searchTerm ? 'text-blue-400 animate-pulse' : 'text-gray-400'
+                loading && searchTerm ? 'text-gray-400 animate-pulse' : 'text-gray-400'
               }`}
             />
             <Input
@@ -257,7 +257,7 @@ export default function ProjectDashboard() {
               onClick={() => setViewMode('card')}
               className={`h-9 px-3 transition-all duration-300 ${
                 viewMode === 'card'
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg'
+                  ? 'bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 shadow-lg'
                   : 'hover:bg-gray-700 text-gray-300'
               }`}
             >
@@ -269,7 +269,7 @@ export default function ProjectDashboard() {
               onClick={() => setViewMode('table')}
               className={`h-9 px-3 transition-all duration-300 ${
                 viewMode === 'table'
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg'
+                  ? 'bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 shadow-lg'
                   : 'hover:bg-gray-700 text-gray-300'
               }`}
             >
@@ -282,7 +282,7 @@ export default function ProjectDashboard() {
           <div className="mb-6 space-y-4">
             <button
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className="flex items-center gap-2 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
+              className="flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-gray-300 transition-colors"
             >
               <svg
                 className={`h-5 w-5 transition-transform ${
@@ -301,7 +301,7 @@ export default function ProjectDashboard() {
               </svg>
               Advanced Filters{' '}
               {activeFilterCount > 0 && (
-                <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-600 text-xs font-bold text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -316,7 +316,7 @@ export default function ProjectDashboard() {
                     <select
                       value={employeeId}
                       onChange={(e) => setEmployeeId(e.target.value)}
-                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
                     >
                       <option value="">All Employees</option>
                       {employees.map((e: any) => (
@@ -336,7 +336,7 @@ export default function ProjectDashboard() {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
                     />
                   </div>
 
@@ -349,7 +349,7 @@ export default function ProjectDashboard() {
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-600 bg-[#0f1419] px-3 py-2 text-sm text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
                     />
                   </div>
                 </div>
@@ -357,7 +357,7 @@ export default function ProjectDashboard() {
                 {activeFilterCount > 0 && (
                   <button
                     onClick={resetFilters}
-                    className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                    className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-300 transition-colors"
                   >
                     <X className="h-4 w-4" />
                     Clear All Filters
@@ -378,7 +378,7 @@ export default function ProjectDashboard() {
                 onChange={(e) => {
                   setLimit(Number(e.target.value));
                 }}
-                className="rounded-lg border border-gray-600 bg-[#1e2339] px-3 py-2 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="rounded-lg border border-gray-600 bg-[#1e2339] px-3 py-2 text-sm text-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500"
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>

@@ -99,7 +99,7 @@ export const TaskCards = ({
                     variant="ghost"
                     size="icon"
                     onClick={() => setExpandedId(isExpanded ? null : task._id)}
-                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-600/20"
+                    className="text-gray-400 hover:text-gray-300 hover:bg-gray-600/20"
                   >
                     {isExpanded ? (
                       <ChevronUp className="h-5 w-5" />
@@ -110,11 +110,11 @@ export const TaskCards = ({
                 </div>
                 <div className="flex flex-wrap gap-4 text-sm text-gray-300">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-blue-400" />
+                    <Calendar className="h-4 w-4 text-gray-400" />
                     Due {formatDate(task.dueDate)}
                   </div>
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-blue-400" />
+                    <User className="h-4 w-4 text-gray-400" />
                     {task.assignedTo?.name || 'Unassigned'}
                   </div>
                   {task.assignedTo?.phone && (
@@ -124,14 +124,14 @@ export const TaskCards = ({
                     </div>
                   )}
                   <div className="flex items-center gap-2">
-                    <ClipboardList className="h-4 w-4 text-blue-400" />
+                    <ClipboardList className="h-4 w-4 text-gray-400" />
                     {task.project?.name || 'No project'}
                   </div>
                 </div>
                 {isExpanded && (
                   <div className="space-y-3">
                     <div>
-                      <h4 className="text-sm font-semibold text-blue-400">Description</h4>
+                      <h4 className="text-sm font-semibold text-gray-400">Description</h4>
                       <p className="text-sm text-gray-300 leading-relaxed mt-1 bg-[#0f1419] border border-gray-600 rounded-lg p-3 whitespace-pre-wrap wrap-break-word">
                         {task.description}
                       </p>
@@ -175,7 +175,7 @@ export const TaskCards = ({
                     onStatusChange(task._id, value as TaskCardData['status'])
                   }
                 >
-                  <SelectTrigger className="w-36 border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500">
+                  <SelectTrigger className="w-36 border-gray-600 bg-[#1e2339] text-white focus:ring-gray-500">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1e2339] border-gray-700">
@@ -191,7 +191,7 @@ export const TaskCards = ({
                   }
                   disabled={isUserRole}
                 >
-                  <SelectTrigger className="w-32 border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500">
+                  <SelectTrigger className="w-32 border-gray-600 bg-[#1e2339] text-white focus:ring-gray-500">
                     <SelectValue placeholder="Priority" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1e2339] border-gray-700">
@@ -207,7 +207,7 @@ export const TaskCards = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onEdit(task)}
-                    className="border-gray-600 text-blue-400 hover:bg-blue-600/20 hover:text-blue-300 bg-[#1e2339]"
+                    className="border-gray-600 text-gray-400 hover:bg-gray-600/20 hover:text-gray-300 bg-[#1e2339]"
                   >
                     <Edit3 className="h-4 w-4 mr-1.5" />
                     Edit

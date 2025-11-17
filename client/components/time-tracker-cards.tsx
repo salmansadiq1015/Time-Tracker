@@ -175,8 +175,8 @@ export function TimeTrackerCards({
           return (
             <Card
               key={entry._id}
-              className={`border-gray-700/50 bg-[#1e2339] text-white backdrop-blur-sm hover:border-blue-500/50 transition-all shadow-lg ${
-                entry.isActive ? 'ring-2 ring-blue-500/50' : ''
+              className={`border-gray-700/50 bg-[#1e2339] text-white backdrop-blur-sm hover:border-gray-500/50 transition-all shadow-lg ${
+                entry.isActive ? 'ring-2 ring-gray-500/50' : ''
               }`}
             >
               <CardContent className="pt-6">
@@ -189,7 +189,7 @@ export function TimeTrackerCards({
                           {entry.description || 'Untitled'}
                         </h3>
                         {entry.isActive && (
-                          <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs font-semibold rounded-full border border-blue-500/50">
+                          <span className="px-2 py-1 bg-gray-500/20 text-gray-300 text-xs font-semibold rounded-full border border-gray-500/50">
                             Active
                           </span>
                         )}
@@ -197,7 +197,7 @@ export function TimeTrackerCards({
                       {(getProjectName(entry.project) || getTaskName(entry.task)) && (
                         <div className="flex flex-wrap gap-2 mb-2">
                           {getProjectName(entry.project) && (
-                            <span className="px-2 py-0.5 bg-blue-600/20 text-blue-300 text-xs font-medium rounded border border-blue-500/50">
+                            <span className="px-2 py-0.5 bg-gray-600/20 text-gray-300 text-xs font-medium rounded border border-gray-500/50">
                               Project: {getProjectName(entry.project)}
                             </span>
                           )}
@@ -235,7 +235,7 @@ export function TimeTrackerCards({
                                     : undefined,
                               })
                             }
-                            className="text-sm font-semibold text-blue-400 hover:text-blue-300 hover:underline underline-offset-2 transition"
+                            className="text-sm font-semibold text-gray-400 hover:text-gray-300 hover:underline underline-offset-2 transition"
                           >
                             {entry.user?.name || 'Unknown User'}
                           </button>
@@ -254,7 +254,7 @@ export function TimeTrackerCards({
                     </div>
                     {duration && (
                       <div className="text-right">
-                        <p className="text-2xl font-bold text-blue-400">{duration}h</p>
+                        <p className="text-2xl font-bold text-gray-400">{duration}h</p>
                         <p className="text-xs text-gray-400">Duration</p>
                       </div>
                     )}
@@ -278,7 +278,7 @@ export function TimeTrackerCards({
 
                   {/* Location */}
                   <div className="flex items-start gap-2 text-sm">
-                    <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
+                    <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-gray-400" />
                     <div>
                       <p className="text-xs text-gray-400 mb-1">Start Location</p>
                       <p className="text-sm text-white">
@@ -309,8 +309,8 @@ export function TimeTrackerCards({
                       </div>
 
                       <div className="flex items-start gap-2 text-sm">
-                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
-                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
+                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-gray-400" />
+                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-gray-400" />
                         <div>
                           <p className="text-xs text-gray-400 mb-1">End Location</p>
                           <p className="text-sm text-white">
@@ -410,7 +410,7 @@ export function TimeTrackerCards({
                       onClick={() => onPageChange?.(pageNum)}
                       className={
                         pageNum === pagination.currentPage
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
+                          ? 'bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 border-gray-600'
                           : 'bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
                       }
                     >

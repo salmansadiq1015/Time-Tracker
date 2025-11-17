@@ -64,7 +64,7 @@ export function Header() {
               <span className="text-sm font-semibold text-white">{user?.name || 'User'}</span>
               <span className="text-xs text-gray-400 capitalize">{user?.role || 'User'}</span>
             </div> */}
-            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center ring-2 ring-blue-500/50 shadow-lg">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-b from-gray-400 to-gray-600 flex items-center justify-center ring-2 ring-gray-500/50 shadow-lg">
               <span className="text-sm font-semibold text-white">
                 {user?.name?.charAt(0)?.toUpperCase() || 'U'}
               </span>

@@ -111,12 +111,12 @@ const AudioMessage = ({ src, mine }) => {
   const progressPercent = duration ? Math.min(100, (currentTime / duration) * 100) : 0;
 
   const containerClasses = mine
-    ? 'bg-blue-600/20 text-white border border-blue-500/50'
+    ? 'bg-gray-600/20 text-white border border-gray-500/50'
     : 'bg-[#1e2339] text-gray-200 border border-gray-700/50';
 
-  const knobClasses = mine ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300';
-  const progressBaseClasses = mine ? 'bg-blue-500/30' : 'bg-gray-700/30';
-  const progressFillClasses = mine ? 'bg-blue-400' : 'bg-blue-500';
+  const knobClasses = mine ? 'bg-gray-600 text-white' : 'bg-gray-700 text-gray-300';
+  const progressBaseClasses = mine ? 'bg-gray-500/30' : 'bg-gray-700/30';
+  const progressFillClasses = mine ? 'bg-gray-400' : 'bg-gray-500';
 
   return (
     <div className={`w-60 sm:w-72 rounded-2xl px-3 py-3 ${containerClasses} shadow-inner`}>
@@ -1013,7 +1013,7 @@ export default function ChatPage() {
                 variant="secondary"
                 size="sm"
                 onClick={() => setGroupModalOpen(true)}
-                className="gap-1 bg-blue-600 hover:bg-blue-700 text-white"
+                className="gap-1 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900"
               >
                 <Plus className="w-4 h-4" /> New group
               </Button>
@@ -1031,7 +1031,7 @@ export default function ChatPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search chats"
-                className="h-9 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                className="h-9 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
               />
             </div>
             <div className="flex-1 overflow-auto">
@@ -1055,7 +1055,7 @@ export default function ChatPage() {
                         active ? 'bg-gray-800/50' : ''
                       }`}
                     >
-                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm">
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-gray-500 to-gray-600 flex items-center justify-center text-white text-sm">
                         {c.isGroupChat ? <Users className="w-4 h-4" /> : (title || '?').slice(0, 1)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -1071,7 +1071,7 @@ export default function ChatPage() {
                         <div className="text-xs text-gray-400 truncate max-w-full">{last}</div>
                       </div>
                       {unread > 0 && (
-                        <div className="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-blue-600 text-white">
+                        <div className="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-gray-600 text-white">
                           {unread}
                         </div>
                       )}
@@ -1086,7 +1086,7 @@ export default function ChatPage() {
             {/* Header */}
             <div className="p-3 border-b border-gray-700/50 bg-[#1e2339] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/50" />
+                <div className="w-8 h-8 rounded-full bg-gray-600/20 border border-gray-500/50" />
                 <div>
                   <div className="text-sm font-semibold text-white">
                     {getChatTitle(activeChat) || 'Select a chat'}
@@ -1161,7 +1161,7 @@ export default function ChatPage() {
                     <div key={i} className={`flex ${i % 2 ? 'justify-end' : 'justify-start'}`}>
                       <div
                         className={`w-[70%] max-w-[380px] rounded-2xl p-3 ${
-                          i % 2 ? 'bg-blue-600/20' : 'bg-[#1e2339]'
+                          i % 2 ? 'bg-gray-600/20' : 'bg-[#1e2339]'
                         } shadow-sm border border-gray-700/50`}
                       >
                         <div className="h-4 bg-gray-700 rounded w-3/4 mb-2 animate-pulse"></div>
@@ -1174,9 +1174,9 @@ export default function ChatPage() {
                 <div className="h-full w-full flex items-center justify-center">
                   <div className="text-center">
                     <div className="relative mx-auto h-24 w-24">
-                      <div className="absolute inset-0 rounded-full bg-blue-600/15 animate-ping"></div>
-                      <div className="absolute inset-3 rounded-full bg-blue-600/20 animate-pulse"></div>
-                      <div className="absolute inset-6 rounded-full bg-blue-600"></div>
+                      <div className="absolute inset-0 rounded-full bg-gray-600/15 animate-ping"></div>
+                      <div className="absolute inset-3 rounded-full bg-gray-600/20 animate-pulse"></div>
+                      <div className="absolute inset-6 rounded-full bg-gray-600"></div>
                     </div>
                     <div className="mt-4 text-sm font-semibold text-white">
                       Select a chat to start messaging
@@ -1190,11 +1190,11 @@ export default function ChatPage() {
                 <div className="h-full w-full flex items-center justify-center">
                   <div className="text-center animate-fade-in">
                     <div className="relative mx-auto h-20 w-20 mb-4">
-                      <div className="absolute inset-0 rounded-full bg-blue-600/10 animate-ping"></div>
-                      <div className="absolute inset-2 rounded-full bg-blue-600/15 animate-pulse"></div>
-                      <div className="absolute inset-4 rounded-full bg-blue-600/20"></div>
+                      <div className="absolute inset-0 rounded-full bg-gray-600/10 animate-ping"></div>
+                      <div className="absolute inset-2 rounded-full bg-gray-600/15 animate-pulse"></div>
+                      <div className="absolute inset-4 rounded-full bg-gray-600/20"></div>
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
                           <Send className="w-4 h-4 text-white" />
                         </div>
                       </div>
@@ -1230,12 +1230,12 @@ export default function ChatPage() {
                       <div
                         className={`group relative max-w-[70%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
                           mine
-                            ? 'bg-blue-600 text-white rounded-br-sm'
+                            ? 'bg-gray-600 text-white rounded-br-sm'
                             : 'bg-[#1e2339] text-gray-200 rounded-bl-sm border border-gray-700/50'
                         }`}
                       >
                         {showSender && (
-                          <div className="text-[11px] font-semibold text-blue-400 mb-1">
+                          <div className="text-[11px] font-semibold text-gray-400 mb-1">
                             {m?.sender?.name ||
                               otherParticipant?.name ||
                               otherParticipant?.email ||
@@ -1331,7 +1331,7 @@ export default function ChatPage() {
 
                         <div
                           className={`mt-1 text-[10px] flex items-center gap-1 ${
-                            mine ? 'text-blue-100/80' : 'text-gray-400'
+                            mine ? 'text-gray-100/80' : 'text-gray-400'
                           }`}
                         >
                           {new Date(m.createdAt).toLocaleTimeString([], {
@@ -1429,10 +1429,10 @@ export default function ChatPage() {
                     if (e.key === 'Enter') handleSend();
                   }}
                   placeholder="Type a message"
-                  className="h-10 flex-1 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                  className="h-10 flex-1 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
                   disabled={!selectedChatId}
                 />
-                <Button onClick={handleSend} disabled={sending || !selectedChatId} className="h-10 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={handleSend} disabled={sending || !selectedChatId} className="h-10 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900">
                   {sending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
@@ -1448,7 +1448,7 @@ export default function ChatPage() {
                   </span>
                 )}
                 {!isRecording && sending && (
-                  <span className="flex items-center gap-2 text-blue-400">
+                  <span className="flex items-center gap-2 text-gray-400">
                     <Loader2 className="w-3 h-3 animate-spin" />
                     Uploading...
                   </span>
@@ -1483,7 +1483,7 @@ export default function ChatPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search chats"
-                  className="h-9 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                  className="h-9 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
                 />
               </div>
               <div className="flex-1 overflow-auto">
@@ -1510,7 +1510,7 @@ export default function ChatPage() {
                           active ? 'bg-gray-800/50' : ''
                         }`}
                       >
-                        <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm">
+                        <div className="w-10 h-10 rounded-full bg-linear-to-br from-gray-500 to-gray-600 flex items-center justify-center text-white text-sm">
                           {c.isGroupChat ? (
                             <Users className="w-4 h-4" />
                           ) : (
@@ -1530,7 +1530,7 @@ export default function ChatPage() {
                           <div className="text-xs text-gray-400 truncate max-w-full">{last}</div>
                         </div>
                         {unread > 0 && (
-                          <div className="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-blue-600 text-white">
+                          <div className="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-gray-600 text-white">
                             {unread}
                           </div>
                         )}
@@ -1570,7 +1570,7 @@ export default function ChatPage() {
                       value={projectSearch}
                       onChange={(e) => setProjectSearch(e.target.value)}
                       placeholder="Search projects..."
-                      className="h-9 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                      className="h-9 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
                     />
                     {loadingProjects && (
                       <div className="absolute right-2 top-2">
@@ -1605,7 +1605,7 @@ export default function ChatPage() {
                                 setProjectSearch('');
                               }}
                               className={`w-full text-left px-3 py-2 border-b border-gray-700 last:border-b-0 hover:bg-gray-800/30 transition ${
-                                isSelected ? 'bg-blue-600/20' : ''
+                                isSelected ? 'bg-gray-600/20' : ''
                               }`}
                             >
                               <div className="text-sm font-medium text-white">{projectName}</div>
@@ -1615,7 +1615,7 @@ export default function ChatPage() {
                                 </div>
                               )}
                               {Array.isArray(p.employees) && p.employees.length > 0 && (
-                                <div className="text-xs text-blue-400 mt-1">
+                                <div className="text-xs text-gray-400 mt-1">
                                   {p.employees.length} employee{p.employees.length !== 1 ? 's' : ''}{' '}
                                   assigned
                                 </div>
@@ -1627,7 +1627,7 @@ export default function ChatPage() {
                     </div>
                   )}
                   {selectedProject && (
-                    <div className="mt-2 flex items-center gap-2 px-2 py-1 bg-blue-600/20 border border-blue-500/50 rounded text-sm">
+                    <div className="mt-2 flex items-center gap-2 px-2 py-1 bg-gray-600/20 border border-gray-500/50 rounded text-sm">
                       <span className="text-white">{selectedProject.name || selectedProject.projectName}</span>
                       <Button
                         variant="ghost"
@@ -1653,7 +1653,7 @@ export default function ChatPage() {
                       selectedProject ? 'Group name (pre-filled from project)' : 'Team name'
                     }
                     disabled={!!selectedProject}
-                    className="h-9 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                    className="h-9 bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
                   />
                 </div>
                 <div>
@@ -1662,7 +1662,7 @@ export default function ChatPage() {
                     value={groupAvatar}
                     onChange={(e) => setGroupAvatar(e.target.value)}
                     placeholder="https://..."
-                    className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                    className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
                   />
                 </div>
                 <div>
@@ -1679,7 +1679,7 @@ export default function ChatPage() {
                             type="checkbox"
                             checked={selectedUserIds.includes(u._id)}
                             onChange={() => toggleSelected(u._id)}
-                            className="accent-blue-600"
+                            className="accent-gray-600"
                           />
                           <span className="text-sm text-white">
                             {u.name} <span className="text-gray-400">({u.email})</span>
@@ -1693,7 +1693,7 @@ export default function ChatPage() {
                 <Button variant="ghost" onClick={() => setGroupModalOpen(false)} className="text-gray-300 hover:text-white hover:bg-gray-700">
                   Cancel
                 </Button>
-                <Button onClick={handleCreateGroup} disabled={creatingGroup} className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={handleCreateGroup} disabled={creatingGroup} className="bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900">
                   {creatingGroup ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create'}
                 </Button>
               </div>
@@ -1727,7 +1727,7 @@ export default function ChatPage() {
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
                     placeholder="Team name"
-                    className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                    className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
                   />
                 </div>
                 <div>
@@ -1736,7 +1736,7 @@ export default function ChatPage() {
                     value={groupAvatar}
                     onChange={(e) => setGroupAvatar(e.target.value)}
                     placeholder="https://..."
-                    className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                    className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
                   />
                 </div>
                 <div>
@@ -1753,7 +1753,7 @@ export default function ChatPage() {
                             type="checkbox"
                             checked={selectedUserIds.includes(u._id)}
                             onChange={() => toggleSelected(u._id)}
-                            className="accent-blue-600"
+                            className="accent-gray-600"
                           />
                           <span className="text-sm text-white">
                             {u.name} <span className="text-gray-400">({u.email})</span>
@@ -1767,7 +1767,7 @@ export default function ChatPage() {
                 <Button variant="ghost" onClick={() => setEditGroupModalOpen(false)} className="text-gray-300 hover:text-white hover:bg-gray-700">
                   Cancel
                 </Button>
-                <Button onClick={handleSaveEditGroup} disabled={savingEditGroup} className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={handleSaveEditGroup} disabled={savingEditGroup} className="bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900">
                   {savingEditGroup ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save changes'}
                 </Button>
               </div>
@@ -1816,7 +1816,7 @@ export default function ChatPage() {
                       className="flex items-center justify-between gap-3 rounded-xl border border-gray-700 px-4 py-3 bg-[#0f1419]"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-10 w-10 rounded-full bg-linear-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
+                        <div className="h-10 w-10 rounded-full bg-linear-to-br from-gray-500 to-gray-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
                           {(member?.name || member?.email || member?.phone || '?')
                             .slice(0, 2)
                             .toUpperCase()}
@@ -1840,7 +1840,7 @@ export default function ChatPage() {
                           )}
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-1 text-[11px] font-semibold uppercase tracking-wide text-blue-400">
+                      <div className="flex flex-col items-end gap-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
                         {isAdmin ? <span>Admin</span> : null}
                       </div>
                     </div>

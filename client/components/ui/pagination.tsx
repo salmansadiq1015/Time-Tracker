@@ -59,7 +59,7 @@ function PaginationLink({
           size,
         }),
         isActive
-          ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
+          ? 'bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 border-gray-600'
           : 'bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white',
         className,
       )}

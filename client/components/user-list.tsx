@@ -68,7 +68,7 @@ export function UserList({
       case 'dispatcher':
         return 'bg-purple-500/20 text-purple-300 border-purple-500/50';
       default:
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/50';
+        return 'bg-gray-500/20 text-gray-300 border-gray-500/50';
     }
   };
 
@@ -141,7 +141,7 @@ export function UserList({
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
+            <thead className="bg-linear-to-r from-gray-500 to-gray-600 text-white border-b-2 border-gray-500/50">
               <tr>
                 <th className="text-left py-4 px-4 min-w-[10rem] font-semibold text-white uppercase text-xs tracking-wider">
                   Name
@@ -201,7 +201,7 @@ export function UserList({
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4 text-gray-500" />
                         <span
-                          className="font-medium text-white cursor-pointer hover:text-blue-400 transition-colors"
+                          className="font-medium text-white cursor-pointer hover:text-gray-400 transition-colors"
                           onClick={() => router.push(`/dashboard/users/${user._id}`)}
                         >
                           {user.name}
@@ -244,7 +244,7 @@ export function UserList({
                             variant="ghost"
                             size="icon"
                             onClick={() => router.push(`/dashboard/users/${user._id}`)}
-                            className="text-blue-400 hover:bg-blue-600/20 h-8 w-8 rounded-lg transition-colors"
+                            className="text-gray-400 hover:bg-gray-600/20 h-8 w-8 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Clock className="w-4 h-4" />
@@ -267,7 +267,7 @@ export function UserList({
                             variant="ghost"
                             size="icon"
                             onClick={() => onEdit(user)}
-                            className="text-blue-400 hover:bg-blue-600/20 h-8 w-8 rounded-lg transition-colors"
+                            className="text-gray-400 hover:bg-gray-600/20 h-8 w-8 rounded-lg transition-colors"
                             title="Edit User"
                           >
                             <Edit2 className="w-4 h-4" />

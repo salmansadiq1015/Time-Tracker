@@ -74,7 +74,7 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
           placeholder="e.g., MacBook Pro 14"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
           required
         />
       </div>
@@ -88,7 +88,7 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
           placeholder="e.g., ABC123XYZ"
           value={formData.serial}
           onChange={(e) => setFormData({ ...formData, serial: e.target.value })}
-          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
           required
         />
       </div>
@@ -102,14 +102,14 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
           type="date"
           value={formData.purchaseDate}
           onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
-          className="bg-[#0f1419] border-gray-600 text-white focus:border-blue-500"
+          className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500"
         />
       </div>
 
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+        className="w-full bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900"
       >
         {loading ? (
           <>

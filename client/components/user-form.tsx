@@ -65,7 +65,7 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
           onChange={(e) => setName(e.target.value)}
           required
           disabled={isLoading}
-          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
         />
       </div>
 
@@ -78,7 +78,7 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
           onChange={(e) => setEmail(e.target.value)}
           required
           disabled={isLoading}
-          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
         />
       </div>
 
@@ -91,7 +91,7 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
           onChange={(e) => setPhone(e.target.value)}
           required
           disabled={isLoading}
-          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+          className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
         />
       </div>
 
@@ -105,7 +105,7 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
             onChange={(e) => setPassword(e.target.value)}
             required
             disabled={isLoading}
-            className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
+            className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
           />
         </div>
       )}
@@ -116,7 +116,7 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
           value={role}
           onChange={(e) => setRole(e.target.value as any)}
           disabled={isLoading}
-          className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
+          className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-gray-500 focus:outline-none transition-colors"
         >
           <option value="user">User</option>
           {/* <option value="client">Client</option> */}
@@ -132,7 +132,7 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
             value={status}
             onChange={(e) => setStatus(e.target.value as 'active' | 'inactive')}
             disabled={isLoading}
-            className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
+            className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-gray-500 focus:outline-none transition-colors"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -153,7 +153,7 @@ export function UserForm({ user, onSubmit, onCancel, isLoading = false }: UserFo
         <Button
           type="submit"
           disabled={isLoading}
-          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all font-medium"
+          className="flex-1 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 shadow-lg transition-all font-medium"
         >
           {isLoading ? (
             <>

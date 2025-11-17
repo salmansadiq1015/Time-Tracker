@@ -89,7 +89,7 @@ export function Sidebar() {
           onClick={() => setIsOpen(!isOpen)}
           className={`md:hidden fixed top-4 ${
             isOpen ? 'right-3' : 'left-4 '
-          } z-50 p-2 bg-blue-600 text-white rounded-lg`}
+          } z-50 p-2 bg-gradient-to-b from-gray-400 to-gray-600 text-gray-900 rounded-lg`}
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
@@ -131,7 +131,7 @@ export function Sidebar() {
                         transition-all duration-200
                         ${
                           isActive
-                            ? 'bg-blue-600/20 text-white border-l-4 border-blue-500'
+                            ? 'bg-gray-600/20 text-white border-l-4 border-gray-500'
                             : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
                         }
                       `}
@@ -139,7 +139,7 @@ export function Sidebar() {
                       <div className="flex items-center gap-3">
                         <Icon
                           className={`w-5 h-5 ${
-                            isActive ? 'text-blue-400' : 'text-gray-400 group-hover:text-blue-400'
+                            isActive ? 'text-gray-300' : 'text-gray-400 group-hover:text-gray-300'
                           }`}
                         />
                         <span
@@ -152,7 +152,7 @@ export function Sidebar() {
                       </div>
                       <ChevronRight
                         className={`w-4 h-4 transition-transform ${
-                          isActive ? 'text-blue-400' : 'text-gray-500 group-hover:text-blue-400'
+                          isActive ? 'text-gray-300' : 'text-gray-500 group-hover:text-gray-300'
                         }`}
                       />
                     </button>

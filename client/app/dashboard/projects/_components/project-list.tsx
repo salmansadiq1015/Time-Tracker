@@ -168,7 +168,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
     return viewMode === 'card' ? (
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[...Array(6)].map((_, i) => (
-          <Card key={i} className="border-amber-200 shadow-lg overflow-hidden">
+          <Card key={i} className="border-gray-200 shadow-lg overflow-hidden">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-start justify-between">
                 <Skeleton className="h-6 w-3/4" />
@@ -191,7 +191,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
+              <TableRow className="bg-linear-to-r from-gray-500 to-gray-600 text-white border-b-2 border-gray-500/50">
                 <TableHead className="h-16 px-6 font-bold text-base text-white">Project Name</TableHead>
                 {/* <TableHead className="h-16 px-6 font-bold text-base text-white">Client</TableHead> */}
                 <TableHead className="h-16 px-6 font-bold text-base text-white">Location</TableHead>
@@ -238,13 +238,13 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
 
   if (projects.length === 0) {
     return (
-      <Card className="border-amber-200 shadow-xl backdrop-blur-sm bg-linear-to-br from-card/80 to-card/40 overflow-hidden">
+      <Card className="border-gray-200 shadow-xl backdrop-blur-sm bg-linear-to-br from-card/80 to-card/40 overflow-hidden">
         <CardContent className="flex flex-col items-center justify-center py-24">
           <div className="relative mb-6">
-            <div className="w-24 h-24 rounded-2xl bg-linear-to-br from-amber-600/20 to-amber-500/10 flex items-center justify-center shadow-2xl shadow-amber-600/10 animate-pulse">
-              <Building2 className="w-12 h-12 text-amber-600" />
+            <div className="w-24 h-24 rounded-2xl bg-linear-to-br from-gray-600/20 to-gray-500/10 flex items-center justify-center shadow-2xl shadow-gray-600/10 animate-pulse">
+              <Building2 className="w-12 h-12 text-gray-600" />
             </div>
-            <div className="absolute -top-2 -right-2 w-6 h-6 bg-amber-600/20 rounded-full animate-ping"></div>
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gray-600/20 rounded-full animate-ping"></div>
           </div>
           <h3 className="text-2xl font-bold text-foreground mb-2">No projects found</h3>
           <p className="text-muted-foreground text-center max-w-md">
@@ -268,7 +268,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="bg-linear-to-r from-blue-600 to-blue-700 text-white border-b-2 border-blue-500/50">
+                <TableRow className="bg-linear-to-r from-gray-500 to-gray-600 text-white border-b-2 border-gray-500/50">
                   <TableHead className="h-16 px-6 font-bold text-base text-white">Project Name</TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base text-white">Location</TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base text-white">Dates</TableHead>
@@ -299,11 +299,11 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                     >
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                            <Building2 className="w-5 h-5 text-blue-400" />
+                          <div className="w-10 h-10 rounded-lg bg-gray-600/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                            <Building2 className="w-5 h-5 text-gray-400" />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
+                            <p className="font-semibold text-white group-hover:text-gray-400 transition-colors truncate">
                               {project.name}
                             </p>
                             {project.description && (
@@ -316,7 +316,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <div className="flex items-start gap-2">
-                          <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                          <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
                           <div className="flex flex-col text-sm text-white max-w-[220px]">
                             <span className="font-medium truncate">
                               {project.city || project.location || 'City not set'}
@@ -331,7 +331,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-blue-400 shrink-0" />
+                          <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
                           <div className="flex flex-col">
                             <span className="text-xs text-white font-medium">{startDate}</span>
                             <span className="text-xs text-gray-400">→ {endDate}</span>
@@ -340,7 +340,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-blue-400 shrink-0" />
+                          <Users className="w-4 h-4 text-gray-400 shrink-0" />
                           <span className="text-sm font-medium text-white">
                             {project.employees?.length || 0}
                           </span>
@@ -352,7 +352,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                             Archived
                           </Badge>
                         ) : (
-                          <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/50 font-semibold">
+                          <Badge className="bg-gray-500/20 text-gray-300 border-gray-500/50 font-semibold">
                             Active
                           </Badge>
                         )}
@@ -366,7 +366,7 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                                 size="sm"
                                 className="h-9 w-9 p-0 border-gray-600 hover:bg-gray-700 group/btn transition-all duration-300 hover:scale-110"
                               >
-                                <MoreVertical className="w-4 h-4 text-gray-300 group-hover/btn:text-blue-400 transition-colors" />
+                                <MoreVertical className="w-4 h-4 text-gray-300 group-hover/btn:text-gray-400 transition-colors" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">

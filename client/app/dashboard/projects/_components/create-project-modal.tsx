@@ -91,20 +91,19 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl border-gray-700 bg-[#1e2339]">
-        <DialogHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white -m-6 mb-4 p-6 rounded-t-lg">
-          <DialogTitle className="text-3xl font-bold text-white">
-            Create New Project
-          </DialogTitle>
-          <p className="mt-1 text-sm text-gray-200">
-            Set up a new project and define its timeline
-          </p>
+        <DialogHeader className="bg-gradient-to-r from-gray-500 to-gray-600 text-white -m-6 mb-4 p-6 rounded-t-lg">
+          <DialogTitle className="text-3xl font-bold text-white">Create New Project</DialogTitle>
+          <p className="mt-1 text-sm text-gray-200">Set up a new project and define its timeline</p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 max-h-[70vh] overflow-y-auto pr-4 bg-[#1e2339]">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 max-h-[70vh] overflow-y-auto pr-4 bg-[#1e2339]"
+        >
           {/* Project Name Section */}
           <div className="rounded-lg border border-gray-700 bg-[#0f1419] p-4">
             <div className="flex items-center gap-2 mb-3">
-              <FileText className="h-5 w-5 text-blue-400" />
+              <FileText className="h-5 w-5 text-gray-400" />
               <Label htmlFor="name" className="text-sm font-semibold text-white">
                 Project Name *
               </Label>
@@ -116,14 +115,10 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
               onChange={handleInputChange}
               placeholder="e.g., Website Redesign Project"
               className={`bg-[#1e2339] border-2 transition-colors text-white placeholder:text-gray-500 ${
-                errors.name
-                  ? 'border-red-500'
-                  : 'border-gray-600 focus:border-blue-500'
+                errors.name ? 'border-red-500' : 'border-gray-600 focus:border-gray-500'
               }`}
             />
-            {errors.name && (
-              <p className="mt-2 text-xs text-red-400 font-medium">{errors.name}</p>
-            )}
+            {errors.name && <p className="mt-2 text-xs text-red-400 font-medium">{errors.name}</p>}
           </div>
 
           {/* Client Selection Section */}
@@ -200,7 +195,7 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
           {/* Address & Location Section */}
           <div className="rounded-lg border border-gray-700 bg-[#0f1419] p-4">
             <div className="flex items-center gap-2 mb-3">
-              <MapPin className="h-5 w-5 text-blue-400" />
+              <MapPin className="h-5 w-5 text-gray-400" />
               <Label className="text-sm font-semibold text-white">Location Details *</Label>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -211,14 +206,10 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
                   onChange={handleInputChange}
                   placeholder="Street address"
                   className={`bg-[#1e2339] border-2 transition-colors text-white placeholder:text-gray-500 ${
-                    errors.address
-                      ? 'border-red-500'
-                      : 'border-gray-600 focus:border-blue-500'
+                    errors.address ? 'border-red-500' : 'border-gray-600 focus:border-gray-500'
                   }`}
                 />
-                {errors.address && (
-                  <p className="mt-1 text-xs text-red-400">{errors.address}</p>
-                )}
+                {errors.address && <p className="mt-1 text-xs text-red-400">{errors.address}</p>}
               </div>
               <div>
                 <Input
@@ -226,7 +217,7 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
                   value={formData.city}
                   onChange={handleInputChange}
                   placeholder="City"
-                  className="bg-[#1e2339] border-2 border-gray-600 focus:border-blue-500 text-white placeholder:text-gray-500"
+                  className="bg-[#1e2339] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
                 />
               </div>
             </div>
@@ -243,14 +234,14 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
               value={formData.description}
               onChange={handleInputChange}
               placeholder="Describe the project's goals, outcomes and any other useful context"
-              className="mt-2 h-28 bg-[#1e2339] border-2 border-gray-600 focus:border-blue-500 resize-none text-white placeholder:text-gray-500"
+              className="mt-2 h-28 bg-[#1e2339] border-2 border-gray-600 focus:border-gray-500 resize-none text-white placeholder:text-gray-500"
             />
           </div>
 
           {/* Dates Section */}
           <div className="rounded-lg border border-gray-700 bg-[#0f1419] p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Calendar className="h-5 w-5 text-blue-400" />
+              <Calendar className="h-5 w-5 text-gray-400" />
               <Label className="text-sm font-semibold text-white">Project Timeline *</Label>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -262,9 +253,7 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
                   value={formData.startDate}
                   onChange={handleInputChange}
                   className={`bg-[#1e2339] border-2 transition-colors text-white ${
-                    errors.startDate
-                      ? 'border-red-500'
-                      : 'border-gray-600 focus:border-blue-500'
+                    errors.startDate ? 'border-red-500' : 'border-gray-600 focus:border-gray-500'
                   }`}
                 />
                 {errors.startDate && (
@@ -279,14 +268,10 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
                   value={formData.endDate}
                   onChange={handleInputChange}
                   className={`bg-[#1e2339] border-2 transition-colors text-white ${
-                    errors.endDate
-                      ? 'border-red-500'
-                      : 'border-gray-600 focus:border-blue-500'
+                    errors.endDate ? 'border-red-500' : 'border-gray-600 focus:border-gray-500'
                   }`}
                 />
-                {errors.endDate && (
-                  <p className="mt-1 text-xs text-red-400">{errors.endDate}</p>
-                )}
+                {errors.endDate && <p className="mt-1 text-xs text-red-400">{errors.endDate}</p>}
               </div>
             </div>
           </div>
@@ -304,7 +289,7 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
             <Button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+              className="bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 font-semibold shadow-md hover:shadow-lg transition-all"
             >
               {loading ? 'Creating...' : 'Create Project'}
             </Button>

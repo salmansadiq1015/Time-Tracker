@@ -192,7 +192,7 @@ export default function UsersPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#0f1419]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
       </div>
     );
   }
@@ -222,7 +222,7 @@ export default function UsersPage() {
       <header className="sticky top-0 z-50 border-b border-gray-700/50 bg-[#1e2339]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-600 shadow-lg">
               <Users className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -238,7 +238,7 @@ export default function UsersPage() {
                 setEditingUser(null);
                 setShowForm(!showForm);
               }}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+              className="gap-2 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 shadow-lg"
             >
               <UserPlus className="w-4 h-4" />
               Add User
@@ -250,15 +250,15 @@ export default function UsersPage() {
       {/* Stats Cards */}
       <div className="px-4 md:px-8 pb-6 space-y-4 mt-2">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border cursor-pointer border-blue-500/30 bg-[#1e2339] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+          <Card className="border cursor-pointer border-gray-500/30 bg-[#1e2339] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
             <CardContent onClick={() => setFilters({ ...filters, role: 'all' })} className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm text-gray-400 font-medium">Total Users</p>
                   <p className="text-3xl font-bold text-white">{totalCount}</p>
                 </div>
-                <div className="p-3 bg-blue-600/20 rounded-xl shadow-sm">
-                  <Users className="w-6 h-6 text-blue-400" />
+                <div className="p-3 bg-gray-600/20 rounded-xl shadow-sm">
+                  <Users className="w-6 h-6 text-gray-400" />
                 </div>
               </div>
             </CardContent>
@@ -309,7 +309,7 @@ export default function UsersPage() {
 
         {/* Search & Filters */}
         <Card className="border-gray-700/50 bg-[#1e2339] shadow-lg py-0 pb-3 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4">
+          <CardHeader className="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-4">
             <div className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-white flex items-center gap-2">
                 <Search className="w-5 h-5" />
@@ -330,7 +330,7 @@ export default function UsersPage() {
             </div>
           </CardHeader>
           <CardContent className="0 space-y-4">
-            <div className="flex gap-3 items-center border-2 border-gray-600 rounded-lg p-3 bg-[#0f1419] focus-within:border-blue-500 transition-colors">
+            <div className="flex gap-3 items-center border-2 border-gray-600 rounded-lg p-3 bg-[#0f1419] focus-within:border-gray-500 transition-colors">
               <Search className="w-5 h-5 text-gray-400 shrink-0" />
               <input
                 placeholder="Search by name or email..."
@@ -347,7 +347,7 @@ export default function UsersPage() {
                   <select
                     value={filters.role}
                     onChange={(e) => handleRoleFilter(e.target.value)}
-                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-gray-500 focus:outline-none transition-colors"
                   >
                     <option value="all">All Roles</option>
                     <option value="user">User</option>
@@ -361,7 +361,7 @@ export default function UsersPage() {
                   <select
                     value={filters.status}
                     onChange={(e) => handleStatusFilter(e.target.value)}
-                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-gray-500 focus:outline-none transition-colors"
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -377,7 +377,7 @@ export default function UsersPage() {
                       setLimit(Number.parseInt(e.target.value));
                       setPage(1);
                     }}
-                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full px-4 py-2 bg-[#0f1419] border-2 border-gray-600 rounded-lg text-white focus:border-gray-500 focus:outline-none transition-colors"
                   >
                     <option value="5">5 items</option>
                     <option value="10">10 items</option>
@@ -401,7 +401,7 @@ export default function UsersPage() {
           }}
         >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#1e2339] border-gray-700 shidden">
-            <DialogHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white -m-6 mb-4 p-6 rounded-t-lg">
+            <DialogHeader className="bg-gradient-to-r from-gray-600 to-gray-700 text-white -m-6 mb-4 p-6 rounded-t-lg">
               <DialogTitle className="text-white text-xl font-semibold flex items-center gap-2">
                 <UserPlus className="w-5 h-5" />
                 {editingUser ? 'Edit User' : 'Add New User'}
@@ -494,7 +494,7 @@ export default function UsersPage() {
                           onClick={() => setPage(pageNum)}
                           className={`w-10 transition-all ${
                             pageNum === page
-                              ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600'
+                              ? 'bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 border-gray-600'
                               : 'bg-[#1e2339] border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white'
                           }`}
                         >

@@ -71,9 +71,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#0f1419] flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gray-600/10 rounded-full blur-3xl animate-pulse" />
         <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gray-500/10 rounded-full blur-3xl animate-pulse"
           style={{ animationDelay: '1s' }}
         />
       </div>
@@ -140,7 +140,7 @@ export default function LoginPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
-                    className="bg-[#0f1419] border border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 pl-4 h-11 text-base"
+                    className="bg-[#0f1419] border border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-2 focus:ring-gray-500/20 transition-all duration-200 pl-4 h-11 text-base"
                   />
                 </div>
               </div>
@@ -151,7 +151,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setForgotOpen(true)}
-                  className="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                  className="text-xs text-gray-400 hover:text-gray-300 font-medium transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -163,7 +163,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="bg-[#0f1419] border border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 pl-4 pr-12 h-11 text-base"
+                    className="bg-[#0f1419] border border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-2 focus:ring-gray-500/20 transition-all duration-200 pl-4 pr-12 h-11 text-base"
                   />
                   <button
                     type="button"
@@ -181,7 +181,7 @@ export default function LoginPage() {
                   id="remember"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-600 bg-[#0f1419] cursor-pointer accent-blue-600"
+                  className="w-4 h-4 rounded border-gray-600 bg-[#0f1419] cursor-pointer accent-gray-500"
                 />
                 <label
                   htmlFor="remember"
@@ -194,7 +194,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold h-11 text-base shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 group"
+                className="w-full bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 font-semibold h-11 text-base shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 group"
               >
                 {loading ? (
                   <>
@@ -407,11 +407,11 @@ function ForgotPasswordDialog({ open, onOpenChange, initialPhone }) {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
               />
             </div>
             <DialogFooter>
-              <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              <Button type="submit" disabled={loading} className="w-full bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900">
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -450,7 +450,7 @@ function ForgotPasswordDialog({ open, onOpenChange, initialPhone }) {
                   type="button"
                   onClick={handleResendCode}
                   disabled={loading || resendCooldown > 0}
-                  className="text-blue-400 hover:text-blue-300 font-medium disabled:opacity-60"
+                  className="text-gray-400 hover:text-gray-300 font-medium disabled:opacity-60"
                 >
                   {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend code'}
                 </button>
@@ -465,7 +465,7 @@ function ForgotPasswordDialog({ open, onOpenChange, initialPhone }) {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
-                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
               />
             </div>
 
@@ -477,12 +477,12 @@ function ForgotPasswordDialog({ open, onOpenChange, initialPhone }) {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500"
+                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500"
               />
             </div>
 
             <DialogFooter>
-              <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              <Button type="submit" disabled={loading} className="w-full bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900">
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -320,7 +320,7 @@ export default function TimeTrackerPage() {
       <header className="sticky top-0 z-50 border-b border-gray-700/50 bg-[#1e2339]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-600 shadow-lg">
               <Clock className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -334,7 +334,7 @@ export default function TimeTrackerPage() {
             <Button
               onClick={() => setShowForm(!showForm)}
               disabled={!!activeTimer}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+              className="gap-2 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 shadow-lg"
             >
               <Play className="w-4 h-4 mr-2" />
               Start Timer

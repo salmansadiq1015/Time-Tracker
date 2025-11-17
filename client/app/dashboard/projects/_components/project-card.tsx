@@ -160,7 +160,7 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
 
   return (
     <>
-      <Card className="group overflow-hidden border-gray-700/50 bg-[#1e2339] transition-all hover:shadow-lg hover:border-blue-500/50">
+      <Card className="group overflow-hidden border-gray-700/50 bg-[#1e2339] transition-all hover:shadow-lg hover:border-gray-500/50">
         <CardHeader className="relative pb-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
@@ -217,7 +217,7 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
 
           {/* Location */}
           <div className="flex items-start gap-2 text-sm text-gray-400">
-            <MapPin className="h-4 w-4 shrink-0 text-blue-400 mt-0.5" />
+            <MapPin className="h-4 w-4 shrink-0 text-gray-400 mt-0.5" />
             <div className="flex flex-col">
               <span className="line-clamp-1 font-medium text-white">
                 {project.city || project.location || 'City not set'}
@@ -232,7 +232,7 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
 
           {/* Dates */}
           <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Calendar className="h-4 w-4 shrink-0 text-blue-400" />
+            <Calendar className="h-4 w-4 shrink-0 text-gray-400" />
             <span>
               {startDate} → {endDate}
             </span>
@@ -240,7 +240,7 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
 
           {/* Team */}
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-blue-400 shrink-0" />
+            <Users className="h-4 w-4 text-gray-400 shrink-0" />
             <span className="text-sm font-medium text-white">
               {project.employees?.length || 0} Team Members
             </span>

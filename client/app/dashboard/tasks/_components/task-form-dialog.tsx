@@ -145,7 +145,7 @@ export const TaskFormDialog = ({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Prepare project kickoff deck"
-                className="border-gray-600 bg-[#1e2339] text-white placeholder:text-gray-500 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3"
+                className="border-gray-600 bg-[#1e2339] text-white placeholder:text-gray-500 focus-visible:ring-gray-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3"
                 required
               />
             </div>
@@ -154,10 +154,10 @@ export const TaskFormDialog = ({
                 Project <span className="text-red-400">*</span>
               </Label>
               <Select value={project || ''} onValueChange={setProject} required>
-                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
+                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-gray-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
                   <SelectValue placeholder="Select project" />
                 </SelectTrigger>
-                <SelectContent className="max-h-60 bg-[#1e2339] border-gray-700">
+                <SelectContent className="max-h-60 bg-[#1e2339] text-white border-gray-700">
                   {projects?.map((proj) => (
                     <SelectItem key={proj._id} value={proj._id}>
                       {proj.name}
@@ -176,7 +176,7 @@ export const TaskFormDialog = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add context, acceptance criteria or supporting details..."
-              className="min-h-[140px] border-gray-600 bg-[#1e2339] text-white placeholder:text-gray-500 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3"
+              className="min-h-[140px] border-gray-600 bg-[#1e2339] text-white placeholder:text-gray-500 focus-visible:ring-gray-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3"
               required
             />
           </div>
@@ -185,10 +185,10 @@ export const TaskFormDialog = ({
             <div className="space-y-2">
               <Label className="text-xs uppercase tracking-wide text-gray-400">Assign to</Label>
               <Select value={assignedTo} onValueChange={setAssignedTo} disabled={isUserRole}>
-                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm disabled:opacity-60">
+                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-gray-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm disabled:opacity-60">
                   <SelectValue placeholder="Select team member" />
                 </SelectTrigger>
-                <SelectContent className="max-h-60 bg-[#1e2339] border-gray-700">
+                <SelectContent className="max-h-60 bg-[#1e2339] text-white border-gray-700">
                   <SelectItem value={UNASSIGNED_VALUE}>Unassigned</SelectItem>
                   {assigneeOptions?.map((user) => (
                     <SelectItem key={user.value} value={user.value}>
@@ -208,10 +208,10 @@ export const TaskFormDialog = ({
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
                   min={formatDateInput(new Date())}
-                  className="border-gray-600 bg-[#1e2339] text-white focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3 pr-12"
+                  className="border-gray-600 bg-[#1e2339] text-white focus-visible:ring-gray-500 focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl px-4 py-3 pr-12"
                   required
                 />
-                <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-400" />
+                <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
             </div>
           </div>
@@ -220,10 +220,10 @@ export const TaskFormDialog = ({
             <div className="space-y-2">
               <Label className="text-xs uppercase tracking-wide text-gray-400">Status</Label>
               <Select value={status} onValueChange={(value) => setStatus(value as any)}>
-                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
+                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-gray-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1e2339] border-gray-700">
+                <SelectContent className="bg-[#1e2339] text-white border-gray-700">
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="in_progress">In progress</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
@@ -239,10 +239,10 @@ export const TaskFormDialog = ({
             <div className="space-y-2">
               <Label className="text-xs uppercase tracking-wide text-gray-400">Priority</Label>
               <Select value={priority} onValueChange={(value) => setPriority(value as any)}>
-                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-blue-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
+                <SelectTrigger className="w-full border-gray-600 bg-[#1e2339] text-white focus:ring-gray-500 focus:ring-2 focus:ring-offset-1 rounded-xl px-4 py-3 text-left text-sm">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1e2339] border-gray-700">
+                <SelectContent className="bg-[#1e2339] text-white border-gray-700">
                   <SelectItem value="low">Low</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
                   <SelectItem value="high">High</SelectItem>
@@ -268,7 +268,7 @@ export const TaskFormDialog = ({
             <Button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white min-w-[140px] rounded-xl shadow-lg"
+              className="bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 min-w-[140px] rounded-xl shadow-lg"
             >
               {loading ? <span className="animate-pulse">Saving...</span> : 'Save task'}
             </Button>

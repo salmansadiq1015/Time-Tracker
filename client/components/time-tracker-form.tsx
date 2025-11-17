@@ -206,7 +206,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
               onChange={(e) => setDescription(e.target.value)}
               required
               disabled={submitting}
-              className="bg-[#0f1419] border-gray-600 hover:border-blue-500 focus:border-blue-500 resize-none h-20 transition-colors text-white placeholder:text-gray-500"
+              className="bg-[#0f1419] border-gray-600 hover:border-gray-500 focus:border-gray-500 resize-none h-20 transition-colors text-white placeholder:text-gray-500"
             />
           </div>
 
@@ -222,7 +222,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
                 onValueChange={(value) => setSelectedProject(value === 'none' ? '' : value)}
                 disabled={submitting || loadingProjects}
               >
-                <SelectTrigger className="w-full bg-[#0f1419] border-gray-600 hover:border-blue-500 focus:border-blue-500 transition-colors h-10 text-white">
+                <SelectTrigger className="w-full bg-[#0f1419] border-gray-600 hover:border-gray-500 focus:border-gray-500 transition-colors h-10 text-white">
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[300px] bg-[#1e2339] border-gray-700">
@@ -248,7 +248,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
                 onValueChange={(value) => setSelectedTask(value === 'none' ? '' : value)}
                 disabled={submitting || loadingTasks}
               >
-                <SelectTrigger className="w-full bg-[#0f1419] border-gray-600 hover:border-blue-500 focus:border-blue-500 transition-colors h-10 text-white">
+                <SelectTrigger className="w-full bg-[#0f1419] border-gray-600 hover:border-gray-500 focus:border-gray-500 transition-colors h-10 text-white">
                   <SelectValue placeholder={selectedProject ? 'Select a task' : 'Select a task'} />
                 </SelectTrigger>
                 <SelectContent className="max-h-[300px] bg-[#1e2339] border-gray-700">
@@ -272,12 +272,12 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-200 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-blue-400" />
+              <MapPin className="w-4 h-4 text-gray-400" />
               Current Location
             </label>
             {loading ? (
               <div className="p-4 bg-[#0f1419] rounded-lg border border-gray-700 flex items-center gap-3">
-                <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
                 <span className="text-sm text-gray-300">Getting location...</span>
               </div>
             ) : (
@@ -296,7 +296,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
             <Button
               type="submit"
               disabled={loading || submitting}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold h-11 shadow-lg hover:shadow-xl transition-all"
+              className="flex-1 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 font-semibold h-11 shadow-lg hover:shadow-xl transition-all"
             >
               {submitting ? (
                 <>
