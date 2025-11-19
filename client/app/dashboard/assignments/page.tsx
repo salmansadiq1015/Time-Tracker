@@ -219,8 +219,8 @@ export default function AssignmentsPage() {
                 <FileText className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Assignments</h1>
-                <p className="text-xs text-gray-400">Manage and track your assignments</p>
+                <h1 className="text-2xl font-bold text-white">Tasks</h1>
+                <p className="text-xs text-gray-400">Manage and track your tasks</p>
               </div>
             </div>
             {auth.user.role === 'admin' && (
@@ -495,12 +495,12 @@ export default function AssignmentsPage() {
         <DialogContent className="max-w-2xl border-gray-700 bg-[#1e2339]">
           <DialogHeader>
             <DialogTitle className="text-2xl text-white">
-              {editingAssignment ? 'Edit Assignment' : 'Create New Assignment'}
+              {editingAssignment ? 'Edit Task' : 'Create New Task'}
             </DialogTitle>
             <DialogDescription className="text-gray-400">
               {editingAssignment
-                ? 'Update the assignment description'
-                : 'Enter the assignment description below'}
+                ? 'Update the task description'
+                : 'Enter the task description below'}
             </DialogDescription>
           </DialogHeader>
 
@@ -510,7 +510,7 @@ export default function AssignmentsPage() {
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ description: e.target.value })}
-                placeholder="Enter assignment description..."
+                placeholder="Enter task description..."
                 className="min-h-[120px] bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-2 focus:ring-gray-500/20 resize-none"
               />
             </div>

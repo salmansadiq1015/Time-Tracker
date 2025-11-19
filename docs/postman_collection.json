@@ -156,14 +156,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"user\": \"{{userId}}\",\n  \"start\": {\n    \"startTime\": \"{{nowIso}}\",\n    \"location\": \"NYC\",\n    \"lat\": 40.7128,\n    \"lng\": -74.006\n  },\n  \"description\": \"Demo start\",\n  \"photos\": [],\n  \"project\": \"{{projectId}}\",\n  \"task\": \"{{taskId}}\"\n}"
+              "raw": "{\n  \"user\": \"{{userId}}\",\n  \"start\": {\n    \"startTime\": \"{{nowIso}}\",\n    \"location\": \"NYC\",\n    \"lat\": 40.7128,\n    \"lng\": -74.006\n  },\n  \"description\": \"Demo start\",\n  \"photos\": [],\n  \"project\": \"{{projectId}}\",\n  \"assignment\": \"{{assignmentId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/time-tracker/start",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "time-tracker", "start"]
             },
-            "description": "Start a timer. Project and task are optional fields. If provided, they should be valid project and task IDs."
+            "description": "Start a timer. Project and assignment are optional fields. If provided, they should be valid project and assignment IDs. Only one active (non-paused) timer is allowed per user."
           }
         },
         {
@@ -186,7 +186,37 @@
           }
         },
         {
-          "name": "Update Timer (status/client/photos/project/task)",
+          "name": "Pause Timer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/time-tracker/pause/{{timerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "time-tracker", "pause", "{{timerId}}"]
+            },
+            "description": "Pause an active timer. The timer must be active and not already paused. Paused timers can be resumed later."
+          }
+        },
+        {
+          "name": "Resume Timer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/time-tracker/resume/{{timerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "time-tracker", "resume", "{{timerId}}"]
+            },
+            "description": "Resume a paused timer. The timer must be paused. Only one active (non-paused) timer is allowed per user at a time."
+          }
+        },
+        {
+          "name": "Update Timer (status/client/photos/project/assignment)",
           "request": {
             "method": "PATCH",
             "header": [
@@ -195,14 +225,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"description\": \"Edited\",\n  \"photos\": [],\n  \"status\": \"approved\",\n  \"verifiedByClient\": true,\n  \"client\": \"{{clientId}}\",\n  \"project\": \"{{projectId}}\",\n  \"task\": \"{{taskId}}\"\n}"
+              "raw": "{\n  \"description\": \"Edited\",\n  \"photos\": [],\n  \"status\": \"approved\",\n  \"verifiedByClient\": true,\n  \"client\": \"{{clientId}}\",\n  \"project\": \"{{projectId}}\",\n  \"assignment\": \"{{assignmentId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/time-tracker/update/{{timerId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "time-tracker", "update", "{{timerId}}"]
             },
-            "description": "Update a timer. All fields are optional. Project and task can be updated independently."
+            "description": "Update a timer. All fields are optional. Project and assignment can be updated independently."
           }
         },
         {
@@ -265,7 +295,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Project A\",\n  \"client\": \"{{clientId}}\",\n  \"employees\": [],\n  \"address\": \"123 Street\",\n  \"city\": \"NYC\",\n  \"description\": \"Test\",\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-02-01\",\n  \"tags\": [\"demo\"]\n}"
+              "raw": "{\n  \"name\": \"Project A\",\n  \"client\": \"{{clientId}}\",\n  \"employees\": [],\n  \"address\": \"123 Street\",\n  \"city\": \"NYC\",\n  \"state\": \"NY\",\n  \"zip\": \"10001\",\n  \"description\": \"Test\",\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-02-01\",\n  \"tags\": [\"demo\"]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/projects/create",
@@ -282,7 +312,7 @@
               {"key": "Authorization", "value": "{{token}}"},
               {"key": "Content-Type", "value": "application/json"}
             ],
-            "body": {"mode": "raw", "raw": "{\n  \"name\": \"Edited Project\"\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"name\": \"Edited Project\",\n  \"state\": \"CA\",\n  \"zip\": \"90210\"\n}"},
             "url": {
               "raw": "{{baseUrl}}/api/v1/projects/update/{{projectId}}",
               "host": ["{{baseUrl}}"],
@@ -348,15 +378,18 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/equipment/all?page=1&limit=10&search=",
+              "raw": "{{baseUrl}}/api/v1/equipment/all?page=1&limit=10&status=all&assignedTo=&search=",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "equipment", "all"],
               "query": [
                 {"key": "page", "value": "1"},
                 {"key": "limit", "value": "10"},
+                {"key": "status", "value": "all"},
+                {"key": "assignedTo", "value": ""},
                 {"key": "search", "value": ""}
               ]
-            }
+            },
+            "description": "List all equipment. Supports filtering by status, assignedTo (user ID), and search query (searches by name)."
           }
         },
         {
@@ -381,7 +414,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Excavator\",\n  \"serial\": \"EX-123\",\n  \"brand\": \"CAT\",\n  \"status\": \"active\"\n}"
+              "raw": "{\n  \"name\": \"Excavator\",\n  \"serial\": \"EX-123\",\n  \"project\": \"{{projectId}}\",\n  \"status\": \"available\",\n  \"assignedTo\": \"{{userId}}\",\n  \"assignDate\": \"2025-01-15\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/equipment/create",
@@ -398,7 +431,7 @@
               {"key": "Authorization", "value": "{{token}}"},
               {"key": "Content-Type", "value": "application/json"}
             ],
-            "body": {"mode": "raw", "raw": "{\n  \"name\": \"Excavator X\"\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"name\": \"Excavator X\",\n  \"assignDate\": \"2025-01-20\"\n}"},
             "url": {
               "raw": "{{baseUrl}}/api/v1/equipment/update/{{equipmentId}}",
               "host": ["{{baseUrl}}"],
@@ -634,6 +667,101 @@
       ]
     },
     {
+      "name": "Assignments",
+      "item": [
+        {
+          "name": "List Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assignments/all?page=1&limit=10&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assignments", "all"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "search", "value": ""}
+              ]
+            },
+            "description": "List all assignments with pagination. Supports search by description. Requires authentication."
+          }
+        },
+        {
+          "name": "Get Assignment Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assignments/{{assignmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assignments", "{{assignmentId}}"]
+            },
+            "description": "Get details of a specific assignment. Requires authentication."
+          }
+        },
+        {
+          "name": "Create Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Complete site inspection and report\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assignments/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assignments", "create"]
+            },
+            "description": "Create a new assignment. Only description field is required. Requires admin authentication."
+          }
+        },
+        {
+          "name": "Update Assignment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated assignment description\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assignments/update/{{assignmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assignments", "update", "{{assignmentId}}"]
+            },
+            "description": "Update an assignment. Only description field can be updated. Requires admin authentication."
+          }
+        },
+        {
+          "name": "Delete Assignment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "{{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assignments/delete/{{assignmentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assignments", "delete", "{{assignmentId}}"]
+            },
+            "description": "Delete an assignment. Requires admin authentication."
+          }
+        }
+      ]
+    },
+    {
       "name": "Tasks",
       "item": [
         {
@@ -743,6 +871,7 @@
     { "key": "projectId", "value": "" },
     { "key": "equipmentId", "value": "" },
     { "key": "taskId", "value": "" },
+    { "key": "assignmentId", "value": "" },
     { "key": "nowIso", "value": "{{$isoTimestamp}}" }
   ]
 }

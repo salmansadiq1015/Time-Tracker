@@ -222,7 +222,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
 
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-200 flex items-center gap-1.5">
-                <span>Assignment</span>
+                <span>Task</span>
                 <span className="text-xs font-normal text-gray-400">(Optional)</span>
               </label>
               <Select
@@ -231,7 +231,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
                 disabled={submitting || loadingAssignments}
               >
                 <SelectTrigger className="w-full bg-[#0f1419] border-gray-600 hover:border-gray-500 focus:border-gray-500 transition-colors h-10 text-white">
-                  <SelectValue placeholder="Select an assignment" />
+                  <SelectValue placeholder="Select a task" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[300px] bg-[#1e2339] border-gray-700">
                   <SelectItem value="none" className="text-gray-400">
@@ -250,7 +250,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
                   ))}
                   {assignments.length === 0 && (
                     <SelectItem value="no-assignments" disabled className="text-gray-500 italic">
-                      No assignments found
+                      No tasks found
                     </SelectItem>
                   )}
                 </SelectContent>
