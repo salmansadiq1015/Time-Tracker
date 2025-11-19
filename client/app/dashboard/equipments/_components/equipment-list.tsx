@@ -46,7 +46,7 @@ interface Equipment {
   serial: string;
   status: 'available' | 'assigned' | 'maintenance';
   assignedTo?: { name: string; email: string };
-  purchaseDate?: string;
+  assignDate?: string;
   createdBy?: { name: string };
 }
 
@@ -58,6 +58,8 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
   const [totalCount, setTotalCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [userFilter, setUserFilter] = useState<string>('all');
+  const [users, setUsers] = useState<Array<{ _id: string; name: string; email: string }>>([]);
   const [editingEquipment, setEditingEquipment] = useState<Equipment | null>(null);
   const [assigningEquipment, setAssigningEquipment] = useState<Equipment | null>(null);
   const [viewMode, setViewMode] = useState<'card' | 'table'>('table');
@@ -70,6 +72,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
       query.append('page', page.toString());
       query.append('limit', limit.toString());
       if (statusFilter !== 'all') query.append('status', statusFilter);
+      if (userFilter !== 'all') query.append('assignedTo', userFilter);
 
       const { data } = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/equipment/all?${query}`
@@ -84,7 +87,22 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, searchTerm, statusFilter]);
+  }, [page, limit, searchTerm, statusFilter, userFilter]);
+
+  // Fetch users for filter
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/auth/all`);
+        if (data.results && data.results.users) {
+          setUsers(data.results.users);
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
     fetchEquipment();
@@ -94,7 +112,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
   useEffect(() => {
     setPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter, userFilter]);
 
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
@@ -337,7 +355,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
           </div>
         </div>
         <CardContent className="p-6 relative">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="md:col-span-2 relative group/search">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within/search:text-gray-400 transition-all duration-300 group-focus-within/search:scale-110" />
               <Input
@@ -371,6 +389,20 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                 <option value="available">Available</option>
                 <option value="assigned">Assigned</option>
                 <option value="maintenance">Maintenance</option>
+              </select>
+            </div>
+            <div className="relative">
+              <select
+                className="w-full h-12 px-4 border border-gray-600 rounded-lg bg-[#0f1419] text-white focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500/20 transition-all appearance-none cursor-pointer font-medium hover:border-gray-500"
+                value={userFilter}
+                onChange={(e) => setUserFilter(e.target.value)}
+              >
+                <option value="all">All Users</option>
+                {users.map((user) => (
+                  <option key={user._id} value={user._id}>
+                    {user.name}
+                  </option>
+                ))}
               </select>
             </div>
             <Button
@@ -500,7 +532,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                 </div>
                 <div className="flex items-start justify-between relative z-10">
                   <div className="flex-1 min-w-0 pr-4">
-                    <CardTitle className="text-xl font-bold mb-3 truncate group-hover:text-gray-400 transition-colors duration-300 text-white">
+                    <CardTitle className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-gray-400 transition-colors duration-300 text-white">
                       {item.name}
                     </CardTitle>
                     <div className="flex items-center gap-2 text-sm text-gray-400 bg-[#0f1419] px-3 py-1.5 rounded-lg w-fit border border-gray-600">
@@ -547,17 +579,17 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                   </div>
                 )}
 
-                {item.purchaseDate && (
+                {item.assignDate && (
                   <div className="flex items-center gap-4 p-4 rounded-xl bg-[#0f1419] border-2 border-gray-600 hover:border-gray-500 transition-all duration-300 hover:shadow-md">
                     <div className="w-12 h-12 rounded-xl bg-gray-600/20 flex items-center justify-center shrink-0 shadow-md">
                       <Calendar className="w-5 h-5 text-gray-400" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
-                        Purchase Date
+                        Assign Date
                       </p>
                       <p className="font-bold text-white text-base">
-                        {new Date(item.purchaseDate).toLocaleDateString('en-US', {
+                        {new Date(item.assignDate).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
@@ -617,7 +649,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                     Assigned To
                   </TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base text-white">
-                    Purchase Date
+                    Assign Date
                   </TableHead>
                   <TableHead className="h-16 px-6 text-right font-bold text-base text-white">
                     Actions
@@ -648,7 +680,10 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                         <span className="font-mono text-sm text-gray-300">{item.serial}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="px-6 py-4">
+                    <TableCell
+                      className="px-6 py-4 cursor-pointer"
+                      onClick={() => setAssigningEquipment(item)}
+                    >
                       <Badge
                         className={`flex items-center gap-1.5 px-3 py-1.5 border-2 ${getStatusColor(
                           item.status
@@ -678,11 +713,11 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
                       )}
                     </TableCell>
                     <TableCell className="px-6 py-4">
-                      {item.purchaseDate ? (
+                      {item.assignDate ? (
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
                           <span className="text-sm text-white">
-                            {new Date(item.purchaseDate).toLocaleDateString('en-US', {
+                            {new Date(item.assignDate).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'short',
                               day: 'numeric',

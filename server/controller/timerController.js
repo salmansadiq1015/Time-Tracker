@@ -3,7 +3,7 @@ import timerModel from '../models/timerModel.js';
 // Start Timer
 export const startTimer = async (req, res) => {
   try {
-    const { user, start, description, photos, project, task } = req.body;
+    const { user, start, description, photos, project, assignment } = req.body;
 
     if (!start) {
       return res.status(400).json({
@@ -13,12 +13,30 @@ export const startTimer = async (req, res) => {
       });
     }
 
+    const userId = user ? user : req.user._id;
+
+    // Check if there's already an active timer (not paused) for this user
+    const existingActiveTimer = await timerModel.findOne({
+      user: userId,
+      isActive: true,
+      $or: [{ paused: { $ne: true } }, { paused: false }, { status: { $ne: 'paused' } }],
+    });
+
+    if (existingActiveTimer) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'You already have an active timer running. Please pause or stop it before starting a new one.',
+        error: 'Active timer already exists',
+      });
+    }
+
     const startPhotos = Array.isArray(photos) ? photos : [];
 
     const timer = await timerModel.create({
-      user: user ? user : req.user._id,
+      user: userId,
       project: project || undefined,
-      task: task || undefined,
+      assignment: assignment || undefined,
       start: {
         ...start,
         photos: startPhotos,
@@ -142,7 +160,7 @@ export const updateTimer = async (req, res) => {
         {
           user: data.user ? data.user : timer.user,
           project: data.project !== undefined ? data.project : timer.project,
-          task: data.task !== undefined ? data.task : timer.task,
+          assignment: data.assignment !== undefined ? data.assignment : timer.assignment,
           start: startPayload,
           end: endPayload,
           description: data.description ? data.description : timer.description,
@@ -162,7 +180,7 @@ export const updateTimer = async (req, res) => {
         populate: { path: 'createdby', select: 'name email role phone' },
       })
       .populate('project', 'name')
-      .populate('task', 'title')
+      .populate('assignment', 'description')
       .populate('client', 'name email');
 
     res.status(200).json({
@@ -179,145 +197,6 @@ export const updateTimer = async (req, res) => {
     });
   }
 };
-
-// Fetch Timer
-// export const fetchTimers = async (req, res) => {
-//   try {
-//     const page = Math.max(parseInt(req.query.page) || 1, 1);
-//     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
-//     const { user, start, end } = req.query;
-
-//     const query = {};
-//     if (user) query.user = user;
-
-//     // 🗓️ Apply date filters (based on createdAt)
-//     if (start || end) {
-//       query.createdAt = {};
-//       if (start) {
-//         const startDate = new Date(start);
-//         startDate.setHours(0, 0, 0, 0);
-//         query.createdAt.$gte = startDate;
-//       }
-//       if (end) {
-//         const endDate = new Date(end);
-//         endDate.setHours(23, 59, 59, 999);
-//         query.createdAt.$lte = endDate;
-//       }
-//     }
-
-//     // 📦 Fetch paginated timers and total count
-//     const [timers, totalCount, allTimersForLeaveCalc] = await Promise.all([
-//       timerModel
-//         .find(query)
-//         .populate("user", "name email")
-//         .sort({ "start.startTime": -1 })
-//         .skip((page - 1) * limit)
-//         .limit(limit)
-//         .lean(),
-//       timerModel.countDocuments(query),
-//       // Fetch ALL timers (just dates) for accurate leave calculation
-//       timerModel.find(query).select("start.startTime").lean(),
-//     ]);
-
-//     // ⏱️ Compute duration for each timer dynamically
-//     let totalDuration = 0;
-
-//     const timersWithDuration = timers.map((t) => {
-//       let duration = 0;
-
-//       if (t.start?.startTime && t.end?.endTime) {
-//         const start = new Date(t.start.startTime);
-//         const end = new Date(t.end.endTime);
-//         duration = Math.max(0, (end - start) / 1000 / 60);
-//         totalDuration += duration;
-//       }
-
-//       return {
-//         ...t,
-//         duration, // add duration to each timer
-//       };
-//     });
-
-//     // 📅 Compute total leaves (days with no work)
-//     let totalLeaves = 0;
-//     if (allTimersForLeaveCalc.length > 0) {
-//       // Find the earliest timer date from ALL timers
-//       const firstEntryDate = allTimersForLeaveCalc.reduce((earliest, t) => {
-//         if (!t.start?.startTime) return earliest;
-//         const timerDate = new Date(t.start.startTime);
-//         timerDate.setHours(0, 0, 0, 0);
-//         return !earliest || timerDate < earliest ? timerDate : earliest;
-//       }, null);
-
-//       if (firstEntryDate) {
-//         const today = new Date();
-//         today.setHours(0, 0, 0, 0);
-
-//         // Get all worked days from ALL timers (normalize dates to YYYY-MM-DD)
-//         const workedDays = new Set();
-//         allTimersForLeaveCalc.forEach((t) => {
-//           if (t.start?.startTime) {
-//             const workDate = new Date(t.start.startTime);
-//             // Normalize to local date string
-//             const dateKey = new Date(
-//               workDate.getFullYear(),
-//               workDate.getMonth(),
-//               workDate.getDate()
-//             )
-//               .toISOString()
-//               .split("T")[0];
-//             workedDays.add(dateKey);
-//           }
-//         });
-
-//         const lastDayToCheck = new Date(today);
-//         lastDayToCheck.setDate(lastDayToCheck.getDate() - 1);
-
-//         for (
-//           let d = new Date(firstEntryDate);
-//           d <= lastDayToCheck;
-//           d.setDate(d.getDate() + 1)
-//         ) {
-//           const dateKey = d.toISOString().split("T")[0];
-//           if (!workedDays.has(dateKey)) {
-//             totalLeaves++;
-//           }
-//         }
-//       }
-//     }
-
-//     const totalPages = Math.ceil(totalCount / limit);
-
-//     // 📤 Send response
-//     res.status(200).json({
-//       success: true,
-//       message: "Timers fetched successfully",
-//       data: {
-//         timers: timersWithDuration,
-//         summary: {
-//           totalDuration: totalDuration.toFixed(2),
-//           totalLeaves,
-//           totalCount,
-//         },
-//         pagination: {
-//           total: totalCount,
-//           totalPages,
-//           currentPage: page,
-//           limit,
-//           hasNextPage: page < totalPages,
-//           hasPrevPage: page > 1,
-//         },
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Error fetching timers:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Internal Server Error",
-//       error: error.message,
-//     });
-//   }
-// };
 
 export const fetchTimers = async (req, res) => {
   try {
@@ -353,7 +232,7 @@ export const fetchTimers = async (req, res) => {
           populate: { path: 'createdby', select: 'name email role phone' },
         })
         .populate('project', 'name')
-        .populate('task', 'title')
+        .populate('assignment', 'description')
         .sort({ 'start.startTime': -1 })
         .skip((page - 1) * limit)
         .limit(limit)
@@ -369,16 +248,26 @@ export const fetchTimers = async (req, res) => {
     const timersWithDuration = timers.map((t) => {
       let duration = 0;
 
-      if (t.start?.startTime && t.end?.endTime) {
+      if (t.start?.startTime) {
         const start = new Date(t.start.startTime);
-        const end = new Date(t.end.endTime);
-        duration = Math.max(0, (end - start) / 1000 / 60);
-        totalDuration += duration;
+        const end = t.end?.endTime ? new Date(t.end.endTime) : new Date();
+
+        // Calculate total time
+        const totalTime = (end - start) / 1000 / 60;
+
+        // Subtract paused duration
+        const pausedDuration = t.pausedDuration || 0;
+        duration = Math.max(0, totalTime - pausedDuration);
+
+        // Only add to total if timer is stopped
+        if (t.end?.endTime) {
+          totalDuration += duration;
+        }
       }
 
       return {
         ...t,
-        duration, // add duration to each timer
+        duration, // add duration to each timer (excluding paused time)
       };
     });
 
@@ -466,69 +355,180 @@ export const fetchTimers = async (req, res) => {
   }
 };
 
-// export const fetchTimers = async (req, res) => {
-//   try {
-//     // Parse query params with defaults
-//     const page = Math.max(parseInt(req.query.page) || 1, 1);
-//     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
-//     const { user, start, end } = req.query;
+// Pause Timer
+export const pauseTimer = async (req, res) => {
+  try {
+    const timerId = req.params.id;
 
-//     // Build dynamic query efficiently
-//     const query = {};
-//     if (user) query.user = user;
+    const timer = await timerModel.findById(timerId);
 
-//     if (start || end) {
-//       query.createdAt = {};
-//       if (start) {
-//         const startDate = new Date(start);
-//         startDate.setHours(0, 0, 0, 0);
-//         query.createdAt.$gte = startDate;
-//       }
-//       if (end) {
-//         const endDate = new Date(end);
-//         endDate.setHours(23, 59, 59, 999);
-//         query.createdAt.$lte = endDate;
-//       }
-//     }
+    if (!timer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Timer not found',
+        error: 'Timer not found',
+      });
+    }
 
-//     // Count total documents for pagination metadata
-//     const [timers, totalCount] = await Promise.all([
-//       timerModel
-//         .find(query)
-//         .populate("user", "name email")
-//         .sort({ start: -1 })
-//         .skip((page - 1) * limit)
-//         .limit(limit)
-//         .lean(),
-//       timerModel.countDocuments(query),
-//     ]);
+    // Check if timer is active and not already paused
+    // Allow pause if timer is active (isActive=true) and not already paused
+    if (!timer.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'Timer is not active',
+        error: 'Timer is not active',
+      });
+    }
 
-//     const totalPages = Math.ceil(totalCount / limit);
+    if (timer.paused || timer.status === 'paused') {
+      return res.status(200).json({
+        success: false,
+        message: 'Timer is already paused',
+        error: 'Timer is already paused',
+      });
+    }
 
-//     res.status(200).json({
-//       success: true,
-//       message: "Timers fetched successfully",
-//       data: {
-//         timers,
-//         pagination: {
-//           total: totalCount,
-//           totalPages,
-//           currentPage: page,
-//           limit,
-//           hasNextPage: page < totalPages,
-//           hasPrevPage: page > 1,
-//         },
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Error fetching timers:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Internal Server Error",
-//       error: error.message,
-//     });
-//   }
-// };
+    const pausedAt = new Date();
+    const updatedTimer = await timerModel
+      .findByIdAndUpdate(
+        timerId,
+        {
+          paused: true,
+          pausedAt: pausedAt,
+          status: 'paused',
+          $push: {
+            pausePeriods: {
+              pausedAt: pausedAt,
+            },
+          },
+        },
+        { new: true }
+      )
+      .populate({
+        path: 'user',
+        select: 'name email phone role status createdby',
+        populate: { path: 'createdby', select: 'name email role phone' },
+      })
+      .populate('project', 'name')
+      .populate('assignment', 'description')
+      .populate('client', 'name email');
+
+    res.status(200).json({
+      success: true,
+      message: 'Timer paused successfully',
+      timer: updatedTimer,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
+    });
+  }
+};
+
+// Resume Timer
+export const resumeTimer = async (req, res) => {
+  try {
+    const timerId = req.params.id;
+
+    const timer = await timerModel.findById(timerId);
+
+    if (!timer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Timer not found',
+        error: 'Timer not found',
+      });
+    }
+
+    // Check if timer is paused
+    if (!timer.paused && timer.status !== 'paused') {
+      return res.status(400).json({
+        success: false,
+        message: 'Timer is not paused',
+        error: 'Timer is not paused',
+      });
+    }
+
+    if (!timer.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'Timer is not active',
+        error: 'Timer is not active',
+      });
+    }
+
+    // Check if there's already an active timer (not paused) for this user
+    const existingActiveTimer = await timerModel.findOne({
+      user: timer.user,
+      isActive: true,
+      _id: { $ne: timerId }, // Exclude the current timer being resumed
+      $or: [{ paused: { $ne: true } }, { paused: false }, { status: { $ne: 'paused' } }],
+    });
+
+    if (existingActiveTimer) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'You already have an active timer running. Please pause or stop it before resuming another timer.',
+        error: 'Active timer already exists',
+      });
+    }
+
+    const resumedAt = new Date();
+    const pauseDuration = timer.pausedAt
+      ? Math.round((resumedAt - new Date(timer.pausedAt)) / (60 * 1000))
+      : 0;
+
+    // Update the last pause period
+    const pausePeriods = Array.isArray(timer.pausePeriods) ? [...timer.pausePeriods] : [];
+    if (pausePeriods.length > 0) {
+      const lastPause = pausePeriods[pausePeriods.length - 1];
+      if (!lastPause.resumedAt) {
+        lastPause.resumedAt = resumedAt;
+        lastPause.duration = pauseDuration;
+      }
+    }
+
+    const totalPausedDuration = (timer.pausedDuration || 0) + pauseDuration;
+
+    const updatedTimer = await timerModel
+      .findByIdAndUpdate(
+        timerId,
+        {
+          paused: false,
+          pausedAt: null,
+          status: 'active',
+          pausedDuration: totalPausedDuration,
+          pausePeriods: pausePeriods,
+        },
+        { new: true }
+      )
+      .populate({
+        path: 'user',
+        select: 'name email phone role status createdby',
+        populate: { path: 'createdby', select: 'name email role phone' },
+      })
+      .populate('project', 'name')
+      .populate('assignment', 'description')
+      .populate('client', 'name email');
+
+    res.status(200).json({
+      success: true,
+      message: 'Timer resumed successfully',
+      timer: updatedTimer,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
+    });
+  }
+};
 
 // Delete Timer
 export const deleteTimer = async (req, res) => {

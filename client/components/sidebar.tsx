@@ -13,6 +13,7 @@ import {
   CheckSquare,
   ChevronRight,
   User,
+  FileText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -53,7 +54,8 @@ export function Sidebar() {
       title: 'Fleet Management',
       items: [
         { label: 'Projects', href: '/dashboard/projects', icon: BarChart3 },
-        { label: 'Tasks', href: '/dashboard/tasks', icon: CheckSquare },
+        // { label: 'Tasks', href: '/dashboard/tasks', icon: CheckSquare },
+        { label: 'Assignments', href: '/dashboard/assignments', icon: FileText },
         ...(user?.role === 'admin' || user?.role === 'dispatcher'
           ? [{ label: 'Equipments', href: '/dashboard/equipments', icon: FaTools }]
           : []),

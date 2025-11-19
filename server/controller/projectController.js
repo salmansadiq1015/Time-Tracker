@@ -3,7 +3,7 @@ import projectModel from '../models/projectModel.js';
 // Create Project
 export const createProject = async (req, res) => {
   try {
-    const { name, employees = [], address, city, description = '', startDate, endDate } = req.body;
+    const { name, employees = [], address, city, state, zip, description = '', startDate, endDate } = req.body;
 
     // --- 1️⃣ Input validation ---
     const requiredFields = { name, address, startDate, endDate };
@@ -32,6 +32,8 @@ export const createProject = async (req, res) => {
       employees,
       address: address.trim(),
       city,
+      state,
+      zip,
       description: description.trim(),
       startDate,
       endDate,

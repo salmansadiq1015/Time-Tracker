@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { CalendarX, Clock, Play, Users } from 'lucide-react';
 import { TimeTrackerForm } from '@/components/time-tracker-form';
@@ -47,10 +47,18 @@ interface TimeEntry {
   createdAt: string;
   photos?: string[];
   status?: string;
+  paused?: boolean;
+  pausedAt?: string;
+  pausedDuration?: number;
+  pausePeriods?: Array<{
+    pausedAt: string;
+    resumedAt?: string;
+    duration?: number;
+  }>;
   verifiedByClient?: boolean;
   client?: string | { _id: string; name: string; email: string };
   project?: string | { _id: string; name: string };
-  task?: string | { _id: string; title: string };
+  assignment?: string | { _id: string; description: string };
   user?: {
     _id: string;
     name: string;
@@ -94,7 +102,10 @@ export default function TimeTrackerPage() {
   const [entries, setEntries] = useState<TimeEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTimer, setActiveTimer] = useState<TimeEntry | null>(null);
+  const [pausedTimers, setPausedTimers] = useState<TimeEntry[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const pauseInProgressRef = useRef<Set<string>>(new Set());
+  const resumeInProgressRef = useRef<Set<string>>(new Set());
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -154,8 +165,22 @@ export default function TimeTrackerPage() {
         const paginationData = response.data.data.pagination;
         setPagination(paginationData);
 
-        const active = response.data.data.timers?.find((t: TimeEntry) => t.isActive);
+        // Find active timer (only non-paused ones) - strict check
+        const active = response.data.data.timers?.find(
+          (t: TimeEntry) =>
+            t.isActive === true &&
+            t.paused !== true &&
+            t.status !== 'paused' &&
+            (!t.pausedAt || t.pausedAt === null)
+        );
         setActiveTimer(active || null);
+
+        // Find paused timers (for the paused list)
+        const paused =
+          response.data.data.timers?.filter(
+            (t: TimeEntry) => t.isActive && (t.paused || t.status === 'paused')
+          ) || [];
+        setPausedTimers(paused);
       }
     } catch (error: any) {
       console.error('Error fetching time entries:', error);
@@ -302,6 +327,17 @@ export default function TimeTrackerPage() {
 
   // Handle Starting Timer
   const handleStartTimer = async (data: any) => {
+    // Check if there's already an active timer
+    if (activeTimer && activeTimer.status !== 'paused' && !activeTimer.paused) {
+      toast({
+        title: 'Timer Already Running',
+        description:
+          'You already have an active timer running. Please pause or stop it before starting a new one.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/time-tracker/start`,
@@ -316,7 +352,7 @@ export default function TimeTrackerPage() {
           description: data.description,
           photos: data.photos || [],
           project: data.project,
-          task: data.task,
+          assignment: data.assignment,
         }
       );
 
@@ -333,11 +369,20 @@ export default function TimeTrackerPage() {
       }
     } catch (error: any) {
       console.error('Error starting timer:', error);
-      toast({
-        title: 'Error',
-        description: error.response?.data?.message || 'Failed to start timer',
-        variant: 'destructive',
-      });
+      // Handle case where timer is already running
+      if (error.response?.status === 400 && error.response?.data?.message) {
+        toast({
+          title: 'Timer Already Running',
+          description: error.response.data.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: error.response?.data?.message || 'Failed to start timer',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -374,6 +419,131 @@ export default function TimeTrackerPage() {
         description: error.response?.data?.message || 'Failed to stop timer',
         variant: 'destructive',
       });
+    }
+  };
+
+  // Handle Pausing Timer
+  const handlePauseTimer = async (id: string) => {
+    // Prevent duplicate calls
+    if (!id) return;
+
+    // Check if pause is already in progress for this timer
+    if (pauseInProgressRef.current.has(id)) {
+      return;
+    }
+
+    // Mark as in progress
+    pauseInProgressRef.current.add(id);
+
+    try {
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/time-tracker/pause/${id}`
+      );
+
+      if (response.data) {
+        const pausedTimer = response.data.timer;
+        window.location.reload();
+        // Clear active timer since it's now paused
+        setActiveTimer(null);
+        // Update entries
+        setEntries(entries.map((entry) => (entry._id === id ? pausedTimer : entry)));
+        // Add to paused timers list
+        setPausedTimers((prev) => {
+          const exists = prev.find((t) => t._id === id);
+          if (exists) {
+            return prev.map((t) => (t._id === id ? pausedTimer : t));
+          }
+          return [...prev, pausedTimer];
+        });
+        // Refresh to get updated data
+        await fetchEntries();
+        toast({
+          title: 'Timer Paused',
+          description: 'You can now start a new timer or resume this one later.',
+        });
+      }
+    } catch (error: any) {
+      console.error('Error pausing timer:', error);
+      // Don't show error if timer is already paused (expected case)
+      if (
+        error.response?.status !== 400 ||
+        !error.response?.data?.message?.includes('already paused')
+      ) {
+        toast({
+          title: 'Error',
+          description: error.response?.data?.message || 'Failed to pause timer',
+          variant: 'destructive',
+        });
+      }
+    } finally {
+      // Remove from in-progress set
+      pauseInProgressRef.current.delete(id);
+    }
+  };
+
+  // Handle Resuming Timer
+  const handleResumeTimer = async (id: string) => {
+    // Prevent duplicate calls
+    if (!id) return;
+
+    // Check if there's already an active timer running
+    if (activeTimer) {
+      toast({
+        title: 'Timer Already Running',
+        description:
+          'You already have an active timer running. Please pause or stop it before resuming another timer.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Check if resume is already in progress for this timer
+    if (resumeInProgressRef.current.has(id)) {
+      return;
+    }
+
+    // Mark as in progress
+    resumeInProgressRef.current.add(id);
+
+    try {
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/time-tracker/resume/${id}`
+      );
+
+      if (response.data?.success) {
+        const resumedTimer = response.data.timer;
+        // Set as active timer
+        setActiveTimer(resumedTimer);
+        // Remove from paused timers
+        setPausedTimers((prev) => prev.filter((t) => t._id !== id));
+        // Update entries
+        setEntries(entries.map((entry) => (entry._id === id ? resumedTimer : entry)));
+        // Refresh to get updated data
+        await fetchEntries();
+        toast({
+          title: 'Timer Resumed',
+          description: 'Timer has been resumed successfully.',
+        });
+      }
+    } catch (error: any) {
+      console.error('Error resuming timer:', error);
+      // Handle case where timer is already running
+      if (error.response?.status === 400 && error.response?.data?.message) {
+        toast({
+          title: 'Timer Already Running',
+          description: error.response.data.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: error.response?.data?.message || 'Failed to resume timer',
+          variant: 'destructive',
+        });
+      }
+    } finally {
+      // Remove from in-progress set
+      resumeInProgressRef.current.delete(id);
     }
   };
 
@@ -549,9 +719,82 @@ export default function TimeTrackerPage() {
             />
           )}
 
-          {/* Active Timer Display */}
-          {auth?.user?.role === 'user' && (
-            <ActiveTimerDisplay activeTimer={activeTimer} onStop={handleStopTimer} />
+          {/* Active Timer Display - Only show non-paused active timers */}
+          {auth?.user?.role === 'user' &&
+            activeTimer &&
+            activeTimer.paused !== true &&
+            activeTimer.status !== 'paused' &&
+            (!activeTimer.pausedAt || activeTimer.pausedAt === null) && (
+              <ActiveTimerDisplay
+                activeTimer={activeTimer}
+                onStop={handleStopTimer}
+                onPause={handlePauseTimer}
+                onResume={handleResumeTimer}
+              />
+            )}
+
+          {/* Paused Timers List */}
+          {auth?.user?.role === 'user' && pausedTimers.length > 0 && (
+            <Card className="border-yellow-500/30 bg-[#1e2339] shadow-lg">
+              <CardContent className="p-4">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                  Paused Timers ({pausedTimers.length})
+                </h3>
+                <div className="space-y-3">
+                  {pausedTimers.map((timer) => {
+                    // Calculate elapsed time when paused
+                    const startTime = timer.start?.startTime
+                      ? new Date(timer.start.startTime)
+                      : null;
+                    const pausedAt = timer.pausedAt ? new Date(timer.pausedAt) : null;
+                    let elapsedMinutes = 0;
+
+                    if (startTime && pausedAt) {
+                      const totalMinutes = (pausedAt.getTime() - startTime.getTime()) / (60 * 1000);
+                      const pausedDuration = timer.pausedDuration || 0;
+                      elapsedMinutes = Math.max(0, totalMinutes - pausedDuration);
+                    }
+
+                    const hours = Math.floor(elapsedMinutes / 60);
+                    const minutes = Math.floor(elapsedMinutes % 60);
+                    const seconds = Math.floor((elapsedMinutes % 1) * 60);
+
+                    return (
+                      <div
+                        key={timer._id}
+                        className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-yellow-500/20"
+                      >
+                        <div className="flex-1">
+                          <p className="text-white font-medium">{timer.description}</p>
+                          <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                            <span>
+                              Time: {String(hours).padStart(2, '0')}:
+                              {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                            </span>
+                            <span>
+                              Paused:{' '}
+                              {timer.pausedAt
+                                ? new Date(timer.pausedAt).toLocaleString()
+                                : 'Unknown'}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => handleResumeTimer(timer._id)}
+                          disabled={!!activeTimer}
+                          className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                          size="sm"
+                        >
+                          <Play className="w-4 h-4 mr-2" />
+                          Resume
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {/* Selected User Summary */}

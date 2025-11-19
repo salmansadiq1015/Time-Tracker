@@ -23,6 +23,8 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
     name: '',
     address: '',
     city: '',
+    state: '',
+    zip: '',
     description: '',
     startDate: '',
     endDate: '',
@@ -65,6 +67,8 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
         name: formData.name,
         address: formData.address,
         city: formData.city,
+        state: formData.state,
+        zip: formData.zip,
         description: formData.description,
         startDate: formData.startDate,
         endDate: formData.endDate,
@@ -217,6 +221,24 @@ export function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalPro
                   value={formData.city}
                   onChange={handleInputChange}
                   placeholder="City"
+                  className="bg-[#1e2339] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
+                />
+              </div>
+              <div>
+                <Input
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  placeholder="State"
+                  className="bg-[#1e2339] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
+                />
+              </div>
+              <div>
+                <Input
+                  name="zip"
+                  value={formData.zip}
+                  onChange={handleInputChange}
+                  placeholder="Zip Code"
                   className="bg-[#1e2339] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
                 />
               </div>

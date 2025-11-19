@@ -22,7 +22,7 @@ interface Equipment {
   _id: string;
   name: string;
   serial: string;
-  purchaseDate?: string;
+  assignDate?: string;
 }
 
 interface EditEquipmentDialogProps {
@@ -35,7 +35,7 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
   const [formData, setFormData] = useState({
     name: equipment.name,
     serial: equipment.serial,
-    purchaseDate: equipment.purchaseDate?.split('T')[0] || '',
+    assignDate: equipment.assignDate?.split('T')[0] || '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -106,14 +106,14 @@ export function EditEquipmentDialog({ equipment, onClose, onSuccess }: EditEquip
           </div>
 
           <div>
-            <Label htmlFor="edit-purchaseDate" className="pb-1 text-white">
-              Purchase Date
+            <Label htmlFor="edit-assignDate" className="pb-1 text-white">
+              Assign Date
             </Label>
             <Input
-              id="edit-purchaseDate"
+              id="edit-assignDate"
               type="date"
-              value={formData.purchaseDate}
-              onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
+              value={formData.assignDate}
+              onChange={(e) => setFormData({ ...formData, assignDate: e.target.value })}
               className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500"
             />
           </div>

@@ -33,7 +33,7 @@ interface TimeEntry {
   isActive: boolean;
   createdAt: string;
   project?: string | { _id: string; name: string };
-  task?: string | { _id: string; title: string };
+  assignment?: string | { _id: string; description: string };
   user?: {
     _id: string;
     name: string;
@@ -144,10 +144,10 @@ export function TimeTrackerCards({
     return project.name || null;
   };
 
-  const getTaskName = (task?: string | { _id: string; title: string }) => {
-    if (!task) return null;
-    if (typeof task === 'string') return task;
-    return task.title || null;
+  const getAssignmentName = (assignment?: string | { _id: string; description: string }) => {
+    if (!assignment) return null;
+    if (typeof assignment === 'string') return assignment;
+    return assignment.description || null;
   };
 
   const validEntries = entries.filter((entry) => entry && entry._id);
@@ -194,16 +194,16 @@ export function TimeTrackerCards({
                           </span>
                         )}
                       </div>
-                      {(getProjectName(entry.project) || getTaskName(entry.task)) && (
+                      {(getProjectName(entry.project) || getAssignmentName(entry.assignment)) && (
                         <div className="flex flex-wrap gap-2 mb-2">
                           {getProjectName(entry.project) && (
                             <span className="px-2 py-0.5 bg-gray-600/20 text-gray-300 text-xs font-medium rounded border border-gray-500/50">
                               Project: {getProjectName(entry.project)}
                             </span>
                           )}
-                          {getTaskName(entry.task) && (
+                          {getAssignmentName(entry.assignment) && (
                             <span className="px-2 py-0.5 bg-purple-600/20 text-purple-300 text-xs font-medium rounded border border-purple-500/50">
-                              Task: {getTaskName(entry.task)}
+                              Assignment: {getAssignmentName(entry.assignment)}
                             </span>
                           )}
                         </div>
@@ -281,9 +281,7 @@ export function TimeTrackerCards({
                     <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-gray-400" />
                     <div>
                       <p className="text-xs text-gray-400 mb-1">Start Location</p>
-                      <p className="text-sm text-white">
-                        {entry.start?.location || 'Unknown'}
-                      </p>
+                      <p className="text-sm text-white">{entry.start?.location || 'Unknown'}</p>
                       <p className="text-xs text-gray-500">
                         {entry.start?.lat.toFixed(4)}, {entry.start?.lng.toFixed(4)}
                       </p>
@@ -313,9 +311,7 @@ export function TimeTrackerCards({
                         <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-gray-400" />
                         <div>
                           <p className="text-xs text-gray-400 mb-1">End Location</p>
-                          <p className="text-sm text-white">
-                            {entry.end.location || 'Unknown'}
-                          </p>
+                          <p className="text-sm text-white">{entry.end.location || 'Unknown'}</p>
                           <p className="text-xs text-gray-500">
                             {entry.end.lat.toFixed(4)}, {entry.end.lng.toFixed(4)}
                           </p>

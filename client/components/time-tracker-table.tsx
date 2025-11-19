@@ -53,10 +53,18 @@ interface TimeEntry {
   createdAt: string;
   photos?: string[];
   status?: string;
+  paused?: boolean;
+  pausedAt?: string;
+  pausedDuration?: number;
+  pausePeriods?: Array<{
+    pausedAt: string;
+    resumedAt?: string;
+    duration?: number;
+  }>;
   verifiedByClient?: boolean;
   client?: string | { _id: string; name: string; email: string };
   project?: string | { _id: string; name: string };
-  task?: string | { _id: string; title: string };
+  assignment?: string | { _id: string; description: string };
   user?: {
     _id: string;
     name: string;
@@ -140,33 +148,51 @@ export function TimeTrackerTable({
   };
 
   const getDurationDisplay = (entry: TimeEntry) => {
-    if (typeof entry.duration === 'number') {
+    // If duration is already calculated (from backend), use it
+    if (typeof entry.duration === 'number' && entry.duration > 0) {
       const hours = entry.duration / 60;
       if (Number.isFinite(hours) && hours > 0) {
-        return hours.toFixed(2);
+        return { hours: hours.toFixed(2), minutes: entry.duration.toFixed(0) };
       }
     }
 
+    // Calculate duration manually
     const start = entry.start?.startTime;
-    const end = entry.end?.endTime;
-    if (!start || !end) return null;
+    const end = entry.end?.endTime || (entry.isActive ? new Date().toISOString() : null);
+    if (!start) return null;
 
     try {
       const startTime = new Date(start).getTime();
-      const endTime = new Date(end).getTime();
-      const diffHours = (endTime - startTime) / 3600000;
-      if (!Number.isFinite(diffHours) || diffHours <= 0) return null;
-      return diffHours.toFixed(2);
+      const endTime = end ? new Date(end).getTime() : Date.now();
+
+      // Calculate total time in minutes
+      const totalMinutes = (endTime - startTime) / (60 * 1000);
+
+      // Subtract paused duration
+      const pausedDuration = entry.pausedDuration || 0;
+      const actualMinutes = Math.max(0, totalMinutes - pausedDuration);
+
+      if (!Number.isFinite(actualMinutes) || actualMinutes <= 0) return null;
+
+      const hours = actualMinutes / 60;
+      return { hours: hours.toFixed(2), minutes: actualMinutes.toFixed(0) };
     } catch {
       return null;
     }
   };
 
-  const getStatusBadge = (status?: string) => {
+  const getStatusBadge = (entry: TimeEntry) => {
+    const status = entry.status;
+    const isPaused = entry.paused || status === 'paused';
+
     const statusConfig: Record<string, { label: string; className: string }> = {
       active: {
         label: 'Active',
-        className: 'bg-gray-100 text-gray-700 border-gray-200',
+        className: 'bg-green-500/20 text-green-400 border-green-500/50',
+      },
+      paused: {
+        label: 'Paused',
+        className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50',
       },
       approved: {
         label: 'Approved',
@@ -185,7 +211,14 @@ export function TimeTrackerTable({
         className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
       },
     };
-    const config = statusConfig[status || 'active'] || statusConfig.active;
+
+    // Determine which status to show
+    let displayStatus = status || 'active';
+    if (isPaused && entry.isActive) {
+      displayStatus = 'paused';
+    }
+
+    const config = statusConfig[displayStatus] || statusConfig.active;
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${config.className}`}>
         {config.label}
@@ -205,10 +238,10 @@ export function TimeTrackerTable({
     return project.name || '-';
   };
 
-  const getTaskName = (task?: string | { _id: string; title: string }) => {
-    if (!task) return '-';
-    if (typeof task === 'string') return task;
-    return task.title || '-';
+  const getAssignmentName = (assignment?: string | { _id: string; description: string }) => {
+    if (!assignment) return '-';
+    if (typeof assignment === 'string') return assignment;
+    return assignment.description || '-';
   };
 
   const normalizeCoordinate = (value: unknown): number | null => {
@@ -379,9 +412,11 @@ export function TimeTrackerTable({
                   Project
                 </th>
                 <th className="text-left py-4 px-4 min-w-32 font-semibold text-white uppercase text-xs tracking-wider">
-                  Task
+                  Assignment
                 </th>
-
+                <th className="text-left py-4 px-4 min-w-24 font-semibold text-white uppercase text-xs tracking-wider">
+                  Status
+                </th>
                 <th className="text-left py-4 px-4 min-w-60 font-semibold text-gray-50 uppercase text-xs tracking-wider">
                   Start Time
                 </th>
@@ -408,7 +443,7 @@ export function TimeTrackerTable({
                 <>
                   {[...Array(3)].map((_, i) => (
                     <tr key={i} className="border-b border-gray-100">
-                      <td colSpan={12} className="py-4 px-4">
+                      <td colSpan={13} className="py-4 px-4">
                         <Skeleton className="h-8 w-full" />
                       </td>
                     </tr>
@@ -416,7 +451,7 @@ export function TimeTrackerTable({
                 </>
               ) : validEntries.length === 0 ? (
                 <tr>
-                  <td colSpan={12} className="py-12 px-4 text-center">
+                  <td colSpan={13} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <AlertCircle className="w-12 h-12 text-gray-400" />
                       <p className="text-gray-500 font-medium">No time entries found</p>
@@ -535,7 +570,9 @@ export function TimeTrackerTable({
                           </span>
                         </td>
                         <td className="py-4 px-4">
-                          <span className="text-gray-300 text-sm">{getTaskName(entry.task)}</span>
+                          <span className="text-gray-300 text-sm">
+                            {getAssignmentName(entry.assignment)}
+                          </span>
                         </td>
                         {/* <td className="py-4 px-4">
                           <button
@@ -592,9 +629,15 @@ export function TimeTrackerTable({
                             )}
                           </div>
                         </td>
+                        <td className="py-4 px-4">{getStatusBadge(entry)}</td>
                         <td className="py-4 px-4 text-right">
                           {duration ? (
-                            <span className="font-bold text-gray-400 text-sm">{duration}h</span>
+                            <div className="flex flex-col items-end">
+                              <span className="font-bold text-gray-300 text-sm">
+                                {duration.hours}h
+                              </span>
+                              <span className="text-xs text-gray-500">({duration.minutes}m)</span>
+                            </div>
                           ) : (
                             <span className="text-gray-500 text-xs">-</span>
                           )}
@@ -645,7 +688,7 @@ export function TimeTrackerTable({
                       </tr>
                       {expandedRows[entry._id] && (
                         <tr className="bg-gray-800/30">
-                          <td colSpan={12} className="px-6 py-5">
+                          <td colSpan={13} className="px-6 py-5">
                             <div className="flex flex-col gap-6">
                               <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="space-y-1">
@@ -785,37 +828,99 @@ export function TimeTrackerTable({
                                 </div>
                               )}
 
-                              {/* <div className="grid gap-4 md:grid-cols-3">
+                              <div className="grid gap-4 md:grid-cols-2 border-t border-gray-700/50 pt-4">
                                 <div>
                                   <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
                                     Status
                                   </p>
-                                  {getStatusBadge(entry.status)}
-                                </div>
-                                <div>
-                                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
-                                    Client
-                                  </p>
-                                  <div className="flex items-center gap-1 text-sm text-gray-700">
-                                    <User className="h-3 w-3 text-gray-400 shrink-0" />
-                                    <span>{getClientName(entry.client)}</span>
-                                  </div>
-                                </div>
-                                <div>
-                                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
-                                    Verified
-                                  </p>
-                                  {entry.verifiedByClient ? (
-                                    <span className="inline-flex items-center gap-1 text-sm text-green-600">
-                                      <CheckCircle2 className="h-4 w-4" /> Approved
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 text-sm text-gray-500">
-                                      <XCircle className="h-4 w-4" /> Pending
-                                    </span>
+                                  {getStatusBadge(entry)}
+                                  {entry.paused && entry.pausedAt && (
+                                    <div className="mt-2 text-xs text-yellow-400">
+                                      Paused at: {new Date(entry.pausedAt).toLocaleString()}
+                                    </div>
+                                  )}
+                                  {entry.pausedDuration && entry.pausedDuration > 0 && (
+                                    <div className="mt-1 text-xs text-gray-400">
+                                      Total paused: {Math.round(entry.pausedDuration)} minutes
+                                    </div>
                                   )}
                                 </div>
-                              </div> */}
+                                <div>
+                                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">
+                                    Duration Details
+                                  </p>
+                                  <div className="space-y-1 text-sm text-gray-300">
+                                    {duration && (
+                                      <>
+                                        <p>
+                                          <span className="font-medium text-white">Total:</span>{' '}
+                                          {duration.hours} hours ({duration.minutes} minutes)
+                                        </p>
+                                        {entry.pausedDuration && entry.pausedDuration > 0 && (
+                                          <p>
+                                            <span className="font-medium text-white">Paused:</span>{' '}
+                                            {Math.round(entry.pausedDuration)} minutes
+                                          </p>
+                                        )}
+                                        {entry.pausedDuration &&
+                                          entry.pausedDuration > 0 &&
+                                          duration && (
+                                            <p>
+                                              <span className="font-medium text-white">
+                                                Active Time:
+                                              </span>{' '}
+                                              {(
+                                                (parseFloat(duration.minutes) -
+                                                  entry.pausedDuration) /
+                                                60
+                                              ).toFixed(2)}{' '}
+                                              hours
+                                            </p>
+                                          )}
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {entry.pausePeriods && entry.pausePeriods.length > 0 && (
+                                <div className="border-t border-gray-700/50 pt-4">
+                                  <p className="text-xs uppercase tracking-wide text-gray-500 mb-3">
+                                    Pause History
+                                  </p>
+                                  <div className="space-y-2">
+                                    {entry.pausePeriods.map((period, idx) => (
+                                      <div
+                                        key={idx}
+                                        className="flex items-center justify-between p-2 bg-gray-800/50 rounded border border-gray-700/50"
+                                      >
+                                        <div className="flex-1">
+                                          <p className="text-xs text-gray-300">
+                                            <span className="font-medium">Paused:</span>{' '}
+                                            {new Date(period.pausedAt).toLocaleString()}
+                                          </p>
+                                          {period.resumedAt && (
+                                            <p className="text-xs text-gray-400 mt-1">
+                                              <span className="font-medium">Resumed:</span>{' '}
+                                              {new Date(period.resumedAt).toLocaleString()}
+                                            </p>
+                                          )}
+                                          {!period.resumedAt && (
+                                            <p className="text-xs text-yellow-400 mt-1">
+                                              Currently paused
+                                            </p>
+                                          )}
+                                        </div>
+                                        {period.duration && (
+                                          <div className="text-xs text-gray-400">
+                                            {Math.round(period.duration)}m
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </td>
                         </tr>

@@ -16,6 +16,7 @@ import projectRoutes from './routes/projectRoutes.js';
 import equipmentRouters from './routes/equipmentRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
+import assignmentRoutes from './routes/assignmentRoute.js';
 
 // Socket Server
 import http from 'http';
@@ -75,6 +76,7 @@ app.use('/api/v1/time-tracker', timerRoutes);
 app.use('/api/v1/projects', projectRoutes);
 app.use('/api/v1/equipment', equipmentRouters);
 app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v1/assignments', assignmentRoutes);
 
 // Messages
 app.use('/api/v1/chat', chatRoutes);

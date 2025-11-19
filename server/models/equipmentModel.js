@@ -19,7 +19,7 @@ const equipmentSchema = new mongoose.Schema(
       default: "available",
     },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-    purchaseDate: {
+    assignDate: {
         type:Date,
         default:new Date()
     },

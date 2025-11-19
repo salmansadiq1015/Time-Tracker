@@ -30,10 +30,9 @@ interface Project {
   name: string;
 }
 
-interface Task {
+interface Assignment {
   _id: string;
-  title: string;
-  project?: string | { _id: string; name: string };
+  description: string;
 }
 
 export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerFormProps) {
@@ -44,11 +43,11 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
   const [submitting, setSubmitting] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>('');
-  const [selectedTask, setSelectedTask] = useState<string>('');
+  const [selectedAssignment, setSelectedAssignment] = useState<string>('');
   const [projects, setProjects] = useState<Project[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
-  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [loadingAssignments, setLoadingAssignments] = useState(false);
   const { auth } = useAuthContent();
 
   // Fetch projects for the user
@@ -80,11 +79,11 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
     fetchProjects();
   }, [auth]);
 
-  // Fetch tasks for the user
+  // Fetch assignments
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchAssignments = async () => {
       if (!auth?.user?._id) return;
-      setLoadingTasks(true);
+      setLoadingAssignments(true);
       try {
         const params = new URLSearchParams({
           page: '1',
@@ -92,34 +91,20 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
         });
 
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/tasks?${params}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/assignments/all?${params}`
         );
-        if (response.data?.success && response.data?.data) {
-          setTasks(response.data.data);
+        if (response.data?.success && response.data?.assignments) {
+          setAssignments(response.data.assignments);
         }
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        console.error('Error fetching assignments:', error);
       } finally {
-        setLoadingTasks(false);
+        setLoadingAssignments(false);
       }
     };
 
-    fetchTasks();
+    fetchAssignments();
   }, [auth]);
-
-  // Filter tasks based on selected project
-  const filteredTasks = selectedProject
-    ? tasks.filter((task) => {
-        const taskProjectId =
-          typeof task.project === 'string' ? task.project : task.project?._id;
-        return taskProjectId === selectedProject;
-      })
-    : tasks;
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -147,19 +132,6 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
     }
   }, [toast]);
 
-  // Reset task when project changes (only if task doesn't belong to new project)
-  useEffect(() => {
-    if (selectedProject && selectedTask) {
-      const taskProjectId =
-        typeof tasks.find((t) => t._id === selectedTask)?.project === 'string'
-          ? tasks.find((t) => t._id === selectedTask)?.project
-          : tasks.find((t) => t._id === selectedTask)?.project?._id;
-      if (taskProjectId !== selectedProject) {
-        setSelectedTask('');
-      }
-    }
-  }, [selectedProject, selectedTask, tasks]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim()) {
@@ -179,7 +151,8 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
         userId: auth?.user?._id,
         photos,
         project: selectedProject && selectedProject !== 'none' ? selectedProject : undefined,
-        task: selectedTask && selectedTask !== 'none' ? selectedTask : undefined,
+        assignment:
+          selectedAssignment && selectedAssignment !== 'none' ? selectedAssignment : undefined,
       });
     } finally {
       setSubmitting(false);
@@ -192,7 +165,12 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
         <CardTitle className="text-xl font-bold text-white">
           {isStarting ? 'Start Timer' : 'Stop Timer'}
         </CardTitle>
-        <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-gray-700/50 text-gray-300 hover:text-white">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onCancel}
+          className="hover:bg-gray-700/50 text-gray-300 hover:text-white"
+        >
           <X className="w-4 h-4" />
         </Button>
       </CardHeader>
@@ -210,7 +188,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
             />
           </div>
 
-          {/* Project & Task Selection - Side by side on large screens */}
+          {/* Project & Assignment Selection - Side by side on large screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-200 flex items-center gap-1.5">
@@ -230,7 +208,11 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
                     None
                   </SelectItem>
                   {projects.map((project) => (
-                    <SelectItem key={project._id} value={project._id} className="text-white hover:bg-gray-700">
+                    <SelectItem
+                      key={project._id}
+                      value={project._id}
+                      className="text-white hover:bg-gray-700"
+                    >
                       {project.name}
                     </SelectItem>
                   ))}
@@ -240,29 +222,35 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
 
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-200 flex items-center gap-1.5">
-                <span>Task</span>
+                <span>Assignment</span>
                 <span className="text-xs font-normal text-gray-400">(Optional)</span>
               </label>
               <Select
-                value={selectedTask || undefined}
-                onValueChange={(value) => setSelectedTask(value === 'none' ? '' : value)}
-                disabled={submitting || loadingTasks}
+                value={selectedAssignment || undefined}
+                onValueChange={(value) => setSelectedAssignment(value === 'none' ? '' : value)}
+                disabled={submitting || loadingAssignments}
               >
                 <SelectTrigger className="w-full bg-[#0f1419] border-gray-600 hover:border-gray-500 focus:border-gray-500 transition-colors h-10 text-white">
-                  <SelectValue placeholder={selectedProject ? 'Select a task' : 'Select a task'} />
+                  <SelectValue placeholder="Select an assignment" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[300px] bg-[#1e2339] border-gray-700">
                   <SelectItem value="none" className="text-gray-400">
                     None
                   </SelectItem>
-                  {filteredTasks.map((task) => (
-                    <SelectItem key={task._id} value={task._id} className="text-white hover:bg-gray-700">
-                      {task.title}
+                  {assignments.map((assignment) => (
+                    <SelectItem
+                      key={assignment._id}
+                      value={assignment._id}
+                      className="text-white hover:bg-gray-700"
+                    >
+                      <div className="flex flex-col">
+                        <span className="truncate max-w-[200px]">{assignment.description}</span>
+                      </div>
                     </SelectItem>
                   ))}
-                  {filteredTasks.length === 0 && (
-                    <SelectItem value="no-tasks" disabled className="text-gray-500 italic">
-                      No tasks found
+                  {assignments.length === 0 && (
+                    <SelectItem value="no-assignments" disabled className="text-gray-500 italic">
+                      No assignments found
                     </SelectItem>
                   )}
                 </SelectContent>

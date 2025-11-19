@@ -3,7 +3,7 @@ import equipmentModel from '../models/equipmentModel.js';
 
 export const createEquipment = async (req, res) => {
   try {
-    const { name, serial, project, status, assignedTo, purchaseDate } = req.body;
+    const { name, serial, project, status, assignedTo, assignDate } = req.body;
 
     if (!name || !serial) {
       return res.status(400).json({
@@ -26,7 +26,7 @@ export const createEquipment = async (req, res) => {
       project,
       status,
       assignedTo,
-      purchaseDate,
+      assignDate,
       createdBy: req.user._id,
     });
 

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Pause, MapPin } from 'lucide-react';
+import { Pause, MapPin, Play } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { PhotoCapture } from './photo-capture';
+import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
 
 interface TimeEntry {
   _id?: string;
@@ -26,14 +28,26 @@ interface TimeEntry {
   };
   description: string;
   isActive?: boolean;
+  status?: string;
+  paused?: boolean;
+  pausedAt?: string;
+  pausedDuration?: number;
 }
 
 interface ActiveTimerDisplayProps {
   activeTimer: TimeEntry | null;
   onStop: (id: string, data: any) => void;
+  onPause?: (id: string) => void;
+  onResume?: (id: string) => void;
 }
 
-export function ActiveTimerDisplay({ activeTimer, onStop }: ActiveTimerDisplayProps) {
+export function ActiveTimerDisplay({
+  activeTimer,
+  onStop,
+  onPause,
+  onResume,
+}: ActiveTimerDisplayProps) {
+  const { toast } = useToast();
   const [elapsedTime, setElapsedTime] = useState({
     hours: 0,
     minutes: 0,
@@ -44,16 +58,55 @@ export function ActiveTimerDisplay({ activeTimer, onStop }: ActiveTimerDisplayPr
   const [endLocation, setEndLocation] = useState({ lat: 0, lng: 0, address: '' });
   const [loading, setLoading] = useState(false);
   const [endPhotos, setEndPhotos] = useState<string[]>([]);
+  const [pausing, setPausing] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const pauseRequestRef = useRef<AbortController | null>(null);
+  const resumeRequestRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    if (!activeTimer) return;
+    if (!activeTimer) {
+      setPaused(false);
+      return;
+    }
 
+    // Update paused state
+    const isPaused = activeTimer.status === 'paused' || activeTimer.paused || false;
+    setPaused(isPaused);
+
+    // If paused, show the time when it was paused (frozen display)
+    if (isPaused) {
+      const startTimeStr = activeTimer.start?.startTime || activeTimer.startTime;
+      if (startTimeStr) {
+        const startTime = new Date(startTimeStr);
+        const pausedAt = activeTimer.pausedAt ? new Date(activeTimer.pausedAt) : new Date();
+
+        // Calculate elapsed time up to when it was paused, excluding previous paused duration
+        const pausedDuration = activeTimer.pausedDuration
+          ? activeTimer.pausedDuration * 60 * 1000
+          : 0;
+        const diff = pausedAt.getTime() - startTime.getTime() - pausedDuration;
+
+        const hours = Math.floor(diff / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+
+        setElapsedTime({ hours, minutes, seconds });
+      }
+      return;
+    }
+
+    // Update timer if active
     const interval = setInterval(() => {
       const now = new Date();
       const startTimeStr = activeTimer.start?.startTime || activeTimer.startTime;
       if (!startTimeStr) return;
       const startTime = new Date(startTimeStr);
-      const diff = now.getTime() - startTime.getTime();
+
+      // Calculate elapsed time excluding paused duration
+      const pausedDuration = activeTimer.pausedDuration
+        ? activeTimer.pausedDuration * 60 * 1000
+        : 0;
+      const diff = now.getTime() - startTime.getTime() - pausedDuration;
 
       const hours = Math.floor(diff / 3600000);
       const minutes = Math.floor((diff % 3600000) / 60000);
@@ -135,6 +188,152 @@ export function ActiveTimerDisplay({ activeTimer, onStop }: ActiveTimerDisplayPr
     setEndPhotos([]);
   };
 
+  const handlePause = async () => {
+    // Prevent multiple calls - check all conditions
+    if (!activeTimer || pausing || paused) {
+      return;
+    }
+
+    // Check if already paused
+    if (activeTimer.status === 'paused' || activeTimer.paused) {
+      setPaused(true);
+      return;
+    }
+
+    // Cancel any existing pause request
+    if (pauseRequestRef.current) {
+      pauseRequestRef.current.abort();
+    }
+
+    // Create new abort controller
+    const abortController = new AbortController();
+    pauseRequestRef.current = abortController;
+
+    setPausing(true);
+    setPaused(true); // Set immediately to prevent duplicate calls
+
+    try {
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/time-tracker/pause/${timerId}`,
+        {},
+        {
+          signal: abortController.signal,
+        }
+      );
+
+      // Check if request was aborted
+      if (abortController.signal.aborted) {
+        return;
+      }
+
+      if (response.data?.success) {
+        toast({
+          title: 'Timer Paused',
+          description: 'You can now start a new timer or resume this one later.',
+        });
+        if (onPause) {
+          onPause(timerId);
+        }
+      } else {
+        // Reset if failed
+        setPaused(false);
+      }
+    } catch (error: any) {
+      // Ignore abort errors
+      if (axios.isCancel(error) || error.name === 'AbortError' || abortController.signal.aborted) {
+        return;
+      }
+
+      console.error('Pause error:', error);
+      // Reset on error
+      setPaused(false);
+
+      // Don't show error if timer is already paused (expected case)
+      if (
+        error.response?.status !== 400 ||
+        !error.response?.data?.message?.includes('already paused')
+      ) {
+        toast({
+          title: 'Error',
+          description: error.response?.data?.message || 'Failed to pause timer',
+          variant: 'destructive',
+        });
+      }
+    } finally {
+      setPausing(false);
+      pauseRequestRef.current = null;
+    }
+  };
+
+  const handleResume = async () => {
+    // Prevent multiple calls - check all conditions
+    if (!activeTimer || pausing || !paused) {
+      return;
+    }
+
+    // Check if not paused
+    if (!activeTimer.paused && activeTimer.status !== 'paused') {
+      return;
+    }
+
+    // Cancel any existing resume request
+    if (resumeRequestRef.current) {
+      resumeRequestRef.current.abort();
+    }
+
+    // Create new abort controller
+    const abortController = new AbortController();
+    resumeRequestRef.current = abortController;
+
+    setPausing(true);
+    setPaused(false); // Set immediately to prevent duplicate calls
+
+    try {
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/time-tracker/resume/${timerId}`,
+        {},
+        {
+          signal: abortController.signal,
+        }
+      );
+
+      // Check if request was aborted
+      if (abortController.signal.aborted) {
+        return;
+      }
+
+      if (response.data?.success) {
+        toast({
+          title: 'Timer Resumed',
+          description: 'Timer has been resumed successfully.',
+        });
+        if (onResume) {
+          onResume(timerId);
+        }
+      } else {
+        // Reset if failed
+        setPaused(true);
+      }
+    } catch (error: any) {
+      // Ignore abort errors
+      if (axios.isCancel(error) || error.name === 'AbortError' || abortController.signal.aborted) {
+        return;
+      }
+
+      console.error('Resume error:', error);
+      // Reset on error
+      setPaused(true);
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to resume timer',
+        variant: 'destructive',
+      });
+    } finally {
+      setPausing(false);
+      resumeRequestRef.current = null;
+    }
+  };
+
   return (
     <>
       <Card className="border-primary/50 bg-gradient-to-r from-primary/10 to-primary/5 shadow-lg py-0 pb-3">
@@ -145,13 +344,22 @@ export function ActiveTimerDisplay({ activeTimer, onStop }: ActiveTimerDisplayPr
               <div className="flex items-center flex-col sm:flex-row  gap-4">
                 {/* Animated Pulse Indicator */}
                 <div className="flex flex-col items-center gap-2">
-                  <div className="animate-pulse w-4 h-4 bg-primary rounded-full"></div>
-                  <span className="text-xs font-semibold text-primary">ACTIVE</span>
+                  {activeTimer.status === 'paused' || activeTimer.paused ? (
+                    <>
+                      <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                      <span className="text-xs font-semibold text-yellow-500">PAUSED</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="animate-pulse w-4 h-4 bg-primary rounded-full"></div>
+                      <span className="text-xs font-semibold text-primary">ACTIVE</span>
+                    </>
+                  )}
                 </div>
 
                 {/* Timer Content */}
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Current Task</p>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">Current Work</p>
                   <p className="font-semibold text-foreground text-lg mb-3">
                     {activeTimer.description || 'No description'}
                   </p>
@@ -186,21 +394,74 @@ export function ActiveTimerDisplay({ activeTimer, onStop }: ActiveTimerDisplayPr
               </div>
             </div>
 
-            {/* Stop Button */}
+            {/* Action Buttons */}
             <div className="flex flex-col gap-2 md:w-auto w-full">
-              <Button
-                onClick={() => {
-                  setShowStopDialog(true);
-                  setEndDescription(activeTimer?.description || '');
-                }}
-                variant="destructive"
-                size="lg"
-                className="w-full md:w-auto"
-              >
-                <Pause className="w-5 h-5 mr-2" />
-                Stop Timer
-              </Button>
-              <p className="text-xs text-center text-muted-foreground">Click to end tracking</p>
+              {activeTimer.status === 'paused' || activeTimer.paused ? (
+                <>
+                  <Button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (!pausing && paused) {
+                        handleResume();
+                      }
+                    }}
+                    disabled={pausing || !paused}
+                    variant="default"
+                    size="lg"
+                    className="w-full md:w-auto bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Play className="w-5 h-5 mr-2" />
+                    {pausing ? 'Resuming...' : 'Resume Timer'}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowStopDialog(true);
+                      setEndDescription(activeTimer?.description || '');
+                    }}
+                    variant="destructive"
+                    size="lg"
+                    className="w-full md:w-auto"
+                  >
+                    <Pause className="w-5 h-5 mr-2" />
+                    Stop Timer
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (!pausing && !paused) {
+                        handlePause();
+                      }
+                    }}
+                    disabled={pausing || paused}
+                    variant="outline"
+                    size="lg"
+                    className="w-full md:w-auto border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Pause className="w-5 h-5 mr-2" />
+                    {pausing ? 'Pausing...' : paused ? 'Paused' : 'Pause Timer'}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowStopDialog(true);
+                      setEndDescription(activeTimer?.description || '');
+                    }}
+                    variant="destructive"
+                    size="lg"
+                    className="w-full md:w-auto"
+                  >
+                    <Pause className="w-5 h-5 mr-2" />
+                    Stop Timer
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground">Pause to switch tasks</p>
+                </>
+              )}
             </div>
           </div>
         </CardContent>

@@ -48,6 +48,8 @@ interface Project {
   address: string;
   location?: string;
   city?: string;
+  state?: string;
+  zip?: string;
   description: string;
   startDate: string;
   endDate: string;
@@ -192,13 +194,21 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
           <Table>
             <TableHeader>
               <TableRow className="bg-linear-to-r from-gray-500 to-gray-600 text-white border-b-2 border-gray-500/50">
-                <TableHead className="h-16 px-6 font-bold text-base text-white">Project Name</TableHead>
+                <TableHead className="h-16 px-6 font-bold text-base text-white">
+                  Project Name
+                </TableHead>
                 {/* <TableHead className="h-16 px-6 font-bold text-base text-white">Client</TableHead> */}
                 <TableHead className="h-16 px-6 font-bold text-base text-white">Location</TableHead>
+                <TableHead className="h-16 px-6 font-bold text-base text-white">State</TableHead>
+                <TableHead className="h-16 px-6 font-bold text-base text-white">Zip Code</TableHead>
                 <TableHead className="h-16 px-6 font-bold text-base text-white">Dates</TableHead>
-                <TableHead className="h-16 px-6 font-bold text-base text-white">Team Size</TableHead>
+                <TableHead className="h-16 px-6 font-bold text-base text-white">
+                  Team Size
+                </TableHead>
                 <TableHead className="h-16 px-6 font-bold text-base text-white">Status</TableHead>
-                <TableHead className="h-16 px-6 text-right font-bold text-base text-white">Actions</TableHead>
+                <TableHead className="h-16 px-6 text-right font-bold text-base text-white">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -212,6 +222,12 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                   </TableCell> */}
                   <TableCell>
                     <Skeleton className="h-5 w-28" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-16" />
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-5 w-32" />
@@ -269,10 +285,20 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
             <Table>
               <TableHeader>
                 <TableRow className="bg-linear-to-r from-gray-500 to-gray-600 text-white border-b-2 border-gray-500/50">
-                  <TableHead className="h-16 px-6 font-bold text-base text-white">Project Name</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base text-white">Location</TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">
+                    Project Name
+                  </TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">
+                    Location
+                  </TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">State</TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">
+                    Zip Code
+                  </TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base text-white">Dates</TableHead>
-                  <TableHead className="h-16 px-6 font-bold text-base text-white">Team Size</TableHead>
+                  <TableHead className="h-16 px-6 font-bold text-base text-white">
+                    Team Size
+                  </TableHead>
                   <TableHead className="h-16 px-6 font-bold text-base text-white">Status</TableHead>
                   <TableHead className="h-16 px-6 text-right font-bold text-base text-white">
                     Actions
@@ -328,6 +354,12 @@ export function ProjectList({ projects, loading, viewMode, onRefresh }: ProjectL
                             )}
                           </div>
                         </div>
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        <span className="text-sm text-white">{project.state || 'N/A'}</span>
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        <span className="text-sm text-white">{project.zip || 'N/A'}</span>
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-2">

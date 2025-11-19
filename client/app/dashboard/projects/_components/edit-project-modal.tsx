@@ -23,6 +23,8 @@ interface Project {
   address: string;
   location?: string;
   city?: string;
+  state?: string;
+  zip?: string;
   description: string;
   startDate: string;
   endDate: string;
@@ -41,6 +43,8 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
     name: project.name,
     address: project.address,
     city: project.city || '',
+    state: project.state || '',
+    zip: project.zip || '',
     description: project.description,
     startDate: project.startDate.split('T')[0],
     endDate: project.endDate.split('T')[0],
@@ -81,6 +85,8 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
         name: formData.name,
         address: formData.address,
         city: formData.city,
+        state: formData.state,
+        zip: formData.zip,
         description: formData.description,
         startDate: formData.startDate,
         endDate: formData.endDate,
@@ -154,6 +160,30 @@ export function EditProjectModal({ project, onClose, onSuccess }: EditProjectMod
                 id="city"
                 name="city"
                 value={formData.city}
+                onChange={handleInputChange}
+                className="bg-[#0f1419] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
+              />
+            </div>
+            <div>
+              <Label htmlFor="state" className="text-white pb-1">
+                State
+              </Label>
+              <Input
+                id="state"
+                name="state"
+                value={formData.state}
+                onChange={handleInputChange}
+                className="bg-[#0f1419] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
+              />
+            </div>
+            <div>
+              <Label htmlFor="zip" className="text-white pb-1">
+                Zip Code
+              </Label>
+              <Input
+                id="zip"
+                name="zip"
+                value={formData.zip}
                 onChange={handleInputChange}
                 className="bg-[#0f1419] border-2 border-gray-600 focus:border-gray-500 text-white placeholder:text-gray-500"
               />

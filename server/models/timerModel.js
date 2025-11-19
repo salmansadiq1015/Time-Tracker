@@ -11,9 +11,9 @@ const timerModelSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Project',
     },
-    task: {
+    assignment: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Task',
+      ref: 'Assignment',
     },
     start: {
       startTime: {
@@ -58,10 +58,28 @@ const timerModelSchema = new mongoose.Schema(
     photos: [{ type: String }],
     status: {
       type: String,
-      enum: ['active', 'approved', 'flagged', 'archived', 'pending'],
+      enum: ['active', 'paused', 'approved', 'flagged', 'archived', 'pending'],
       default: 'active',
       index: true,
     },
+    paused: {
+      type: Boolean,
+      default: false,
+    },
+    pausedAt: {
+      type: Date,
+    },
+    pausedDuration: {
+      type: Number,
+      default: 0,
+    },
+    pausePeriods: [
+      {
+        pausedAt: { type: Date, required: true },
+        resumedAt: { type: Date },
+        duration: { type: Number, default: 0 },
+      },
+    ],
     verifiedByClient: { type: Boolean, default: false },
     client: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
     isActive: {

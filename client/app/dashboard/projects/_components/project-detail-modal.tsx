@@ -102,8 +102,17 @@ export function ProjectDetailModal({ projectId, onClose }: ProjectDetailModalPro
               <MapPin className="h-4 w-4 text-gray-600" />
               <h3 className="font-semibold text-foreground">Location</h3>
             </div>
-            <p className="text-sm text-muted-foreground">{project?.city || project?.address}</p>
-            <p className="text-xs text-muted-foreground">{project?.address}</p>
+            {project?.address && (
+              <p className="text-sm text-muted-foreground">{project.address}</p>
+            )}
+            {[project?.city, project?.state, project?.zip].filter(Boolean).length > 0 && (
+              <p className="text-sm text-muted-foreground">
+                {[project?.city, project?.state, project?.zip].filter(Boolean).join(', ')}
+              </p>
+            )}
+            {!project?.address && !project?.city && !project?.state && !project?.zip && (
+              <p className="text-sm text-muted-foreground">Location not set</p>
+            )}
           </div>
 
           {/* Timeline */}

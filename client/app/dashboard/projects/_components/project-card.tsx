@@ -37,6 +37,8 @@ interface Project {
   address: string;
   location?: string;
   city?: string;
+  state?: string;
+  zip?: string;
   description: string;
   startDate: string;
   endDate: string;
@@ -220,7 +222,7 @@ export function ProjectCard({ project, onRefresh }: ProjectCardProps) {
             <MapPin className="h-4 w-4 shrink-0 text-gray-400 mt-0.5" />
             <div className="flex flex-col">
               <span className="line-clamp-1 font-medium text-white">
-                {project.city || project.location || 'City not set'}
+                {[project.city, project.state, project.zip].filter(Boolean).join(', ') || project.location || 'Location not set'}
               </span>
               {project.address && (
                 <span className="text-xs text-gray-400 line-clamp-1">

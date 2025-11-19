@@ -17,7 +17,7 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     serial: '',
-    purchaseDate: new Date().toISOString().split('T')[0],
+    assignDate: new Date().toISOString().split('T')[0],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -37,7 +37,7 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
 
       if (data.success) {
         setSuccess('Equipment created successfully!');
-        setFormData({ name: '', serial: '', purchaseDate: new Date().toISOString().split('T')[0] });
+        setFormData({ name: '', serial: '', assignDate: new Date().toISOString().split('T')[0] });
         setTimeout(onSuccess, 1500);
       } else {
         setError(data.message || 'Failed to create equipment');
@@ -94,14 +94,14 @@ export function CreateEquipmentForm({ onSuccess }: CreateEquipmentFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="purchaseDate" className="pb-1 text-white">
-          Purchase Date
+        <Label htmlFor="assignDate" className="pb-1 text-white">
+          Assign Date
         </Label>
         <Input
-          id="purchaseDate"
+          id="assignDate"
           type="date"
-          value={formData.purchaseDate}
-          onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
+          value={formData.assignDate}
+          onChange={(e) => setFormData({ ...formData, assignDate: e.target.value })}
           className="bg-[#0f1419] border-gray-600 text-white focus:border-gray-500"
         />
       </div>
