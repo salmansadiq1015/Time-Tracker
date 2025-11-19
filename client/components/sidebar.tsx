@@ -55,7 +55,7 @@ export function Sidebar() {
       items: [
         { label: 'Projects', href: '/dashboard/projects', icon: BarChart3 },
         // { label: 'Tasks', href: '/dashboard/tasks', icon: CheckSquare },
-        { label: 'Assignments', href: '/dashboard/assignments', icon: FileText },
+        { label: 'Tasks', href: '/dashboard/assignments', icon: FileText },
         ...(user?.role === 'admin' || user?.role === 'dispatcher'
           ? [{ label: 'Equipments', href: '/dashboard/equipments', icon: FaTools }]
           : []),
