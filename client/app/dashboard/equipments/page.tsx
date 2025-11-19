@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Wrench } from 'lucide-react';
+import { Plus, Wrench, FileDown } from 'lucide-react';
 import { EquipmentList } from './_components/equipment-list';
 import { CreateEquipmentForm } from './_components/create-equipment-form';
 import {
@@ -12,14 +12,30 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import toast from 'react-hot-toast';
 
 export default function EquipmentDashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [exportPDFRef, setExportPDFRef] = useState<(() => void) | null>(null);
 
   const handleEquipmentCreated = () => {
     setShowCreateModal(false);
     setRefreshKey((prev) => prev + 1);
+  };
+
+  const handleExportPDF = () => {
+    if (exportPDFRef) {
+      exportPDFRef();
+    } else {
+      // Try to get from window if ref not set yet
+      const exportFn = (window as any).equipmentExportPDF;
+      if (exportFn) {
+        exportFn();
+      } else {
+        toast.error('Please wait for equipment data to load');
+      }
+    }
   };
 
   return (
@@ -38,13 +54,23 @@ export default function EquipmentDashboard() {
                 </p>
               </div>
             </div>
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              className="gap-2 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white shadow-lg"
-            >
-              <Plus className="h-4 w-4" />
-              New Equipment
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleExportPDF}
+                variant="outline"
+                className="gap-2 border-gray-600 bg-[#0f1419] hover:bg-gray-800 text-white shadow-lg"
+              >
+                <FileDown className="h-4 w-4" />
+                Export PDF
+              </Button>
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                className="gap-2 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white shadow-lg"
+              >
+                <Plus className="h-4 w-4" />
+                New Equipment
+              </Button>
+            </div>
           </div>
         </header>
 
@@ -61,7 +87,16 @@ export default function EquipmentDashboard() {
             </DialogContent>
           </Dialog>
 
-          <EquipmentList key={refreshKey} onRefresh={() => setRefreshKey((prev) => prev + 1)} />
+          <EquipmentList 
+            key={refreshKey} 
+            onRefresh={() => setRefreshKey((prev) => prev + 1)}
+            onExportPDF={() => {
+              const exportFn = (window as any).equipmentExportPDF;
+              if (exportFn) {
+                setExportPDFRef(() => exportFn);
+              }
+            }}
+          />
         </div>
       </div>
     </div>

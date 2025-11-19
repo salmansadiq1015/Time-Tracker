@@ -39,6 +39,8 @@ import {
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface Equipment {
   _id: string;
@@ -50,7 +52,12 @@ interface Equipment {
   createdBy?: { name: string };
 }
 
-export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
+interface EquipmentListProps {
+  onRefresh: () => void;
+  onExportPDF?: () => void;
+}
+
+export function EquipmentList({ onRefresh, onExportPDF }: EquipmentListProps) {
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -162,7 +169,7 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
       case 'available':
         return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50';
       case 'assigned':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/50';
+        return 'bg-red-500/20 text-red-300 border-red-500/50';
       case 'maintenance':
         return 'bg-amber-500/20 text-amber-300 border-amber-500/50';
       default:
@@ -193,6 +200,101 @@ export function EquipmentList({ onRefresh }: { onRefresh: () => void }) {
   const getPercentage = (value: number) => {
     return totalCount > 0 ? Math.round((value / totalCount) * 100) : 0;
   };
+
+  const exportToPDF = useCallback(() => {
+    try {
+      const doc = new jsPDF('landscape', 'mm', 'a4');
+
+      // Add title
+      doc.setFontSize(18);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Equipment Report', 14, 15);
+
+      // Add date
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(
+        `Generated on: ${new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })}`,
+        14,
+        22
+      );
+
+      // Add summary stats
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(
+        `Total: ${stats.total} | Available: ${stats.available} | Assigned: ${stats.assigned} | Maintenance: ${stats.maintenance}`,
+        14,
+        30
+      );
+
+      // Prepare table data
+      const tableData = equipment.map((item) => [
+        item.name || 'N/A',
+        item.serial || 'N/A',
+        item.status.charAt(0).toUpperCase() + item.status.slice(1),
+        item.assignedTo?.name || 'N/A',
+        item.assignedTo?.email || 'N/A',
+        item.assignDate
+          ? new Date(item.assignDate).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
+          : 'N/A',
+        item.createdBy?.name || 'N/A',
+      ]);
+
+      // Add table
+      autoTable(doc, {
+        head: [['Name', 'Serial', 'Status', 'Assigned To', 'Email', 'Assign Date', 'Created By']],
+        body: tableData,
+        startY: 35,
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+        },
+        headStyles: {
+          fillColor: [66, 66, 66],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+        },
+        alternateRowStyles: {
+          fillColor: [245, 245, 245],
+        },
+        columnStyles: {
+          0: { cellWidth: 40 },
+          1: { cellWidth: 35 },
+          2: { cellWidth: 25 },
+          3: { cellWidth: 40 },
+          4: { cellWidth: 50 },
+          5: { cellWidth: 35 },
+          6: { cellWidth: 35 },
+        },
+        margin: { top: 35, left: 14, right: 14 },
+      });
+
+      // Save PDF
+      const fileName = `equipment-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      doc.save(fileName);
+
+      toast.success('Equipment report exported successfully');
+    } catch (error) {
+      console.error('Error exporting to PDF:', error);
+      toast.error('Failed to export equipment report');
+    }
+  }, [equipment, stats]);
+
+  // Expose export function to parent via useEffect
+  useEffect(() => {
+    (window as any).equipmentExportPDF = exportToPDF;
+  }, [exportToPDF]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
