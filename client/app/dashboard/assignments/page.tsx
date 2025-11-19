@@ -229,7 +229,7 @@ export default function AssignmentsPage() {
                 className="gap-2 bg-gradient-to-b from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-gray-900 shadow-lg"
               >
                 <Plus className="w-4 h-4" />
-                New Assignment
+                New Task
               </Button>
             )}
           </div>
