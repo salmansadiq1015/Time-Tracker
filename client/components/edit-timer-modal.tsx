@@ -47,6 +47,7 @@ interface TimeEntry {
   status?: string;
   verifiedByClient?: boolean;
   client?: string | { _id: string; name: string; email: string };
+  company?: string;
 }
 
 interface EditTimerModalProps {
@@ -64,6 +65,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
   const [endLocation, setEndLocation] = useState(entry.end?.location || '');
   const [photos, setPhotos] = useState<string[]>(entry.photos || []);
   const [status, setStatus] = useState<string>(entry.status || 'active');
+  const [company, setCompany] = useState<string>(entry.company || '');
   const [verifiedByClient, setVerifiedByClient] = useState<boolean>(
     entry.verifiedByClient || false
   );
@@ -82,6 +84,7 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
         },
         photos,
         status,
+        company: company || undefined,
         verifiedByClient,
       };
 
@@ -237,6 +240,24 @@ export function EditTimerModal({ entry, onClose, onSave }: EditTimerModalProps) 
                 )}
               </div>
               <PhotoCapture onPhotosChange={setPhotos} existingPhotos={photos} maxPhotos={5} />
+            </div>
+
+            {/* Divider */}
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+
+            {/* Company */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-gray-400" />
+                <label className="text-sm font-semibold text-white">Company</label>
+              </div>
+              <Input
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                placeholder="Enter company name"
+                className="bg-[#0f1419] border-gray-600 text-white placeholder:text-gray-500 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all"
+                disabled={saving}
+              />
             </div>
 
             {/* Divider */}

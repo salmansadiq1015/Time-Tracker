@@ -15,6 +15,10 @@ const timerModelSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Assignment',
     },
+    company: {
+      type: String,
+      required: false,
+    },
     start: {
       startTime: {
         type: Date,

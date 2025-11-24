@@ -44,6 +44,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
   const [photos, setPhotos] = useState<string[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [selectedAssignment, setSelectedAssignment] = useState<string>('');
+  const [company, setCompany] = useState<string>('');
   const [projects, setProjects] = useState<Project[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
@@ -153,6 +154,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
         project: selectedProject && selectedProject !== 'none' ? selectedProject : undefined,
         assignment:
           selectedAssignment && selectedAssignment !== 'none' ? selectedAssignment : undefined,
+        company: company || undefined,
       });
     } finally {
       setSubmitting(false);
@@ -255,6 +257,20 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
                   )}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-200 flex items-center gap-1.5">
+                <span>Company</span>
+                <span className="text-xs font-normal text-gray-400">(Optional)</span>
+              </label>
+              <Input
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                placeholder="Enter company name"
+                disabled={submitting}
+                className="bg-[#0f1419] border-gray-600 hover:border-gray-500 focus:border-gray-500 transition-colors h-10 text-white placeholder:text-gray-500"
+              />
             </div>
           </div>
 

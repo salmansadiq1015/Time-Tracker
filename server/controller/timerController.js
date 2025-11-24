@@ -3,7 +3,7 @@ import timerModel from '../models/timerModel.js';
 // Start Timer
 export const startTimer = async (req, res) => {
   try {
-    const { user, start, description, photos, project, assignment } = req.body;
+    const { user, start, description, photos, project, assignment, company } = req.body;
 
     if (!start) {
       return res.status(400).json({
@@ -36,6 +36,7 @@ export const startTimer = async (req, res) => {
     const timer = await timerModel.create({
       user: userId,
       project: project || undefined,
+      company: company || undefined,
       assignment: assignment || undefined,
       start: {
         ...start,
@@ -161,6 +162,7 @@ export const updateTimer = async (req, res) => {
           user: data.user ? data.user : timer.user,
           project: data.project !== undefined ? data.project : timer.project,
           assignment: data.assignment !== undefined ? data.assignment : timer.assignment,
+          company: data.company !== undefined ? data.company : timer.company,
           start: startPayload,
           end: endPayload,
           description: data.description ? data.description : timer.description,

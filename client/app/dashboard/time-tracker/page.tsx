@@ -59,6 +59,7 @@ interface TimeEntry {
   client?: string | { _id: string; name: string; email: string };
   project?: string | { _id: string; name: string };
   assignment?: string | { _id: string; description: string };
+  company?: string;
   user?: {
     _id: string;
     name: string;
@@ -353,6 +354,7 @@ export default function TimeTrackerPage() {
           photos: data.photos || [],
           project: data.project,
           assignment: data.assignment,
+          company: data.company,
         }
       );
 

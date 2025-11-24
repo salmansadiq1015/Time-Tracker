@@ -65,6 +65,7 @@ interface TimeEntry {
   client?: string | { _id: string; name: string; email: string };
   project?: string | { _id: string; name: string };
   assignment?: string | { _id: string; description: string };
+  company?: string;
   user?: {
     _id: string;
     name: string;
@@ -414,6 +415,9 @@ export function TimeTrackerTable({
                 <th className="text-left py-4 px-4 min-w-32 font-semibold text-white uppercase text-xs tracking-wider">
                   Assignment
                 </th>
+                <th className="text-left py-4 px-4 min-w-32 font-semibold text-white uppercase text-xs tracking-wider">
+                  Company
+                </th>
                 <th className="text-left py-4 px-4 min-w-24 font-semibold text-white uppercase text-xs tracking-wider">
                   Status
                 </th>
@@ -443,7 +447,7 @@ export function TimeTrackerTable({
                 <>
                   {[...Array(3)].map((_, i) => (
                     <tr key={i} className="border-b border-gray-100">
-                      <td colSpan={13} className="py-4 px-4">
+                      <td colSpan={14} className="py-4 px-4">
                         <Skeleton className="h-8 w-full" />
                       </td>
                     </tr>
@@ -451,7 +455,7 @@ export function TimeTrackerTable({
                 </>
               ) : validEntries.length === 0 ? (
                 <tr>
-                  <td colSpan={13} className="py-12 px-4 text-center">
+                  <td colSpan={14} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <AlertCircle className="w-12 h-12 text-gray-400" />
                       <p className="text-gray-500 font-medium">No time entries found</p>
@@ -574,15 +578,12 @@ export function TimeTrackerTable({
                             {getAssignmentName(entry.assignment)}
                           </span>
                         </td>
-                        {/* <td className="py-4 px-4">
-                          <button
-                            type="button"
-                            className="text-gray-400 text-xs font-mono hover:text-gray-400 transition-colors"
-                            onClick={() => openRouteInMaps(entry.start, entry.end)}
-                          >
-                            {formatDate(startTime)}
-                          </button>
-                        </td> */}
+                        <td className="py-4 px-4">
+                          <span className="text-gray-300 text-sm">
+                            {entry.company || '-'}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4">{getStatusBadge(entry)}</td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3 text-gray-500" />
@@ -629,7 +630,6 @@ export function TimeTrackerTable({
                             )}
                           </div>
                         </td>
-                        <td className="py-4 px-4">{getStatusBadge(entry)}</td>
                         <td className="py-4 px-4 text-right">
                           {duration ? (
                             <div className="flex flex-col items-end">
@@ -688,7 +688,7 @@ export function TimeTrackerTable({
                       </tr>
                       {expandedRows[entry._id] && (
                         <tr className="bg-gray-800/30">
-                          <td colSpan={13} className="px-6 py-5">
+                          <td colSpan={14} className="px-6 py-5">
                             <div className="flex flex-col gap-6">
                               <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="space-y-1">
