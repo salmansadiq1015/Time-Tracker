@@ -445,11 +445,10 @@ export default function TimeTrackerPage() {
       if (response.data) {
         const pausedTimer = response.data.timer;
         window.location.reload();
-        // Clear active timer since it's now paused
         setActiveTimer(null);
-        // Update entries
+
         setEntries(entries.map((entry) => (entry._id === id ? pausedTimer : entry)));
-        // Add to paused timers list
+
         setPausedTimers((prev) => {
           const exists = prev.find((t) => t._id === id);
           if (exists) {
@@ -466,7 +465,6 @@ export default function TimeTrackerPage() {
       }
     } catch (error: any) {
       console.error('Error pausing timer:', error);
-      // Don't show error if timer is already paused (expected case)
       if (
         error.response?.status !== 400 ||
         !error.response?.data?.message?.includes('already paused')
@@ -529,7 +527,6 @@ export default function TimeTrackerPage() {
       }
     } catch (error: any) {
       console.error('Error resuming timer:', error);
-      // Handle case where timer is already running
       if (error.response?.status === 400 && error.response?.data?.message) {
         toast({
           title: 'Timer Already Running',

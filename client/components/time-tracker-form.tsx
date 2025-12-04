@@ -62,7 +62,7 @@ export function TimeTrackerForm({ onSubmit, onCancel, isStarting }: TimeTrackerF
           page: '1',
           limit: '100',
         });
-        if (employeeId) params.append('employeeId', employeeId);
+        // if (employeeId) params.append('employeeId', employeeId);
 
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/projects/all?${params}`

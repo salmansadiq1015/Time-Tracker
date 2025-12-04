@@ -25,6 +25,9 @@ interface TimeEntry {
     name: string;
     email: string;
   };
+  project?: string | { _id: string; name: string };
+  assignment?: string | { _id: string; description: string };
+  company?: string;
 }
 
 interface ExportButtonsProps {
@@ -37,6 +40,17 @@ interface ExportButtonsProps {
 }
 
 export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
+  const getProjectName = (entry: any) => {
+    if (!entry.project) return 'N/A';
+    if (typeof entry.project === 'string') return entry.project;
+    return entry.project.name || 'N/A';
+  };
+
+  const getTaskName = (entry: any) => {
+    if (!entry.assignment) return 'N/A';
+    if (typeof entry.assignment === 'string') return entry.assignment;
+    return entry.assignment.description || 'N/A';
+  };
   const formatDuration = (minutes: number) => {
     const hrs = Math.floor(minutes / 60);
     const mins = Math.floor(minutes % 60);
@@ -59,11 +73,11 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
       'ID',
       'User Name',
       'User Email',
+      'Project',
+      'Task',
       'Description',
-      'Start Time',
-      'Start Location',
-      'End Time',
-      'End Location',
+      'Start (Time & Location)',
+      'End (Time & Location)',
       'Duration (h:m)',
       'Photos Count',
       'Status',
@@ -74,11 +88,11 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
       entry._id,
       entry.user?.name || 'N/A',
       entry.user?.email || 'N/A',
+      getProjectName(entry),
+      getTaskName(entry),
       entry.description,
-      formatDateTime(entry.start.startTime),
-      entry.start.location,
-      entry.end ? formatDateTime(entry.end.endTime) : 'N/A',
-      entry.end?.location || 'N/A',
+      `${formatDateTime(entry.start.startTime)} | ${entry.start.location}`,
+      entry.end ? `${formatDateTime(entry.end.endTime)} | ${entry.end.location}` : 'N/A',
       entry.duration ? formatDuration(entry.duration) : '0h:0m',
       entry.photos?.length || 0,
       entry.isActive ? 'Active' : 'Completed',
@@ -150,7 +164,8 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
         <title>Time Tracker Report</title>
         <style>
           @page {
-            size: A4;
+            /* Wider page: A4 landscape */
+            size: A4 landscape;
             margin: ${margin}mm;
           }
           body {
@@ -305,15 +320,15 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
         <table>
           <thead>
             <tr>
-              <th style="width: 10%;">User</th>
+              <th style="width: 8%;">User</th>
+              <th style="width: 12%;">Project</th>
+              <th style="width: 12%;">Task</th>
               <th style="width: 15%;">Description</th>
-              <th style="width: 12%;">Start Time</th>
-              <th style="width: 12%;">End Time</th>
-              <th style="width: 12%;">Start Location</th>
-              <th style="width: 12%;">End Location</th>
+              <th style="width: 16%;">Start (Time & Location)</th>
+              <th style="width: 16%;">End (Time & Location)</th>
               <th style="width: 8%;">Duration</th>
               <th style="width: 6%;">Photos</th>
-              <th style="width: 4%;">Status</th>
+              <th style="width: 5%;">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -345,11 +360,22 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
       html += `
         <tr>
           <td>${entry.user?.name || 'N/A'}</td>
+          <td>${getProjectName(entry)}</td>
+          <td>${getTaskName(entry)}</td>
           <td>${entry.description}</td>
-          <td>${formatDateTime(entry.start.startTime)}</td>
-          <td>${entry.end ? formatDateTime(entry.end.endTime) : 'N/A'}</td>
-          <td>${entry.start.location}</td>
-          <td>${entry.end?.location || 'N/A'}</td>
+          <td>
+            <div>${formatDateTime(entry.start.startTime)}</div>
+            <div style="font-size: 7pt; color: #666;">${entry.start.location}</div>
+          </td>
+          <td>
+            ${
+              entry.end
+                ? `<div>${formatDateTime(
+                    entry.end.endTime
+                  )}</div><div style="font-size: 7pt; color: #666;">${entry.end.location}</div>`
+                : 'N/A'
+            }
+          </td>
           <td>${entry.duration ? formatDuration(entry.duration) : 'N/A'}</td>
           <td>${photosHtml}</td>
           <td>
