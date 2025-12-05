@@ -323,7 +323,7 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
               <th style="width: 8%;">User</th>
               <th style="width: 12%;">Project</th>
               <th style="width: 12%;">Task</th>
-              <th style="width: 15%;">Description</th>
+              <th style="width: 12%;">Company</th>
               <th style="width: 16%;">Start (Time & Location)</th>
               <th style="width: 16%;">End (Time & Location)</th>
               <th style="width: 8%;">Duration</th>
@@ -362,7 +362,7 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
           <td>${entry.user?.name || 'N/A'}</td>
           <td>${getProjectName(entry)}</td>
           <td>${getTaskName(entry)}</td>
-          <td>${entry.description}</td>
+          <td>${entry.company || 'N/A'}</td>
           <td>
             <div>${formatDateTime(entry.start.startTime)}</div>
             <div style="font-size: 7pt; color: #666;">${entry.start.location}</div>
