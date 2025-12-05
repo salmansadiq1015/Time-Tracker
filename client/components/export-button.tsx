@@ -239,23 +239,25 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
           tr:nth-child(even) {
             background-color: #f9fafb;
           }
-          .status-active {
-            display: inline-block;
-            padding: 2px 6px;
-            background: #dcfce7;
-            color: #166534;
-            border-radius: 4px;
+          .location-link {
+            color: #0ea5e9;
+            text-decoration: underline;
             font-size: 7pt;
-            font-weight: bold;
+            cursor: pointer;
           }
-          .status-completed {
+          .location-link:hover {
+            color: #0284c7;
+          }
+          .map-icon-link {
             display: inline-block;
-            padding: 2px 6px;
-            background: #e0e7ff;
-            color: #3730a3;
-            border-radius: 4px;
-            font-size: 7pt;
-            font-weight: bold;
+            font-size: 16pt;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+          }
+          .map-icon-link:hover {
+            transform: scale(1.2);
           }
           .photo-grid {
             display: flex;
@@ -327,8 +329,8 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
               <th style="width: 16%;">Start (Time & Location)</th>
               <th style="width: 16%;">End (Time & Location)</th>
               <th style="width: 8%;">Duration</th>
-              <th style="width: 6%;">Photos</th>
-              <th style="width: 5%;">Status</th>
+              <th style="width: 10%;">Photos</th>
+              <th style="width: 6%;">Map</th>
             </tr>
           </thead>
           <tbody>
@@ -357,6 +359,29 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
         photosHtml = '<span class="photo-count">-</span>';
       }
 
+      // Generate Google Maps links for start and end locations
+      const startMapsUrl =
+        entry.start.lat && entry.start.lng
+          ? `https://www.google.com/maps?q=${entry.start.lat},${entry.start.lng}`
+          : null;
+      const endMapsUrl =
+        entry.end && entry.end.lat && entry.end.lng
+          ? `https://www.google.com/maps?q=${entry.end.lat},${entry.end.lng}`
+          : null;
+
+      // Generate Google Maps link showing both start and end locations
+      let bothLocationsUrl = null;
+      if (entry.start.lat && entry.start.lng && entry.end && entry.end.lat && entry.end.lng) {
+        // Use Google Maps directions to show both locations
+        bothLocationsUrl = `https://www.google.com/maps/dir/${entry.start.lat},${entry.start.lng}/${entry.end.lat},${entry.end.lng}`;
+      } else if (entry.start.lat && entry.start.lng) {
+        // Only start location available
+        bothLocationsUrl = startMapsUrl;
+      } else if (entry.end && entry.end.lat && entry.end.lng) {
+        // Only end location available
+        bothLocationsUrl = endMapsUrl;
+      }
+
       html += `
         <tr>
           <td>${entry.user?.name || 'N/A'}</td>
@@ -365,23 +390,39 @@ export const ExportButtons = ({ entries, summary }: ExportButtonsProps) => {
           <td>${entry.company || 'N/A'}</td>
           <td>
             <div>${formatDateTime(entry.start.startTime)}</div>
-            <div style="font-size: 7pt; color: #666;">${entry.start.location}</div>
+            <div style="font-size: 7pt; color: #666;">
+              ${entry.start.location}
+              ${
+                startMapsUrl
+                  ? `<br><a href="${startMapsUrl}" target="_blank" class="location-link">📍 View on Map</a>`
+                  : ''
+              }
+            </div>
           </td>
           <td>
             ${
               entry.end
                 ? `<div>${formatDateTime(
                     entry.end.endTime
-                  )}</div><div style="font-size: 7pt; color: #666;">${entry.end.location}</div>`
+                  )}</div><div style="font-size: 7pt; color: #666;">
+                    ${entry.end.location}
+                    ${
+                      endMapsUrl
+                        ? `<br><a href="${endMapsUrl}" target="_blank" class="location-link">📍 View on Map</a>`
+                        : ''
+                    }
+                  </div>`
                 : 'N/A'
             }
           </td>
           <td>${entry.duration ? formatDuration(entry.duration) : 'N/A'}</td>
           <td>${photosHtml}</td>
-          <td>
-            <span class="${entry.isActive ? 'status-active' : 'status-completed'}">
-              ${entry.isActive ? 'Active' : 'Done'}
-            </span>
+          <td style="text-align: center;">
+            ${
+              bothLocationsUrl
+                ? `<a href="${bothLocationsUrl}" target="_blank" class="map-icon-link" title="View Start & End Locations on Map">📍</a>`
+                : '-'
+            }
           </td>
         </tr>
       `;
