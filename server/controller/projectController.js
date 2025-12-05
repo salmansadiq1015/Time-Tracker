@@ -1,9 +1,21 @@
 import projectModel from '../models/projectModel.js';
+import chatModel from '../models/chatModel.js';
+import mongoose from 'mongoose';
 
 // Create Project
 export const createProject = async (req, res) => {
   try {
-    const { name, employees = [], address, city, state, zip, description = '', startDate, endDate } = req.body;
+    const {
+      name,
+      employees = [],
+      address,
+      city,
+      state,
+      zip,
+      description = '',
+      startDate,
+      endDate,
+    } = req.body;
 
     // --- 1️⃣ Input validation ---
     const requiredFields = { name, address, startDate, endDate };
@@ -247,11 +259,39 @@ export const addEmployeeToProject = async (req, res) => {
     if (!employeeId)
       return res.status(400).send({ success: false, message: 'employeeId is required' });
 
+    // Get the project to get the project name
+    const project = await projectModel.findById(id);
+    if (!project) return res.status(404).send({ success: false, message: 'Project not found' });
+
+    // Convert employeeId to ObjectId if it's a string
+    let employeeIdObjectId = employeeId;
+    if (typeof employeeId === 'string' && mongoose.Types.ObjectId.isValid(employeeId)) {
+      employeeIdObjectId = new mongoose.Types.ObjectId(employeeId);
+    }
+
+    // Add employee to project
     const updated = await projectModel
-      .findByIdAndUpdate(id, { $addToSet: { employees: employeeId } }, { new: true })
+      .findByIdAndUpdate(id, { $addToSet: { employees: employeeIdObjectId } }, { new: true })
       .populate('employees', 'name email');
 
-    if (!updated) return res.status(404).send({ success: false, message: 'Project not found' });
+    // Also add user to associated group chat (matching by project name)
+    if (project.name) {
+      try {
+        // Trim and match chat name (case-sensitive exact match)
+        const projectNameTrimmed = project.name.trim();
+
+        const updateResult = await chatModel.updateMany(
+          { chatName: projectNameTrimmed, isGroupChat: true },
+          { $addToSet: { users: employeeIdObjectId } }
+        );
+        console.log(
+          `✅ Added user ${employeeId} to ${updateResult.modifiedCount} group chat(s) with name "${projectNameTrimmed}"`
+        );
+      } catch (chatError) {
+        console.error('❌ Error adding user to group chat:', chatError);
+        // Continue even if chat update fails
+      }
+    }
 
     return res.status(200).send({ success: true, message: 'Employee added', project: updated });
   } catch (error) {
@@ -268,11 +308,41 @@ export const removeEmployeeFromProject = async (req, res) => {
     if (!employeeId)
       return res.status(400).send({ success: false, message: 'employeeId is required' });
 
+    // Get the project to get the project name
+    const project = await projectModel.findById(id);
+    if (!project) return res.status(404).send({ success: false, message: 'Project not found' });
+
+    // Convert employeeId to ObjectId if it's a string
+    let employeeIdObjectId = employeeId;
+    if (typeof employeeId === 'string' && mongoose.Types.ObjectId.isValid(employeeId)) {
+      employeeIdObjectId = new mongoose.Types.ObjectId(employeeId);
+    }
+
+    // Remove employee from project
     const updated = await projectModel
-      .findByIdAndUpdate(id, { $pull: { employees: employeeId } }, { new: true })
+      .findByIdAndUpdate(id, { $pull: { employees: employeeIdObjectId } }, { new: true })
       .populate('employees', 'name email');
 
-    if (!updated) return res.status(404).send({ success: false, message: 'Project not found' });
+    console.log(updated);
+
+    // Also remove user from associated group chat (matching by project name)
+    if (project.name) {
+      try {
+        // Trim and match chat name (case-sensitive exact match)
+        const projectNameTrimmed = project.name.trim();
+
+        const updateResult = await chatModel.updateMany(
+          { chatName: projectNameTrimmed, isGroupChat: true },
+          { $pull: { users: employeeIdObjectId } }
+        );
+        console.log(
+          `✅ Removed user ${employeeId} from ${updateResult.modifiedCount} group chat(s) with name "${projectNameTrimmed}"`
+        );
+      } catch (chatError) {
+        console.error('❌ Error removing user from group chat:', chatError);
+        // Continue even if chat update fails
+      }
+    }
 
     return res.status(200).send({ success: true, message: 'Employee removed', project: updated });
   } catch (error) {
